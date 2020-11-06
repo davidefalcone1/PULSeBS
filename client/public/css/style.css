@@ -1,0 +1,19 @@
+.main-from-nav{
+    padding-top: 5rem;
+    margin-left: 5px;
+}
+.from-nav{
+    padding-top: 5rem;
+}
+.row-height{
+    margin: auto;
+    position: relative;
+}
+.main-title-color{
+    background-color: #0053ac;
+    color: #ffffff;
+}
+body{
+    min-width: min-content;
+    margin: 0 auto;
+}

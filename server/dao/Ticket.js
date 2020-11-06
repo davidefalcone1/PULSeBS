@@ -1,0 +1,13 @@
+class Ticket {
+  constructor(TICKET_ID, TICKET_NUMBER, SERVICE_ID, SERVICE_DESCRIPTION, COUNTER_ID, STATUS, DATE) {
+    if (TICKET_ID) this.TICKET_ID = TICKET_ID;
+    this.TICKET_NUMBER = TICKET_NUMBER;
+    this.SERVICE_ID = SERVICE_ID;
+    this.SERVICE_DESCRIPTION = SERVICE_DESCRIPTION;
+    this.COUNTER_ID = COUNTER_ID;
+    this.STATUS = STATUS;
+    this.DATE = DATE;
+  }
+}
+
+module.exports = Ticket;
