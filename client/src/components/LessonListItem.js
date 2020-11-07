@@ -63,7 +63,7 @@ function SelectField(props){
                             props.updateMyBookedLessonsList();
                         });               
                         props.updateLessonSelectedState(true);
-                    }} variant="success" id={"selectFieldOfService" + props.id}>
+                    }} id={"selectFieldOfLesson" + props.id}>
                         SELECT
                     </Button>
                 </div>
@@ -77,7 +77,7 @@ function SelectField(props){
                             props.updateMyBookedLessonsList();
                         });               
                         props.updateLessonSelectedState(true);
-                    }} variant="success" id={"selectFieldOfService" + props.id}>
+                    }} id={"deleteFieldOfLesson" + props.id}>
                         DELETE
                     </Button>
                 </div>

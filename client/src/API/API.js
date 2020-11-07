@@ -26,7 +26,7 @@ function getMyLessons(email) {
             },
             body: JSON.stringify({email: email}),
         })
-        .then((response) => {
+        .then(async (response) => {
             const lessonsJson = await response.json();
             if (response.ok) {
                 const list = lessonsJson.map((lesson) => {

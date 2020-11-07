@@ -31,16 +31,18 @@ class LessonListPageRender extends React.Component {
   render(){
     return(
       <>        
-        {this.props.serviceList && 
+        {this.props.lessonsList && 
           <ListGroup as="ul" variant="flush">
               <ListHeader />
+              <>{console.log(this.props.lessonsList)}</>
               {this.props.lessonsList.map((lesson) => 
                   <LessonListItem key = {lesson.id} lesson = {lesson}
                     updateSelectionMessage = {this.updateSelectionMessage}
                     updateLessonSelectedState = {this.updateLessonSelectedState}
                     selectLessonFunction = {this.props.selectLessonFunction}
                     updateMyBookedLessonsList = {this.props.updateMyBookedLessonsList}
-                    isMyLessonsList={props.isMyLessonsList}/>)
+                    isMyLessonsList={this.props.isMyLessonsList}/>
+                    )
               }
           </ListGroup>
         }

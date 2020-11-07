@@ -14,7 +14,24 @@ class App extends React.Component {
       user: null,
       loginError: false,
       lessons: [
-        
+        {
+          id: "0",
+          course: "Course 0",
+          professor: "Professor 0",
+          dateAndTime: "",
+        },
+        {
+          id: "1",
+          course: "Course 1",
+          professor: "Professor 1",
+          dateAndTime: "",
+        },
+        {
+          id: "2",
+          course: "Course 2",
+          professor: "Professor 2",
+          dateAndTime: "",
+        },
       ],
       myBookedLessons: [
 
