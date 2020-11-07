@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from 'react-bootstrap/Navbar';
-import Button from 'react-bootstrap/Button';
 import Nav from 'react-bootstrap/Nav';
+import {NavLink} from 'react-router-dom';
 
 const navbar = (props) => {
     return (
@@ -10,9 +10,13 @@ const navbar = (props) => {
             <Navbar.Brand href="/index.html">
                 Office Queue
             </Navbar.Brand>
+
             <Nav className="mr-auto">
-                <Button variant="light" onClick={() => props.setMode('serviceList')}>Service List</Button>
-                <Button variant="light" onClick={() => props.setMode('ticketList')}>Tickets Info</Button>
+                {/* {context.userType === 'student' && <></>}
+                {context.userType === 'professor' && <></>}
+                {context.userType === 'supportManager' && <></>} */}
+                <Nav.Link as={NavLink} to="/lessonsList">Book a lesson!</Nav.Link> 
+                <Nav.Link as={NavLink} to="/myBookedLessonslist"> My booked lessons</Nav.Link> 
             </Nav>
         </Navbar>
     );

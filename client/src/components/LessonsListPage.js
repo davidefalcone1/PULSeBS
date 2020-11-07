@@ -1,27 +1,28 @@
 import React from 'react';
-import ServiceListItem from './ServiceListItem';
+import LessonListItem from './LessonListItem';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button'
 
-const serviceList = (props) => {
+const lessonsList = (props) => {
   return(
-    <ServiceListPageRender serviceList={props.serviceList}
-        selectServiceFunction={props.selectServiceFunction}
-        updateTicketList={props.updateTicketList}/>
+    <LessonListPageRender lessonsList={props.lessonsList}
+        selectLessonFunction={props.selectLessonFunction}
+        updateMyBookedLessonsList={props.updateMyBookedLessonsList}
+        isMyLessonsList={props.isMyLessonsList}/>
   );
 }
 
-class ServiceListPageRender extends React.Component {
+class LessonListPageRender extends React.Component {
 
   constructor(props) {
       super(props);
       this.props = props;
-      this.state = {serviceSelected: false, selectionMessage: ""}
+      this.state = {lessonSelected: false, selectionMessage: ""}
   }
 
-  updateServiceSelectedState = (status) => {
-    this.setState({serviceSelected: status});
+  updateLessonSelectedState = (status) => {
+    this.setState({lessonSelected: status});
   }
   updateSelectionMessage = (msg) => {
     this.setState({selectionMessage: msg});
@@ -33,24 +34,25 @@ class ServiceListPageRender extends React.Component {
         {this.props.serviceList && 
           <ListGroup as="ul" variant="flush">
               <ListHeader />
-              {this.props.serviceList.map((service) => 
-                  <ServiceListItem key = {service.SERVICE_ID} service = {service}
+              {this.props.lessonsList.map((lesson) => 
+                  <LessonListItem key = {lesson.id} lesson = {lesson}
                     updateSelectionMessage = {this.updateSelectionMessage}
-                    updateServiceSelectedState = {this.updateServiceSelectedState}
-                    selectServiceFunction = {this.props.selectServiceFunction}
-                    updateTicketList = {this.props.updateTicketList}/>)
+                    updateLessonSelectedState = {this.updateLessonSelectedState}
+                    selectLessonFunction = {this.props.selectLessonFunction}
+                    updateMyBookedLessonsList = {this.props.updateMyBookedLessonsList}
+                    isMyLessonsList={props.isMyLessonsList}/>)
               }
           </ListGroup>
         }
 
-        {!this.props.serviceList &&
+        {!this.props.lessonsList &&
           <NoItemsImage/>
         }
 
-        {this.state.serviceSelected && 
-          <Modal show={this.state.serviceSelected} animation={false}>
+        {this.state.lessonSelected && 
+          <Modal show={this.state.lessonSelected} animation={false}>
             <Modal.Header>
-              <Modal.Title>Service Selection</Modal.Title>
+              <Modal.Title>Lesson Selection</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <div className="row-md-6">
@@ -61,7 +63,7 @@ class ServiceListPageRender extends React.Component {
               <Button variant="secondary" type="button" 
                 onClick={(event) => {
                   event.preventDefault();
-                  this.setState({serviceSelected: false});
+                  this.setState({lessonSelected: false});
                 }}>Close</Button>
             </Modal.Footer>
           </Modal>
@@ -73,15 +75,18 @@ class ServiceListPageRender extends React.Component {
 
 function ListHeader() {
   return(
-    <ListGroup.Item id = {"serviceList-header"}>
+    <ListGroup.Item id = {"lessonList-header"}>
         <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
-          <div className="col-sm-3">
-              <h4>Code</h4>
-          </div>
-          <div className="col-sm-6">
-              <h4>Description</h4>
+          <div className="col-sm-4">
+              <h4>Course</h4>
           </div>
           <div className="col-sm-3">
+              <h4>Professor</h4>
+          </div>
+          <div className="col-sm-3">
+              <h4>Date and Time</h4>
+          </div>
+          <div className="col-sm-2">
           </div>
         </div>
     </ListGroup.Item>
@@ -96,4 +101,4 @@ function NoItemsImage(props){
     );
 }
 
-export default serviceList;
+export default lessonsList;

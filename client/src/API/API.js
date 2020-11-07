@@ -1,38 +1,15 @@
-import ServiceData from './ServiceData';
+import LessonsData from './LessonsData';
 import TicketData from './TicketData';
 import CountersData from './CountersData';
 
-function login(username, password) {
+function getLessons() {
     return new Promise(async function (resolve, reject) {
-        try {
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
-            });
-            const user = await response.json();
-            if (response.ok) {
-                resolve(user);
-            }
-            else
-                reject();
-        }
-        catch (e) {
-            reject();
-        }
-    });
-}
-
-function getServices() {
-    return new Promise(async function (resolve, reject) {
-        const url = "/services";
+        const url = "/lessons";
         const response = await fetch(url);
-        const servicesJson = await response.json();
+        const lessonsJson = await response.json();
         if (response.ok) {
-            const list = servicesJson.servicesList.map((serv) => {
-                return ServiceData.fromJson(serv);
+            const list = lessonsJson.map((lesson) => {
+                return LessonsData.fromJson(lesson);
             });
             resolve(list);
         } else {
@@ -40,6 +17,29 @@ function getServices() {
         }
     });
 }
+function getMyLessons(email) {
+    return new Promise(async function (resolve, reject) {
+        fetch('/myLessons', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({email: email}),
+        })
+        .then((response) => {
+            const lessonsJson = await response.json();
+            if (response.ok) {
+                const list = lessonsJson.map((lesson) => {
+                    return LessonsData.fromJson(lesson);
+                });
+                resolve(list);
+            } else {
+                reject();
+            }
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
+}
+
 async function getTickets() {
     let url = "/tickets";
     const response = await fetch(url);
@@ -103,6 +103,28 @@ async function callNextCustomer(COUNTER_ID) {
         throw err;
     }
 }
+function login(username, password) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+            const user = await response.json();
+            if (response.ok) {
+                resolve(user);
+            }
+            else
+                reject();
+        }
+        catch (e) {
+            reject();
+        }
+    });
+}
 
-const API = { getServices, getTickets, getCountersIds, addTicket, callNextCustomer, login };
+const API = { getLessons, getMyLessons, getTickets, getCountersIds, addTicket, callNextCustomer, login };
 export default API;
