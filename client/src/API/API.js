@@ -39,45 +39,17 @@ function getMyLessons(email) {
         }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
-
-async function getTickets() {
-    let url = "/tickets";
-    const response = await fetch(url);
-    const ticketsJson = await response.json();
-    if (response.ok) {
-        return ticketsJson.ticketsList.map((t) => {
-            return TicketData.fromJson(t);
-        });
-    } else {
-        let err = { status: response.status, errObj: ticketsJson };
-        throw err;
-    }
-}
-async function getCountersIds() {
-    let url = "/counters";
-    const response = await fetch(url);
-    const countersJson = await response.json();
-    if (response.ok) {
-        return countersJson.countersIdsList.map((c) => {
-            return CountersData.fromJson(c);
-        });
-    } else {
-        let err = { status: response.status, errObj: countersJson };
-        throw err;
-    }
-}
-async function addTicket(SERVICE_ID) {
+async function bookLesson(lessonId) {
     return new Promise((resolve, reject) => {
         fetch("/tickets", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ "SERVICE_ID": SERVICE_ID }),
+            body: JSON.stringify({ "lessonId": lessonId }),
         }).then(async (response) => {
             if (response.ok) {
-                var jsonResult = await response.json();
-                resolve(`Your ticket number is ${jsonResult.ticketNumber}. There are ${jsonResult.queueLenght} before you.`);
+                resolve(`Your lesson has been correctly booked.`);
             } else {
                 response.json()
                     .then((obj) => { reject(obj); })
@@ -89,19 +61,22 @@ async function addTicket(SERVICE_ID) {
         }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
-async function callNextCustomer(COUNTER_ID) {
-    const url = 'queue/' + COUNTER_ID;
-    const response = await fetch(url);
-    const ticketJson = await response.json();
-    if (response.ok) {
-        if (ticketJson === -1)
-            return (`There is no one in the queue for this counter!`);
-        return (`The next customer to be served has ticket number ${ticketJson.ticketNumber}`);
-    }
-    else {
-        let err = { status: response.status, errObj: ticketJson };
-        throw err;
-    }
+async function deleteBooking(bookingId){
+    return new Promise((resolve, reject) => {
+        fetch("/deleteBooking/" + rentalID, {
+            method: 'DELETE'
+        }).then( (response) => {
+            if(response.ok) {
+                resolve(null);
+            } else {
+                response.json()
+                .then( (obj) => {reject(obj);} )
+                .catch( (err) => {reject(
+                    { errors: [{ param: "Application", msg: "Cannot parse server response" }] }) 
+                });
+            }
+        }).catch( (err) => {reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
 }
 function login(username, password) {
     return new Promise(async function (resolve, reject) {
@@ -126,5 +101,5 @@ function login(username, password) {
     });
 }
 
-const API = { getLessons, getMyLessons, getTickets, getCountersIds, addTicket, callNextCustomer, login };
+const API = { getLessons, getMyLessons, bookLesson, deleteBooking, login };
 export default API;
