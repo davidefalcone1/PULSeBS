@@ -70,6 +70,7 @@ app.post('/logout', (req, res) => {
 app.use(
     jwt({
         secret: jwtSecret,
+        algorithms: ['RS256'],
         getToken: req => req.cookies.token
     })
 );
