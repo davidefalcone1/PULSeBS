@@ -59,6 +59,23 @@ app.post('/login', async (req, res) => {
 });
 
 
+app.use(cookieParser());
+
+app.post('/logout', (req, res) => {
+    res.clearCookie('token').end();
+});
+
+
+// For the rest of the code, all APIs require authentication
+app.use(
+    jwt({
+        secret: jwtSecret,
+        getToken: req => req.cookies.token
+    })
+);
+
+//PLACE HERE ALL APIs THAT REQUIRE AUTHENTICATION
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
