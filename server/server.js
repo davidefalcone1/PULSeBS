@@ -4,6 +4,7 @@ const express = require("express");//import express
 const morgan = require("morgan"); // logging middleware
 const dao = require("./dao/dao");
 const userDao = require('./dao/userDao');
+const lessonsDao = require('./dao/lessonDao');
 const app = express();
 const port = 3001;
 
@@ -47,11 +48,26 @@ app.post('/login', async (req, res) => {
         res.status(500).json({ msg: "Server error!" });
     }
 });
-
+// API for get bookable lectures for a given student
 app.get('/lectures', async (req, res) => {
-    dao
-})
-
+    try{
+        const result = await lessonsDao.getAvailableLessons(req.user);
+        res.json(result);
+    }
+    catch(e){
+        res.status(505).end();
+    }
+});
+// API for retrieve lessons booked by a student
+app.get('/myLessons', async(req, res)=>{
+    try{
+        const result = await lessonsDao.getLessons(req.user);
+        res.json(result);
+    }
+    catch(e){
+        res.status(505).end();
+    }
+});
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 app.listen(port, () => {
