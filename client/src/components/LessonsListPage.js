@@ -82,11 +82,17 @@ function ListHeader() {
           <div className="col-sm-4">
               <h4>Course</h4>
           </div>
-          <div className="col-sm-3">
-              <h4>Professor</h4>
+          <div className="col-sm-2">
+              <h4>Date</h4>
           </div>
-          <div className="col-sm-3">
-              <h4>Date and Time</h4>
+          <div className="col-sm-1">
+              <h4>Starting Time</h4>
+          </div>
+          <div className="col-sm-1">
+              <h4>Ending Time</h4>
+          </div>
+          <div className="col-sm-2">
+              <h4># of Booked Seats</h4>
           </div>
           <div className="col-sm-2">
           </div>

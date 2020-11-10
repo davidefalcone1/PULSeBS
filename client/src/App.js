@@ -17,20 +17,26 @@ class App extends React.Component {
         {
           id: "0",
           course: "Course 0",
-          professor: "Professor 0",
-          dateAndTime: "",
+          startingTime: "",
+          endingTime: "",
+          occupiedSeats: 15,
+          availableSeats: 40
         },
         {
           id: "1",
           course: "Course 1",
-          professor: "Professor 1",
-          dateAndTime: "",
+          startingTime: "",
+          endingTime: "",
+          occupiedSeats: 15,
+          availableSeats: 40
         },
         {
           id: "2",
           course: "Course 2",
-          professor: "Professor 2",
-          dateAndTime: "",
+          startingTime: "",
+          endingTime: "",
+          occupiedSeats: 15,
+          availableSeats: 40
         },
       ],
       myBookedLessons: [
