@@ -18,6 +18,21 @@ const navbar = (props) => {
                 <Nav.Link as={NavLink} to="/lessonsList">Book a lesson!</Nav.Link> 
                 <Nav.Link as={NavLink} to="/myBookedLessonslist"> My booked lessons</Nav.Link> 
             </Nav>
+
+            {/* <Nav className="ml-md-auto">
+                {context.sessionUser && 
+                    <>
+                        <Navbar.Brand className="d-md-none align-middle">
+                            Welcome {context.sessionUser.name ? context.sessionUser.name : context.sessionUser.email}!  
+                            <span>   </span>
+                            <img src="./drawable/user_icon.png" width="50" height="50" alt="" />
+                        </Navbar.Brand> 
+                        <Nav.Link onClick = {() => {
+                            context.logoutUser();
+                        }}>Logout</Nav.Link>
+                    </>}
+                {!context.sessionUser && <Nav.Link as = {NavLink} to = "/login">Login</Nav.Link>}
+            </Nav> */}
         </Navbar>
     );
 }

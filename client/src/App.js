@@ -2,7 +2,7 @@ import React from 'react';
 import {Navbar} from 'react-bootstrap';
 import API from './API/API';
 import LessonsList from './components/LessonsListPage';
-import TicketDetails from './components/TicketDetailsPage';
+import MyCoursesLessonsStudents from './components/MyCoursesLessonsStudentsPage';
 import {Switch, Route, Redirect, withRouter} from 'react-router-dom';
 import LoginPage from './components/LoginPage';
 class App extends React.Component {
@@ -42,6 +42,9 @@ class App extends React.Component {
       myBookedLessons: [
 
       ],
+      courses: [],
+      studentsBookings: [],
+      studentsInfos: [],
     };
   }
 
@@ -55,8 +58,15 @@ class App extends React.Component {
       this.props.history.push('/ticketdetails');
       //IF STUDENT        
         //fetch from back-end bookable lessons and my booked lessons
+          //1.1 --> fetch my courses (where i am enrolled)
+          //1.2 --> fetch bookable lessons for my courses
+          //1.3 --> fetch booked lessons for my courses
       //IF PROFESSOR
         //fetch from back-end data on my lessons and students booked to them
+          //1.1 --> fetch my courses (where i teach)
+          //1.2 --> fetch lessons of my courses
+          //1.3 --> fetch my lessons' booked students id
+          //1.4 --> fetch my lessons' booked students data 
       //IF SUPPORT MANAGER
         //fetch from back-end something??? TODO
     })
@@ -87,10 +97,16 @@ class App extends React.Component {
         </Navbar>
         <Switch>
           <Route path='/lessonslist'>
-            <LessonsList lessonsList = {this.state.lessons} selectLessonFunction={this.bookLesson} updateMyBookedLessonsList={this.updateMyBookedLessonsList} isMyLessonsList={false}/>
+            <LessonsList lessonsList = {this.state.lessons} selectLessonFunction={this.bookLesson} courses = {this.state.courses}
+              updateMyBookedLessonsList={this.updateMyBookedLessonsList} isMyLessonsList={false}/>
           </Route>
           <Route path='/myBookedLessonslist'>
-            <LessonsList lessonsList = {this.state.myBookedLessons} selectLessonFunction={this.deleteLesson} updateMyBookedLessonsList={this.updateMyBookedLessonsList} isMyLessonsList={true}/>
+            <LessonsList lessonsList = {this.state.myBookedLessons} selectLessonFunction={this.deleteLesson} courses = {this.state.courses}
+              updateMyBookedLessonsList={this.updateMyBookedLessonsList} isMyLessonsList={true}/>
+          </Route>
+          <Route path='/myCoursesLessonslist'>
+            <MyCoursesLessonsStudents courses = {this.state.teacherCourses} myTeachedCoursesLessons = {this.state.lessonsList} 
+              studentsBookedToMyLessons = {this.state.studentsBookings} myBookedStudentsInfos = {this.state.studentsInfos}/>
           </Route>
           {/* <Route path="/ticketdetails">
             {

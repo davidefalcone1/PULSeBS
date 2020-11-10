@@ -1,10 +1,10 @@
 import moment from 'moment';
 
 class LessonData{
-    constructor(id, course, startingTime, endingTime, occupiedSeats, availableSeats) {
-        if (id) 
-            this.id = id;
-        this.course = course;
+    constructor(scheduleId, course, startingTime, endingTime, occupiedSeats, availableSeats) {
+        if (scheduleId) 
+            this.scheduleId = scheduleId;
+        this.courseId = courseId;
         this.startingTime = moment(new Date(startingTime));
         this.endingTime = moment(new Date(endingTime));
         this.occupiedSeats = occupiedSeats;

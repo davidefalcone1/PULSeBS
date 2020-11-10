@@ -7,12 +7,12 @@ const lessonListItem = (props) => {
   return (
     <ListGroup.Item id = {"lesson-" + props.lesson.id}>
         <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
-                <CourseField id = {props.lesson.id} course = {props.lesson.course}/>
-                <DateField id = {props.lesson.id} date = {props.lesson.date}/>
-                <StartingTimeField id = {props.lesson.id} startingTime = {props.lesson.startingTime}/>
-                <EndingTimeField id = {props.lesson.id} endingTime = {props.lesson.endingTime}/>
-                <BookingStatusField id = {props.lesson.id} occupiedSeats = {props.lesson.occupiedSeats} availableSeats = {props.lesson.availableSeats}/>
-                <SelectField id = {props.lesson.id} selectLessonFunction = {props.selectLessonFunction}
+                <CourseField id = {props.lesson.scheduleId} course = {props.lesson.course}/>
+                <DateField id = {props.lesson.scheduleId} date = {props.lesson.date}/>
+                <StartingTimeField id = {props.lesson.scheduleId} startingTime = {props.lesson.startingTime}/>
+                <EndingTimeField id = {props.lesson.scheduleId} endingTime = {props.lesson.endingTime}/>
+                <BookingStatusField id = {props.lesson.scheduleId} occupiedSeats = {props.lesson.occupiedSeats} availableSeats = {props.lesson.availableSeats}/>
+                <SelectField id = {props.lesson.scheduleId} selectLessonFunction = {props.selectLessonFunction}
                     updateSelectionMessage = {props.updateSelectionMessage}
                     updateLessonSelectedState = {props.updateLessonSelectedState}
                     updateMyBookedLessonsList = {props.updateMyBookedLessonsList}

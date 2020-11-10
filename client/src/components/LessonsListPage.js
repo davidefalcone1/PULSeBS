@@ -36,7 +36,7 @@ class LessonListPageRender extends React.Component {
               <ListHeader />
               <>{console.log(this.props.lessonsList)}</>
               {this.props.lessonsList.map((lesson) => 
-                  <LessonListItem key = {lesson.id} lesson = {lesson}
+                  <LessonListItem key = {lesson.scheduleId} lesson = {lesson}
                     updateSelectionMessage = {this.updateSelectionMessage}
                     updateLessonSelectedState = {this.updateLessonSelectedState}
                     selectLessonFunction = {this.props.selectLessonFunction}
