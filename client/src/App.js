@@ -2,7 +2,6 @@ import React from 'react';
 import {Navbar} from 'react-bootstrap';
 import API from './API/API';
 import LessonsList from './components/LessonsListPage';
-import TicketDetails from './components/TicketDetailsPage';
 import {Switch, Route, Redirect, withRouter} from 'react-router-dom';
 import LoginPage from './components/LoginPage';
 class App extends React.Component {
