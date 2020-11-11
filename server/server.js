@@ -29,21 +29,21 @@ app.post('/users/authenticate', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    if(!username){
-        res.status(500).json({ error: 'Missing username'});
+    if (!username) {
+        res.status(500).json({ error: 'Missing username' });
     }
-    if(!password){
-        res.status(500).json({ error: 'Missing password'});   
+    if (!password) {
+        res.status(500).json({ error: 'Missing password' });
     }
 
     try {
         const user = await userDao.getUser(username, password);
-        if(user === undefined){
-            res.status(401).send({error: 'Invalid username'});
+        if (user === undefined) {
+            res.status(401).send({ error: 'Invalid username' });
         }
         else {
             if (!userDao.checkPassword(user, password)) {
-                res.status(401).send({error: 'Invalid password'});
+                res.status(401).send({ error: 'Invalid password' });
             }
             else {
                 // AUTHENTICATION SUCCESS
@@ -52,7 +52,7 @@ app.post('/users/authenticate', async (req, res) => {
                 res.status(200).json({ id: user.userID, name: user.username, accessLevel: user.accessLevel });
             }
         }
-        
+
     }
     catch (error) {
         res.status(500).json({ msg: "Server error!" });
@@ -64,7 +64,6 @@ app.use(cookieParser());
 app.post('/logout', (req, res) => {
     res.clearCookie('token').end();
 });
-
 
 // For the rest of the code, all APIs require authentication
 app.use(
@@ -81,8 +80,8 @@ app.use(
 app.delete('/deleteBooking/:bookingID', (req, res) => {
     const bookingID = req.params.bookingID;
     bookingDao.deleteBooking(bookingID)
-    .then(() => res.status(204).end())
-    .catch((err) => res.status(500).json({error: 'Server error'}));
+        .then(() => res.status(204).end())
+        .catch((err) => res.status(500).json({ error: 'Server error' }));
 });
 /////////////////////////////////////////////////////////////////////////////////////////////////
 app.listen(port, () => {

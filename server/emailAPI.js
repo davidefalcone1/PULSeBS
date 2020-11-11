@@ -22,15 +22,16 @@ newEnd -> new end time of the course AS A STRNG
 
 */
 const createMessage = (info) => {
+    
     const emailFields = {
         subject: '',
         html: ''};
 
-    if(!info || !info.notifcationType){
+    if(!info || !info.notificationType){
         return false;
     }
 
-    switch(info.notifcationType) {
+    switch(info.notificationType) {
         case 1:
             if(!info.course || !info.date || !info.start || !info.end){
                 return undefined;
@@ -84,8 +85,10 @@ const createMessage = (info) => {
 
 } 
 
-exports.sendNotification = (username, info) => {
-
+// if username is a group of users it has to be a string with all emails
+// separated by a comma
+exports.sendNotification = (username, emailInfo) => {
+    
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -94,11 +97,11 @@ exports.sendNotification = (username, info) => {
         }
       });
 
-      const emailFields = createMessage(info);
+      const emailFields = createMessage(emailInfo);
       if(!emailFields) {
           return false;
       }
-
+      
       const mailOptions = {
         from: 'pulsebs2020@gmail.com',
         to: username,
