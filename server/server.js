@@ -7,8 +7,7 @@ const userDao = require('./dao/userDao');
 const jwt = require('express-jwt');
 const jsonwebtoken = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
-const nodemailer = require('nodemailer');
-
+const emailAPI = require('./emailAPI');
 
 const jwtSecret = '123456789';
 const expireTime = 300; //seconds
@@ -58,32 +57,6 @@ app.post('/login', async (req, res) => {
     catch (error) {
         res.status(500).json({ msg: "Server error!" });
     }
-});
-
-app.get('/test', (req, res) => {
-
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'pulsebs2020@gmail.com',
-          pass: 'gruppo-2-P'
-        }
-      });
-      
-      const mailOptions = {
-        from: 'pulsebs2020@gmail.com',
-        to: 'i.foderini@gmail.com',
-        subject: 'Sending Email using Node.js',
-        text: 'That was easy!'
-      };
-      
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });
 });
 
 app.use(cookieParser());
