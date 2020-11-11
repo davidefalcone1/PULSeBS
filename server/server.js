@@ -8,7 +8,7 @@ const jwt = require('express-jwt');
 const jsonwebtoken = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const emailAPI = require('./emailAPI');
-
+const bookingDao = require('./dao/bookingDao')
 const jwtSecret = '123456789';
 const expireTime = 300; //seconds
 
@@ -77,6 +77,13 @@ app.use(
 
 //PLACE HERE ALL APIs THAT REQUIRE AUTHENTICATION
 
+// DELETE A BOOKING 
+app.delete('/deleteBooking/:bookingID', (req, res) => {
+    const bookingID = req.params.bookingID;
+    bookingDao.deleteBooking(bookingID)
+    .then(() => res.status(204).end())
+    .catch((err) => res.status(500).json({error: 'Server error'}));
+});
 /////////////////////////////////////////////////////////////////////////////////////////////////
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
