@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 });
 
 // LOGIN API
-app.post('/login', async (req, res) => {
+app.post('/users/authenticate', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
