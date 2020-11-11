@@ -81,8 +81,9 @@ app.delete('/deleteBooking/:bookingID', (req, res) => {
     const bookingID = req.params.bookingID;
     bookingDao.deleteBooking(bookingID)
         .then(() => res.status(204).end())
-        .catch((err) => res.status(500).json({ error: 'Server error' }));
+        .catch((err) => res.status(500).json({ error: 'Server error: ' + err }));
 });
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
