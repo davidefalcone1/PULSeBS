@@ -8,7 +8,9 @@ const jwt = require('express-jwt');
 const jsonwebtoken = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const emailAPI = require('./emailAPI');
-const bookingDao = require('./dao/bookingDao')
+const bookingDao = require('./dao/bookingDao');
+const dailyMailer = require('./dailyMailer');
+
 const jwtSecret = '123456789';
 const expireTime = 300; //seconds
 
@@ -75,7 +77,7 @@ app.use(
 );
 
 //PLACE HERE ALL APIs THAT REQUIRE AUTHENTICATION
-
+dailyMailer.setDailyMail();
 // DELETE A BOOKING 
 app.delete('/deleteBooking/:bookingID', (req, res) => {
     const bookingID = req.params.bookingID;
