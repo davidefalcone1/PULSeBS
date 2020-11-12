@@ -1,5 +1,5 @@
 import React from 'react';
-import {Navbar} from 'react-bootstrap';
+import Navbar from './components/Navbar';
 import API from './API/API';
 import LessonsList from './components/LessonsListPage';
 import MyCoursesLessonsStudents from './components/MyCoursesLessonsStudentsPage';
@@ -104,9 +104,7 @@ class App extends React.Component {
     //LOGIN IS THE FIRST PAGE
     return (
       <>
-        <Navbar bg="dark" variant="dark">
-          <Navbar.Brand>PUL Project</Navbar.Brand>
-        </Navbar>
+        <Navbar />
         <Switch>
           <Route path='/lessonslist'>
             <LessonsList lessonsList = {this.state.lessons} selectLessonFunction={this.bookLesson} courses = {this.state.courses}

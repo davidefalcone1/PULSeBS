@@ -8,7 +8,7 @@ const navbar = (props) => {
         <Navbar bg="dark" variant="dark" expand="md">
             <Navbar.Toggle data-toggle="collapse" data-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation" />
             <Navbar.Brand href="/index.html">
-                Office Queue
+                PUL Project
             </Navbar.Brand>
 
             <Nav className="mr-auto">
@@ -17,6 +17,7 @@ const navbar = (props) => {
                 {context.userType === 'supportManager' && <></>} */}
                 <Nav.Link as={NavLink} to="/lessonsList">Book a lesson!</Nav.Link> 
                 <Nav.Link as={NavLink} to="/myBookedLessonslist"> My booked lessons</Nav.Link> 
+                <Nav.Link as={NavLink} to="/myCoursesLessonslist"> My courses details</Nav.Link> 
             </Nav>
 
             {/* <Nav className="ml-md-auto">

@@ -39,7 +39,7 @@ function CourseField(props){
 
 function StartingTimeField(props){
     return(
-        <div className="col-sm-1">
+        <div className="col-sm-2">
             <p id={"startingTimeOfLesson" + props.id}>
                 {props.startingTime}
             </p>
@@ -49,7 +49,7 @@ function StartingTimeField(props){
 
 function EndingTimeField(props){
     return(
-        <div className="col-sm-1">
+        <div className="col-sm-2">
             <p id={"endingTimeOfLesson" + props.id}>
                 {props.endingTime}
             </p>
