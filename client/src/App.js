@@ -15,36 +15,48 @@ class App extends React.Component {
       loginError: false,
       lessons: [
         {
-          id: "0",
-          course: "Course 0",
-          startingTime: "",
-          endingTime: "",
-          occupiedSeats: 15,
-          availableSeats: 40
-        },
-        {
-          id: "1",
-          course: "Course 1",
-          startingTime: "",
-          endingTime: "",
-          occupiedSeats: 15,
-          availableSeats: 40
-        },
-        {
-          id: "2",
-          course: "Course 2",
-          startingTime: "",
-          endingTime: "",
-          occupiedSeats: 15,
-          availableSeats: 40
+          scheduleId: 0,
+          courseId: 1,
+          startingTime: "2013-02-08 09:30:26",
+          endingTime: "2013-02-08 09:30:26",
+          occupiedSeats: 5,
+          availableSeats: 10
         },
       ],
       myBookedLessons: [
-
+        {
+          scheduleId: 0,
+          courseId: 1,
+          startingTime: "2013-02-08 09:30:26",
+          endingTime: "2013-02-08 09:30:26",
+          occupiedSeats: 5,
+          availableSeats: 10
+        },
       ],
-      courses: [],
-      studentsBookings: [],
-      studentsInfos: [],
+      courses: [
+        {
+          courseId: 1,
+          courseName: "CourseName",
+          teacherId: 1
+        },
+      ],
+      studentsBookings: [
+        {
+          id: 0,
+          scheduleId: 0,
+          studentId: 2,
+          status: "active",
+          attended: "true"
+        }
+      ],
+      studentsInfos: [
+        {
+          id: 0,
+          personId: 2,
+          fullName: "Full Name",
+          email: "mail@mail.com"
+        }
+      ],
     };
   }
 
@@ -105,7 +117,7 @@ class App extends React.Component {
               updateMyBookedLessonsList={this.updateMyBookedLessonsList} isMyLessonsList={true}/>
           </Route>
           <Route path='/myCoursesLessonslist'>
-            <MyCoursesLessonsStudents courses = {this.state.teacherCourses} myTeachedCoursesLessons = {this.state.lessonsList} 
+            <MyCoursesLessonsStudents teacherCourses = {this.state.courses} myTeachedCoursesLessons = {this.state.lessons} 
               studentsBookedToMyLessons = {this.state.studentsBookings} myBookedStudentsInfos = {this.state.studentsInfos}/>
           </Route>
           {/* <Route path="/ticketdetails">

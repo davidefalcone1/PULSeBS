@@ -32,31 +32,34 @@ class MyCoursesLessonsPageRender extends React.Component {
                   <Card>
                     <Card.Header>
                       <Accordion.Toggle as={Button} variant="link" eventKey = {"course-" + teacherCourse.courseName}>
-                        <CourseHeader course = {"course-" + teacherCourse.courseName}/>
+                        <CourseHeader course = {teacherCourse.courseName}/>
                       </Accordion.Toggle>
                     </Card.Header>
-                    <Accordion.Collapse eventKey={teacherCourse.teacherCourse.courseName}>
+                    <Accordion.Collapse eventKey={"course-" + teacherCourse.courseName}>
                       <Card.Body>
                         <ListGroup as="ul" variant="flush">
                           {this.props.myTeachedCoursesLessons.map((courseLesson) => //per ogni lezione del mio corso
                             (courseLesson.courseId === teacherCourse.courseId) &&
-                            <Accordion>
+                            <ListGroup.Item key = {courseLesson.scheduleId} id = {teacherCourse.courseName + "-" + courseLesson.scheduleId}>
+                              <Accordion>
                               <Card>
                                 <Card.Header>
                                   <Accordion.Toggle as={Button} variant="link" eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
                                     <LessonHeader startingTime = {courseLesson.startingTime} endingTime = {courseLesson.endingTime}/>
                                   </Accordion.Toggle>
                                 </Card.Header>
-                                <Accordion.Collapse>
+                                <Accordion.Collapse eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
                                   <Card.Body>
                                     <StudentHeader/>
                                     <ListGroup as="ul" variant="flush">
                                       {this.props.studentsBookedToMyLessons.map((studentBooking) => //per ogni prenotazione alla lezione del mio corso
                                         (studentBooking.scheduleId === courseLesson.scheduleId) &&
-                                        this.props.myBookedStudentsInfos.map((student) => //trova e mostra i dati dello studente
+                                        <ListGroup.Item key = {studentBooking.studentId} id = {teacherCourse.courseName + "-" + courseLesson.scheduleId + "-" + studentBooking.studentId}>
+                                          {this.props.myBookedStudentsInfos.map((student) => //trova e mostra i dati dello studente
                                           (studentBooking.studentId === student.personId) &&
                                             <MyCourseLessonsStudentItem key = {student.personId} student = {student}/> 
-                                          )    
+                                          )}
+                                        </ListGroup.Item>  
                                         )
                                       }
                                     </ListGroup>
@@ -64,6 +67,7 @@ class MyCoursesLessonsPageRender extends React.Component {
                                 </Accordion.Collapse>
                               </Card>
                             </Accordion>
+                            </ListGroup.Item>
                             )
                           }
                         </ListGroup>
@@ -75,7 +79,7 @@ class MyCoursesLessonsPageRender extends React.Component {
           </ListGroup>
         }
 
-        {!this.props.tickets && !this.props.differentCounterIds &&
+        {!this.props.teacherCourses && !this.props.myTeachedCoursesLessons &&
           <NoItemsImage/>
         }
       </>
