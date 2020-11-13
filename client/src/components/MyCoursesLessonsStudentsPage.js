@@ -25,58 +25,49 @@ class MyCoursesLessonsPageRender extends React.Component {
     return(
       <>        
         {this.props.teacherCourses && this.props.myTeachedCoursesLessons &&
-          <ListGroup as="ul" variant="flush">
+          <Accordion>
             {this.props.teacherCourses.map((teacherCourse) => //per ogni mio corso
-              <ListGroup.Item key = {teacherCourse.courseId} id = {"teacherCourse-" + teacherCourse.courseId}>
-                <Accordion>
-                  <Card>
-                    <Card.Header>
-                      <Accordion.Toggle as={Button} variant="link" eventKey = {"course-" + teacherCourse.courseName}>
-                        <CourseHeader course = {teacherCourse.courseName}/>
-                      </Accordion.Toggle>
-                    </Card.Header>
-                    <Accordion.Collapse eventKey={"course-" + teacherCourse.courseName}>
-                      <Card.Body>
-                        <ListGroup as="ul" variant="flush">
-                          {this.props.myTeachedCoursesLessons.map((courseLesson) => //per ogni lezione del mio corso
-                            (courseLesson.courseId === teacherCourse.courseId) &&
-                            <ListGroup.Item key = {courseLesson.scheduleId} id = {teacherCourse.courseName + "-" + courseLesson.scheduleId}>
-                              <Accordion>
-                              <Card>
-                                <Card.Header>
-                                  <Accordion.Toggle as={Button} variant="link" eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
-                                    <LessonHeader startingTime = {courseLesson.startingTime} endingTime = {courseLesson.endingTime}/>
-                                  </Accordion.Toggle>
-                                </Card.Header>
-                                <Accordion.Collapse eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
-                                  <Card.Body>
-                                    <StudentHeader/>
-                                    <ListGroup as="ul" variant="flush">
-                                      {this.props.studentsBookedToMyLessons.map((studentBooking) => //per ogni prenotazione alla lezione del mio corso
-                                        (studentBooking.scheduleId === courseLesson.scheduleId) &&
-                                        <ListGroup.Item key = {studentBooking.studentId} id = {teacherCourse.courseName + "-" + courseLesson.scheduleId + "-" + studentBooking.studentId}>
-                                          {this.props.myBookedStudentsInfos.map((student) => //trova e mostra i dati dello studente
-                                          (studentBooking.studentId === student.personId) &&
-                                            <MyCourseLessonsStudentItem key = {student.personId} student = {student}/> 
-                                          )}
-                                        </ListGroup.Item>  
-                                        )
-                                      }
-                                    </ListGroup>
-                                  </Card.Body>
-                                </Accordion.Collapse>
-                              </Card>
-                            </Accordion>
-                            </ListGroup.Item>
-                            )
-                          }
-                        </ListGroup>
-                      </Card.Body>
-                    </Accordion.Collapse>
-                  </Card>
-                </Accordion>
-              </ListGroup.Item>)}
-          </ListGroup>
+              <Card>
+                <Card.Header>
+                  <Accordion.Toggle as={Button} variant="link" eventKey = {"course-" + teacherCourse.courseName}>
+                    <CourseHeader course = {teacherCourse.courseName}/>
+                  </Accordion.Toggle>
+                </Card.Header>
+                <Accordion.Collapse eventKey={"course-" + teacherCourse.courseName}>
+                  <Card.Body>
+                    <Accordion>
+                      {this.props.myTeachedCoursesLessons.map((courseLesson) => //per ogni lezione del mio corso
+                        (courseLesson.courseId === teacherCourse.courseId) &&
+                          <Card>
+                            <Card.Header>
+                              <Accordion.Toggle as={Button} variant="link" eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
+                                <LessonHeader startingTime = {courseLesson.startingTime} endingTime = {courseLesson.endingTime}/>
+                              </Accordion.Toggle>
+                            </Card.Header>
+                            <Accordion.Collapse eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
+                              <Card.Body>
+                                <StudentHeader/>
+                                <ListGroup as="ul" variant="flush">
+                                  {this.props.studentsBookedToMyLessons.map((studentBooking) => //per ogni prenotazione alla lezione del mio corso
+                                    (studentBooking.scheduleId === courseLesson.scheduleId) &&
+                                    <ListGroup.Item key = {studentBooking.studentId} id = {teacherCourse.courseName + "-" + courseLesson.scheduleId + "-" + studentBooking.studentId}>
+                                      {this.props.myBookedStudentsInfos.map((student) => //trova e mostra i dati dello studente
+                                      (studentBooking.studentId === student.personId) &&
+                                        <MyCourseLessonsStudentItem key = {student.personId} student = {student}/> 
+                                      )}
+                                    </ListGroup.Item>  
+                                  )}
+                                </ListGroup>
+                              </Card.Body>
+                            </Accordion.Collapse>
+                          </Card>
+                      )}
+                    </Accordion>
+                  </Card.Body>
+                </Accordion.Collapse>
+              </Card>
+            )}
+          </Accordion>
         }
 
         {!this.props.teacherCourses && !this.props.myTeachedCoursesLessons &&
@@ -89,24 +80,16 @@ class MyCoursesLessonsPageRender extends React.Component {
 
 function CourseHeader(props) {
   return(
-    <ListGroup.Item id = {"counter-header"}>
-        <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
-          <div className="col-sm-8">
-            <h4>{props.course}</h4>
-          </div>
-        </div>
-    </ListGroup.Item>
+    <div className="d-flex w-100 pt-3 justify-content-between no-gutters" id = {"course-" + props.course}>
+        <h4>{props.course}</h4>
+    </div>
   );
 }
 function LessonHeader(props) {
   return(
-    <ListGroup.Item id = {"counter-header"}>
-        <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
-          <div className="col-sm-8">
-          <h6>{props.startingTime} -- {props.endingTime}</h6>
-          </div>
-        </div>
-    </ListGroup.Item>
+    <div className="d-flex w-100 pt-3 justify-content-between no-gutters" id = {"lesson-" + props.startingTime + "----" + props.endingTime}>
+      <h6>Lezione del {props.startingTime} -- {props.endingTime}</h6>
+    </div>
   );
 }
 

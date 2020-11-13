@@ -47,7 +47,7 @@ class App extends React.Component {
           studentId: 2,
           status: "active",
           attended: "true"
-        }
+        },
       ],
       studentsInfos: [
         {
