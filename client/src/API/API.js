@@ -204,24 +204,90 @@ function getStudentsData(studentsIds) { //REMEMBER TO SEND A LIST, from bookedSt
 //common
 function login(username, password) {
     return new Promise(async function (resolve, reject) {
-        try {
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
-            });
-            const user = await response.json();
+        fetch('/teacherCourses', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({teacherId: teacherId}),
+        })
+        .then(async (response) => {
+            const coursesJson = await response.json();
             if (response.ok) {
-                resolve(user);
-            }
-            else
+                const list = coursesJson.map((course) => {
+                    return CourseData.fromJson(course);
+                });
+                resolve(list);
+            } else {
                 reject();
-        }
-        catch (e) {
-            reject();
-        }
+            }
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
+}
+function getMyCoursesLessons(teacherId) {
+    return new Promise(async function (resolve, reject) {
+        fetch('/myCoursesLessons', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({teacherId: teacherId}),
+        })
+        .then(async (response) => {
+            const coursesJson = await response.json();
+            if (response.ok) {
+                const list = coursesJson.map((course) => {
+                    return LessonsData.fromJson(course);
+                });
+                resolve(list);
+            } else {
+                reject();
+            }
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
+}
+function getBookedStudent(lessonsIds) { //so the course schedule id
+    return new Promise(async function (resolve, reject) {
+        fetch('/bookedStudents', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({lessonsIds: lessonsIds}),
+        })
+        .then(async (response) => {
+            const bookedStudentsJson = await response.json();
+            if (response.ok) {
+                const list = bookedStudentsJson.map((course) => {
+                    return BookingData.fromJson(course);
+                });
+                resolve(list);
+            } else {
+                reject();
+            }
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
+}
+function getStudentsData(studentsIds) { //REMEMBER TO SEND A LIST, from bookedStudent create a list with the studentsIds
+    return new Promise(async function (resolve, reject) {
+        fetch('/studentsData', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({studentsIds: studentsIds}),
+        })
+        .then(async (response) => {
+            const studentsJson = await response.json();
+            if (response.ok) {
+                const list = studentsJson.map((student) => {
+                    return UserData.fromJson(student);
+                });
+                resolve(list);
+            } else {
+                reject();
+            }
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
 

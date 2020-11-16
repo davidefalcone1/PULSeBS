@@ -4,7 +4,11 @@ import API from './API/API';
 import LessonsList from './components/LessonsListPage';
 import MyCoursesLessonsStudents from './components/MyCoursesLessonsStudentsPage';
 import {Switch, Route, Redirect, withRouter} from 'react-router-dom';
-import LoginPage from './components/LoginPage';
+import LoginPage from './LoginPage';
+import Role from './_services/role';
+import { authenticationService } from '../_services';
+
+
 class App extends React.Component {
 
   constructor(props) {
@@ -12,6 +16,8 @@ class App extends React.Component {
     this.props = props;
     this.state = {
       user: null,
+      isTeacher:false,
+      isStudent:false,
       loginError: false,
       lessons: [
         {
@@ -61,14 +67,46 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    authenticationService.user.subscribe(x =>
+      this.setState({
+        user: x,
+        isTeacher: x && x.role === Role.Teacher,
+        isStudent: x && x.role === Role.Student
+      })
+    );
   }
   
   login = async (username, password) => {
-    API.login(username, password)
+    authenticationService.login(username, password)
     .then((user) =>{
-      this.setState({user, loginError: false});
-      this.props.history.push('/ticketdetails');
-      //IF STUDENT        
+     this.setState({user, loginError: false});
+      if(isTeacher){
+        API.getTeacherCourses(/*user.personId*/).then((mycourses) =>{
+          this.setState({teacherCourses: mycourses});
+        });
+        API.getMyCoursesLessons(/*user.personId*/).then((myLessons) =>{
+          this.setState({myTeachedCoursesLessons: myLessons});
+        });
+        API.getBookedStudent(/*user.personId*/).then((mystudents) =>{
+          this.setState({studentsBookedToMyLessons: mystudents});
+        });
+        API.getStudentsData(/*user.personId*/).then((mystudetsinfo) =>{
+          this.setState({studentsBookedToMyLessons: mystudentsinfo});
+        });
+      }
+      
+      if(isStudent){
+        API.getStudentCourses(/*user.personId*/).then((mycourses) =>{
+          this.setState({courses: mycourses});
+        });
+        API.getMyBookableLessons(/*user.personId*/).then((bookableLessons) =>{
+          this.setState({lessons: bookableLessons});
+        });
+        API.getMyBookedLessons(/*user.personId*/).then((myLessons) =>{
+          this.setState({myBookedLessons: myLessons});
+        });
+      } 
+        //IF STUDENT        
         //fetch from back-end bookable lessons and my booked lessons
           //1.1 --> fetch my courses (where i am enrolled)
           //1.2 --> fetch bookable lessons for my courses
