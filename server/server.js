@@ -8,6 +8,9 @@ const lessonsDao = require('./dao/lessonDao');
 const jwt = require('express-jwt');
 const jsonwebtoken = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const emailAPI = require('./emailAPI');
+const bookingDao = require('./dao/bookingDao');
+const dailyMailer = require('./dailyMailer');
 
 const jwtSecret = '123456789';
 const expireTime = 300; //seconds
@@ -25,25 +28,25 @@ app.get('/', (req, res) => {
 });
 
 // LOGIN API
-app.post('/login', async (req, res) => {
+app.post('/users/authenticate', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    if(!username){
-        res.status(500).json({ error: 'Missing username'});
+    if (!username) {
+        res.status(500).json({ error: 'Missing username' });
     }
-    if(!password){
-        res.status(500).json({ error: 'Missing password'});   
+    if (!password) {
+        res.status(500).json({ error: 'Missing password' });
     }
 
     try {
         const user = await userDao.getUser(username, password);
-        if(user === undefined){
-            res.status(401).send({error: 'Invalid username'});
+        if (user === undefined) {
+            res.status(401).send({ error: 'Invalid username' });
         }
         else {
             if (!userDao.checkPassword(user, password)) {
-                res.status(401).send({error: 'Invalid password'});
+                res.status(401).send({ error: 'Invalid password' });
             }
             else {
                 // AUTHENTICATION SUCCESS
@@ -52,11 +55,17 @@ app.post('/login', async (req, res) => {
                 res.status(200).json({ id: user.userID, name: user.username, accessLevel: user.accessLevel });
             }
         }
-        
+
     }
     catch (error) {
         res.status(500).json({ msg: "Server error!" });
     }
+});
+
+app.use(cookieParser());
+
+app.post('/logout', (req, res) => {
+    res.clearCookie('token').end();
 });
 
 // For the rest of the code, all APIs require authentication
@@ -69,6 +78,14 @@ app.use(
 );
 
 //PLACE HERE ALL APIs THAT REQUIRE AUTHENTICATION
+dailyMailer.setDailyMail();
+// DELETE A BOOKING 
+app.delete('/deleteBooking/:bookingID', (req, res) => {
+    const bookingID = req.params.bookingID;
+    bookingDao.deleteBooking(bookingID)
+        .then(() => res.status(204).end())
+        .catch((err) => res.status(500).json({ error: 'Server error: ' + err }));
+});
 
 app.get('/studentCourses', async (req, res) => {
     try{
