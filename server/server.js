@@ -50,7 +50,7 @@ app.post('/users/authenticate', async (req, res) => {
             }
             else {
                 // AUTHENTICATION SUCCESS
-                const token = jsonwebtoken.sign({ user: user.id }, jwtSecret, { expiresIn: expireTime });
+                const token = jsonwebtoken.sign({ user: user.userID }, jwtSecret, { expiresIn: expireTime });
                 res.cookie('token', token, { httpOnly: true, sameSite: true, maxAge: 1000 * expireTime });
                 res.status(200).json({ id: user.userID, name: user.username, accessLevel: user.accessLevel });
             }
@@ -72,13 +72,12 @@ app.post('/logout', (req, res) => {
 app.use(
     jwt({
         secret: jwtSecret,
-        algorithms: ['HS256'],
+        algorithms: ['sha1', 'RS256', 'HS256'],
         getToken: req => req.cookies.token
     })
 );
 
 //PLACE HERE ALL APIs THAT REQUIRE AUTHENTICATION
-dailyMailer.setDailyMail();
 // DELETE A BOOKING 
 app.delete('/deleteBooking/:bookingID', (req, res) => {
     const bookingID = req.params.bookingID;
@@ -89,28 +88,28 @@ app.delete('/deleteBooking/:bookingID', (req, res) => {
 
 app.get('/studentCourses', async (req, res) => {
     try{
-        console.log(req.user);
-        const result = await lessonsDao.getStudentCourses(req.user);
+        const result = await lessonsDao.getStudentCourses(req.user.user);
         res.json(result);
     }catch(e){
         res.status(505).end();
     }
 });
 
-// API for get bookable lectures for a given student
+// API for getting bookable lectures for a given student
 app.get('/myBookableLessons', async (req, res) => {
     try{
-        const result = await lessonsDao.getAvailableLessons(req.user);
+        const result = await lessonsDao.getBookableLessons(req.user);
         res.json(result);
     }
     catch(e){
         res.status(505).end();
     }
 });
-// API for retrieve lessons booked by a student
+
+// API for retrieving lessons booked by a student
 app.get('/myBookedLessons', async(req, res)=>{
     try{
-        const result = await lessonsDao.getLessons(req.user);
+        const result = await lessonsDao.getBookedLessons(req.user);
         res.json(result);
     }
     catch(e){
