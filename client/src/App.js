@@ -88,16 +88,28 @@ class App extends React.Component {
     });
   }
 
-  bookLesson = () => {
-    console.log("This function simulates the booking of a lesson");
+  bookLesson = (lessonId) => {
+    API.bookLesson(lessonId/*, user.personId*/).then(() =>{
+      console.log("Lesson booked.");
+      API.getMyBookableLessons(/*user.personId*/).then((bookableLessons) =>{
+        this.setState({lessons: bookableLessons});
+      });
+    });
   }
 
-  deleteLesson = () => {
-    console.log("This function simulates the deletion of a lesson");
+  deleteLesson = (bookingId) => {
+    API.deleteBooking(bookingId).then(() =>{
+      console.log("Lesson deleted.");   
+      API.getMyBookableLessons(/*user.personId*/).then((bookableLessons) =>{
+        this.setState({lessons: bookableLessons});
+      });
+    });
   }
 
   updateMyBookedLessonsList = () => {
-    console.log("This function simulates the updating of my lessons list");
+    API.getMyBookedLessons(/*user.personId*/).then((myLessons) => {
+      this.setState({myBookedLessons: myLessons});
+    })   
   }
 
   render() {
