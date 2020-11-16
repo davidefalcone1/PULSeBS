@@ -1,16 +1,16 @@
 'use strict';
-const { default: LessonData } = require('./LessonsData.js');
+const LessonData = require('./LessonsData.js');
 const CourseData = require('./CourseData.js');
 const db = require('../db');
 
 exports.getBookableLessons = function (studentID){
     return new Promise((resolve, reject)=>{
         const sql = 
-            "SELECT CourseScheduleID, CourseId, Classroom, OccupiedSeat, MaxSeat, TimeStart, TimeEnd" +
-            "FROM CourseSchedule CS, StudentCourse SC" +
-            "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true" +
-            "AND TimeStart > TIME() AND CS.CourseType=1 AND CS.CourseScheduleID NOT IN " +
-            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=?"
+            "SELECT CS.CourseScheduleID, CS.CourseId, Classroom, OccupiedSeat, MaxSeat, TimeStart, TimeEnd " +
+            "FROM CourseSchedule CS, StudentCourse SC " +
+            "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
+            "AND TimeStart > TIME() AND CS.CourseType=1 AND CS.CourseScheduleID NOT IN (" +
+            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=?)"
         db.all(sql, [studentID, studentID], function (err, rows) {
             if(err){
                 reject();
@@ -25,11 +25,11 @@ exports.getBookableLessons = function (studentID){
 exports.getBookedLessons = function (studentID){
     return new Promise((resolve, reject)=>{
         const sql = 
-            "SELECT CourseScheduleID, CourseId, Classroom, OccupiedSeat, MaxSeat, TimeStart, TimeEnd" +
-            "FROM CourseSchedule CS, StudentCourse SC" +
-            "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true" +
-            "AND TimeStart > TIME() AND CS.CourseType=1 AND CS.CourseScheduleID IN " +
-            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=?"
+            "SELECT CS.CourseScheduleID, CS.CourseId, Classroom, OccupiedSeat, MaxSeat, TimeStart, TimeEnd " +
+            "FROM CourseSchedule CS, StudentCourse SC " +
+            "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
+            "AND TimeStart > TIME() AND CS.CourseType=1 AND CS.CourseScheduleID IN (" +
+            "SELECT CourseScheduleID FROM Booking WHERE StudentID=?)"
         db.all(sql, [studentID, studentID], function (err, rows) {
             if(err){
                 reject();

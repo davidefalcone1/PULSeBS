@@ -98,7 +98,7 @@ app.get('/studentCourses', async (req, res) => {
 // API for getting bookable lectures for a given student
 app.get('/myBookableLessons', async (req, res) => {
     try{
-        const result = await lessonsDao.getBookableLessons(req.user);
+        const result = await lessonsDao.getBookableLessons(req.user.user);
         res.json(result);
     }
     catch(e){
@@ -109,7 +109,7 @@ app.get('/myBookableLessons', async (req, res) => {
 // API for retrieving lessons booked by a student
 app.get('/myBookedLessons', async(req, res)=>{
     try{
-        const result = await lessonsDao.getBookedLessons(req.user);
+        const result = await lessonsDao.getBookedLessons(req.user.user);
         res.json(result);
     }
     catch(e){
