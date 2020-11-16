@@ -78,7 +78,7 @@ app.use(
 );
 
 //PLACE HERE ALL APIs THAT REQUIRE AUTHENTICATION
-dailyMailer.setDailyMail();
+
 // DELETE A BOOKING 
 app.delete('/deleteBooking/:bookingID', (req, res) => {
     const bookingID = req.params.bookingID;
@@ -96,7 +96,8 @@ app.get('/studentCourses', async (req, res) => {
         res.status(505).end();
     }
 });
-// API for get bookable lectures for a given student
+
+// API for getting bookable lectures for a given student
 app.get('/myBookableLessons', async (req, res) => {
     try{
         const result = await lessonsDao.getBookableLessons(req.user);
@@ -106,7 +107,8 @@ app.get('/myBookableLessons', async (req, res) => {
         res.status(505).end();
     }
 });
-// API for retrieve lessons booked by a student
+
+// API for retrieving lessons booked by a student
 app.get('/myBookedLessons', async(req, res)=>{
     try{
         const result = await lessonsDao.getBookedLessons(req.user);
@@ -119,6 +121,10 @@ app.get('/myBookedLessons', async(req, res)=>{
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
+
+// set automatc email sending to professors
+dailyMailer.setDailyMail();
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
