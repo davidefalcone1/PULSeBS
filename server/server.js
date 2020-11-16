@@ -48,8 +48,18 @@ app.post('/login', async (req, res) => {
         res.status(500).json({ msg: "Server error!" });
     }
 });
+
+app.get('/studentCourses', async (req, res) => {
+    try{
+        const result = await lessonsDao.getStudentCourses(req.user);
+        res.json(result);
+    }catch(e){
+        res.status(505).end();
+    }
+});
+
 // API for get bookable lectures for a given student
-app.get('/lectures', async (req, res) => {
+app.get('/myBookableLessons', async (req, res) => {
     try{
         const result = await lessonsDao.getAvailableLessons(req.user);
         res.json(result);
@@ -59,7 +69,7 @@ app.get('/lectures', async (req, res) => {
     }
 });
 // API for retrieve lessons booked by a student
-app.get('/myLessons', async(req, res)=>{
+app.get('/myBookedLessons', async(req, res)=>{
     try{
         const result = await lessonsDao.getLessons(req.user);
         res.json(result);

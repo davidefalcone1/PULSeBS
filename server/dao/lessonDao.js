@@ -1,11 +1,11 @@
 'use strict';
-const { default: LessonData } = require('../../client/src/API/LessonsData');
+const { default: LessonData } = require('./LessonsData.js');
 const db = require('../db');
 
-exports.getAvailableLessons = function (studentID){
+exports.getBookableLessons = function (studentID){
     return new Promise((resolve, reject)=>{
         const sql = 
-            "SELECT CourseScheduleID, CourseName, Classroom, OccupiedSeat, MaxSeat, TimeStart, TimeEnd" +
+            "SELECT CourseScheduleID, CourseId, Classroom, OccupiedSeat, MaxSeat, TimeStart, TimeEnd" +
             "FROM Course C, CourseSchedule CS, User U, StudentCourse SC" +
             "WHERE C.CourseID=CS.CourseID AND SC.CourseID=C.CourseID AND SC.StudentID=U.UserID AND CourseStatus=true" +
             "AND TimeStart < TIME() AND U.UserID=? AND CS.CourseType=1 AND CS.CourseScheduleID NOT IN " +
@@ -14,17 +14,17 @@ exports.getAvailableLessons = function (studentID){
             if(err){
                 reject();
             }
-            const availableLessons = rows.map((row)=>new LessonData(row.CourseScheduleID, row.CourseName, 
+            const availableLessons = rows.map((row)=>new LessonData(row.CourseScheduleID, row.CourseId, 
                 row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat - row.OccupiedSeat, row.Classroom));
             resolve(availableLessons);
         });
     });
 }
 
-exports.getLessons = function (studentID){
+exports.getBookedLessons = function (studentID){
     return new Promise((resolve, reject)=>{
         const sql = 
-            "SELECT CourseScheduleID, CourseName, Classroom, OccupiedSeat, MaxSeat, TimeStart, TimeEnd" +
+            "SELECT CourseScheduleID, CourseId, Classroom, OccupiedSeat, MaxSeat, TimeStart, TimeEnd" +
             "FROM Course C, CourseSchedule CS, User U, StudentCourse SC" +
             "WHERE C.CourseID=CS.CourseID AND SC.CourseID=C.CourseID AND SC.StudentID=U.UserID AND CourseStatus=true" +
             "AND TimeStart < TIME() AND U.UserID=? AND CS.CourseType=1 AND CS.CourseScheduleID IN " +
@@ -33,9 +33,24 @@ exports.getLessons = function (studentID){
             if(err){
                 reject();
             }
-            const myLessons = rows.map((row)=>new LessonData(row.CourseScheduleID, row.CourseName, 
+            const myLessons = rows.map((row)=>new LessonData(row.CourseScheduleID, row.CourseId, 
                 row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat - row.OccupiedSeat, row.Classroom));
             resolve(myLessons);
+        });
+    });
+}
+
+exports.getStudentCourses = function(studentID){
+    return new Promise((resolve, reject)=>{
+        const sql = 
+            "SELECT CourseId, CourseName, TeacherId FROM Course C, StudentCourse SC WHERE C.CourseId = SC.CourseId AND SC.StudentID = ";
+        db.all(sql, [studentID], function (err, rows) {
+            if(err){
+                reject();
+            }
+            const myCourses = rows.map((row)=>new CourseData(row.CourseId, row.CourseName, 
+                row.TeacherId));
+            resolve(myCourses);
         });
     });
 }
