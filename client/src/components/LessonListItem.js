@@ -3,14 +3,16 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 
 const lessonListItem = (props) => {
-
+    console.log(props.lesson);
+    console.log(props.coursesList);
   return (
     <ListGroup.Item id = {"lesson-" + props.lesson.id}>
         <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
-                <CourseField id = {props.lesson.id} course = {props.lesson.course}/>
-                <ProfessorField id = {props.lesson.id} professor = {props.lesson.professor}/>
-                <DateAndTimeField id = {props.lesson.id} dateAndTime = {props.lesson.dateAndTime}/>
-                <SelectField id = {props.lesson.id} selectLessonFunction = {props.selectLessonFunction}
+                <CourseField id = {props.lesson.scheduleId} courseId = {props.lesson.courseId} coursesList={props.coursesList}/>
+                <StartingTimeField id = {props.lesson.scheduleId} startingTime = {props.lesson.startingTime}/>
+                <EndingTimeField id = {props.lesson.scheduleId} endingTime = {props.lesson.endingTime}/>
+                <BookingStatusField id = {props.lesson.scheduleId} occupiedSeats = {props.lesson.occupiedSeats} availableSeats = {props.lesson.availableSeats}/>
+                <SelectField id = {props.lesson.scheduleId} selectLessonFunction = {props.selectLessonFunction}
                     updateSelectionMessage = {props.updateSelectionMessage}
                     updateLessonSelectedState = {props.updateLessonSelectedState}
                     updateMyBookedLessonsList = {props.updateMyBookedLessonsList}
@@ -24,28 +26,42 @@ const lessonListItem = (props) => {
 function CourseField(props){
     return(
         <div className="col-sm-4">
-            <p id={"courseOfLesson_" + props.id}>
-                {props.course}
+            {props.coursesList.map((course) => 
+            (course.courseId === props.courseId && 
+                <p id={"courseOfLesson_" + props.id}>
+                    {course.courseName}
+                </p>
+                )
+            )}
+        </div>
+    );
+}
+
+function StartingTimeField(props){
+    return(
+        <div className="col-sm-2">
+            <p id={"startingTimeOfLesson" + props.id}>
+                {props.startingTime}
             </p>
         </div>
     );
 }
 
-function ProfessorField(props){
+function EndingTimeField(props){
     return(
-        <div className="col-sm-3">
-            <p id={"professorOfLesson" + props.id}>
-                {props.professor}
+        <div className="col-sm-2">
+            <p id={"endingTimeOfLesson" + props.id}>
+                {props.endingTime}
             </p>
         </div>
     );
 }
 
-function DateAndTimeField(props){
+function BookingStatusField(props){
     return(
-        <div className="col-sm-3">
-            <p id={"dateAndTimeOfLesson" + props.id}>
-                {props.dateAndTime}
+        <div className="col-sm-2">
+            <p id={"seatsStatusOfLesson" + props.id}>
+                {props.occupiedSeats} / {props.availableSeats}
             </p>
         </div>
     );

@@ -4,6 +4,7 @@ const express = require("express");//import express
 const morgan = require("morgan"); // logging middleware
 const dao = require("./dao/dao");
 const userDao = require('./dao/userDao');
+const lessonsDao = require('./dao/lessonDao');
 const jwt = require('express-jwt');
 const jsonwebtoken = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
@@ -85,6 +86,37 @@ app.delete('/deleteBooking/:bookingID', (req, res) => {
         .then(() => res.status(204).end())
         .catch((err) => res.status(500).json({ error: 'Server error: ' + err }));
 });
+
+
+app.get('/studentCourses', async (req, res) => {
+    try{
+        const result = await lessonsDao.getStudentCourses(req.user);
+        res.json(result);
+    }catch(e){
+        res.status(505).end();
+    }
+});
+// API for get bookable lectures for a given student
+app.get('/myBookableLessons', async (req, res) => {
+    try{
+        const result = await lessonsDao.getBookableLessons(req.user);
+        res.json(result);
+    }
+    catch(e){
+        res.status(505).end();
+    }
+});
+// API for retrieve lessons booked by a student
+app.get('/myBookedLessons', async(req, res)=>{
+    try{
+        const result = await lessonsDao.getBookedLessons(req.user);
+        res.json(result);
+    }
+    catch(e){
+        res.status(505).end();
+    }
+});
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 app.listen(port, () => {

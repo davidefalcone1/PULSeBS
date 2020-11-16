@@ -1,6 +1,6 @@
-import moment from 'moment';
+const moment = require('moment');
 
-class LessonData{
+exports.LessonData = class LessonsData{
     constructor(scheduleId, courseId, startingTime, endingTime, occupiedSeats, availableSeats) {
         if (scheduleId) 
             this.scheduleId = scheduleId;
@@ -18,5 +18,3 @@ class LessonData{
         return temp;
     }
 }
-
-export default LessonData;
