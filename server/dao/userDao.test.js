@@ -12,7 +12,7 @@ describe("getUser", ()=>{
         });
     });
     afterEach(()=>{
-        const sql = "DELETE FROM User WHERE ID=1";
+        const sql = "DELETE FROM User WHERE UserID='275330'";
         db.run((sql), function (err, rows){
             if(err)
                 console.log(err);
@@ -32,15 +32,15 @@ describe("getUser", ()=>{
 });
 
 describe("checkPassword", ()=>{
-    beforeEach(()=>{
+    beforeAll(()=>{
         const sql = "INSERT INTO User(UserID, FullName, UserName, Password, AccessLevel) VALUES('275330', 'John Doe', 'john@polito.it', '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S', 1)";
         db.run((sql), function (err, rows){
             if(err)
                 console.log(err);
         });
     });
-    afterEach(()=>{
-        const sql = "DELETE FROM User WHERE ID=1";
+    afterAll(()=>{
+        const sql = "DELETE FROM User WHERE UserID='275330'";
         db.run((sql), function (err, rows){
             if(err)
                 console.log(err);
