@@ -89,36 +89,82 @@ app.delete('/deleteBooking/:bookingID', (req, res) => {
 
 
 app.get('/studentCourses', async (req, res) => {
-    try{
+    try {
         const result = await lessonsDao.getStudentCourses(req.user);
         res.json(result);
-    }catch(e){
+    } catch (e) {
         res.status(505).end();
     }
 });
 
 // API for getting bookable lectures for a given student
 app.get('/myBookableLessons', async (req, res) => {
-    try{
+    try {
         const result = await lessonsDao.getBookableLessons(req.user);
         res.json(result);
     }
-    catch(e){
+    catch (e) {
         res.status(505).end();
     }
 });
 
 // API for retrieving lessons booked by a student
-app.get('/myBookedLessons', async(req, res)=>{
-    try{
+app.get('/myBookedLessons', async (req, res) => {
+    try {
         const result = await lessonsDao.getBookedLessons(req.user);
         res.json(result);
     }
-    catch(e){
+    catch (e) {
         res.status(505).end();
     }
 });
 
+
+//Teacher APIs
+
+/**
+* Get all courses for the given teacherId
+* @route       GET /teacherCourses
+* @param       teacherId
+* @access      Private
+* @returns     CourseData(courseId, courseName, teacherId)
+*/
+app.get('/teacherCourses', async (req, res) => {
+
+});
+
+/**
+* Get ...
+* @route       GET /myCoursesLessons
+* @param       teacherId
+* @access      Private
+* @returns     LessonsData(scheduleId, courseId, startingTime, endingTime, occupiedSeats, availableSeats)
+*/
+app.get('/myCoursesLessons', async (req, res) => {
+
+});
+
+/**
+* Get ...
+* @route       GET /bookedStudents
+* @param       lessonsIds
+* @access      Private
+* @returns     BookingData(id, scheduleId, studentId, status, attended)
+*/
+app.get('/bookedStudents', async (req, res) => {
+
+});
+
+/**
+* Get ...
+* @route       GET /studentsData
+* @param       studentsIds
+* @access      Private
+* @returns     UserData(id, personId, fullName, email)
+*/
+app.get('/studentsData', async (req, res) => {
+
+});
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
