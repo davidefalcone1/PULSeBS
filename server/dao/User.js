@@ -1,6 +1,7 @@
 class User{    
-    constructor(username, passwordHash, accessLevel) {
-       
+    constructor(userID, username, passwordHash, accessLevel) {
+        
+        this.userID = userID;
         this.username = username;
         this.passwordHash = passwordHash;
         this.accessLevel = accessLevel;
