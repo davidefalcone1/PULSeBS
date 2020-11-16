@@ -50,7 +50,7 @@ app.post('/users/authenticate', async (req, res) => {
             }
             else {
                 // AUTHENTICATION SUCCESS
-                const token = jsonwebtoken.sign({ user: user.id }, jwtSecret, { expiresIn: expireTime });
+                const token = jsonwebtoken.sign({ user: user.userID }, jwtSecret, { expiresIn: expireTime });
                 res.cookie('token', token, { httpOnly: true, sameSite: true, maxAge: 1000 * expireTime });
                 res.status(200).json({ id: user.userID, name: user.username, accessLevel: user.accessLevel });
             }
