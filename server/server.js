@@ -59,36 +59,6 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.get('/studentCourses', async (req, res) => {
-    try{
-        const result = await lessonsDao.getStudentCourses(req.user);
-        res.json(result);
-    }catch(e){
-        res.status(505).end();
-    }
-});
-
-// API for get bookable lectures for a given student
-app.get('/myBookableLessons', async (req, res) => {
-    try{
-        const result = await lessonsDao.getAvailableLessons(req.user);
-        res.json(result);
-    }
-    catch(e){
-        res.status(505).end();
-    }
-});
-// API for retrieve lessons booked by a student
-app.get('/myBookedLessons', async(req, res)=>{
-    try{
-        const result = await lessonsDao.getLessons(req.user);
-        res.json(result);
-    }
-    catch(e){
-        res.status(505).end();
-    }
-});
-
 app.use(cookieParser());
 
 app.post('/logout', (req, res) => {
@@ -106,6 +76,37 @@ app.use(
 );
 
 //PLACE HERE ALL APIs THAT REQUIRE AUTHENTICATION
+
+
+app.get('/studentCourses', async (req, res) => {
+    try{
+        const result = await lessonsDao.getStudentCourses(req.user);
+        res.json(result);
+    }catch(e){
+        res.status(505).end();
+    }
+});
+// API for get bookable lectures for a given student
+app.get('/myBookableLessons', async (req, res) => {
+    try{
+        const result = await lessonsDao.getBookableLessons(req.user);
+        res.json(result);
+    }
+    catch(e){
+        res.status(505).end();
+    }
+});
+// API for retrieve lessons booked by a student
+app.get('/myBookedLessons', async(req, res)=>{
+    try{
+        const result = await lessonsDao.getBookedLessons(req.user);
+        res.json(result);
+    }
+    catch(e){
+        res.status(505).end();
+    }
+});
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 app.listen(port, () => {
