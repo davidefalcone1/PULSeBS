@@ -119,7 +119,7 @@ app.get('/myBookedLessons', async(req, res)=>{
 
 app.post('/bookLesson', async(req, res)=>{
     try{
-        const result = await lessonsDao.getBookedLessons(req.user, req.body.lessonId);
+        const result = await lessonsDao.bookLesson(req.user.user, req.body.lessonId);
         res.end();
     }catch(e){
         res.status(505).end();
