@@ -6,7 +6,8 @@ import Button from 'react-bootstrap/Button'
 
 const lessonsList = (props) => {
   return(
-    <LessonListPageRender lessonsList={props.lessonsList}
+    <LessonListPageRender coursesList={props.courses}
+        lessonsList={props.lessonsList}
         selectLessonFunction={props.selectLessonFunction}
         updateMyBookedLessonsList={props.updateMyBookedLessonsList}
         isMyLessonsList={props.isMyLessonsList}/>
@@ -36,12 +37,13 @@ class LessonListPageRender extends React.Component {
               <ListHeader />
               <>{console.log(this.props.lessonsList)}</>
               {this.props.lessonsList.map((lesson) => 
-                  <LessonListItem key = {lesson.id} lesson = {lesson}
+                  <LessonListItem key = {lesson.scheduleId} lesson = {lesson}
                     updateSelectionMessage = {this.updateSelectionMessage}
                     updateLessonSelectedState = {this.updateLessonSelectedState}
                     selectLessonFunction = {this.props.selectLessonFunction}
                     updateMyBookedLessonsList = {this.props.updateMyBookedLessonsList}
-                    isMyLessonsList={this.props.isMyLessonsList}/>
+                    isMyLessonsList={this.props.isMyLessonsList}
+                    coursesList={this.props.coursesList}/>
                     )
               }
           </ListGroup>
@@ -82,11 +84,14 @@ function ListHeader() {
           <div className="col-sm-4">
               <h4>Course</h4>
           </div>
-          <div className="col-sm-3">
-              <h4>Professor</h4>
+          <div className="col-sm-2">
+              <h4>Starting Time</h4>
           </div>
-          <div className="col-sm-3">
-              <h4>Date and Time</h4>
+          <div className="col-sm-2">
+              <h4>Ending Time</h4>
+          </div>
+          <div className="col-sm-2">
+              <h4># of Booked Seats</h4>
           </div>
           <div className="col-sm-2">
           </div>

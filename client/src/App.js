@@ -1,8 +1,8 @@
 import React from 'react';
-import {Navbar} from 'react-bootstrap';
+import Navbar from './components/Navbar';
 import API from './API/API';
 import LessonsList from './components/LessonsListPage';
-import TicketDetails from './components/TicketDetailsPage';
+import MyCoursesLessonsStudents from './components/MyCoursesLessonsStudentsPage';
 import {Switch, Route, Redirect, withRouter} from 'react-router-dom';
 import LoginPage from './components/LoginPage';
 class App extends React.Component {
@@ -15,26 +15,47 @@ class App extends React.Component {
       loginError: false,
       lessons: [
         {
-          id: "0",
-          course: "Course 0",
-          professor: "Professor 0",
-          dateAndTime: "",
-        },
-        {
-          id: "1",
-          course: "Course 1",
-          professor: "Professor 1",
-          dateAndTime: "",
-        },
-        {
-          id: "2",
-          course: "Course 2",
-          professor: "Professor 2",
-          dateAndTime: "",
+          scheduleId: 0,
+          courseId: 1,
+          startingTime: "2013-02-08 09:30:26",
+          endingTime: "2013-02-08 09:30:26",
+          occupiedSeats: 5,
+          availableSeats: 10
         },
       ],
       myBookedLessons: [
-
+        {
+          scheduleId: 0,
+          courseId: 1,
+          startingTime: "2013-02-08 09:30:26",
+          endingTime: "2013-02-08 09:30:26",
+          occupiedSeats: 5,
+          availableSeats: 10
+        },
+      ],
+      courses: [
+        {
+          courseId: 1,
+          courseName: "CourseName",
+          teacherId: 1
+        },
+      ],
+      studentsBookings: [
+        {
+          id: 0,
+          scheduleId: 0,
+          studentId: 2,
+          status: "active",
+          attended: "true"
+        },
+      ],
+      studentsInfos: [
+        {
+          id: 0,
+          personId: 2,
+          fullName: "Full Name",
+          email: "mail@mail.com"
+        }
       ],
     };
   }
@@ -49,8 +70,15 @@ class App extends React.Component {
       this.props.history.push('/ticketdetails');
       //IF STUDENT        
         //fetch from back-end bookable lessons and my booked lessons
+          //1.1 --> fetch my courses (where i am enrolled)
+          //1.2 --> fetch bookable lessons for my courses
+          //1.3 --> fetch booked lessons for my courses
       //IF PROFESSOR
         //fetch from back-end data on my lessons and students booked to them
+          //1.1 --> fetch my courses (where i teach)
+          //1.2 --> fetch lessons of my courses
+          //1.3 --> fetch my lessons' booked students id
+          //1.4 --> fetch my lessons' booked students data 
       //IF SUPPORT MANAGER
         //fetch from back-end something??? TODO
     })
@@ -76,15 +104,19 @@ class App extends React.Component {
     //LOGIN IS THE FIRST PAGE
     return (
       <>
-        <Navbar bg="dark" variant="dark">
-          <Navbar.Brand>PUL Project</Navbar.Brand>
-        </Navbar>
+        <Navbar />
         <Switch>
           <Route path='/lessonslist'>
-            <LessonsList lessonsList = {this.state.lessons} selectLessonFunction={this.bookLesson} updateMyBookedLessonsList={this.updateMyBookedLessonsList} isMyLessonsList={false}/>
+            <LessonsList lessonsList = {this.state.lessons} selectLessonFunction={this.bookLesson} courses = {this.state.courses}
+              updateMyBookedLessonsList={this.updateMyBookedLessonsList} isMyLessonsList={false}/>
           </Route>
           <Route path='/myBookedLessonslist'>
-            <LessonsList lessonsList = {this.state.myBookedLessons} selectLessonFunction={this.deleteLesson} updateMyBookedLessonsList={this.updateMyBookedLessonsList} isMyLessonsList={true}/>
+            <LessonsList lessonsList = {this.state.myBookedLessons} selectLessonFunction={this.deleteLesson} courses = {this.state.courses}
+              updateMyBookedLessonsList={this.updateMyBookedLessonsList} isMyLessonsList={true}/>
+          </Route>
+          <Route path='/myCoursesLessonslist'>
+            <MyCoursesLessonsStudents teacherCourses = {this.state.courses} myTeachedCoursesLessons = {this.state.lessons} 
+              studentsBookedToMyLessons = {this.state.studentsBookings} myBookedStudentsInfos = {this.state.studentsInfos}/>
           </Route>
           {/* <Route path="/ticketdetails">
             {
