@@ -79,6 +79,15 @@ app.get('/myBookedLessons', async(req, res)=>{
     }
 });
 
+app.post('/bookLesson', async(req, res)=>{
+    try{
+        const result = await lessonsDao.getBookedLessons(req.user, req.body.lessonId);
+        res.end();
+    }catch(e){
+        res.status(505).end();
+    }
+});
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
