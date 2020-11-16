@@ -59,8 +59,20 @@ app.post('/login', async (req, res) => {
     }
 });
 
+// For the rest of the code, all APIs require authentication
+app.use(
+    jwt({
+        secret: jwtSecret,
+        algorithms: ['HS256'],
+        getToken: req => req.cookies.token
+    })
+);
+
+//PLACE HERE ALL APIs THAT REQUIRE AUTHENTICATION
+
 app.get('/studentCourses', async (req, res) => {
     try{
+        console.log(req.user);
         const result = await lessonsDao.getStudentCourses(req.user);
         res.json(result);
     }catch(e){
@@ -101,18 +113,6 @@ app.post('/bookLesson', async(req, res)=>{
 app.post('/logout', (req, res) => {
     res.clearCookie('token').end();
 });
-
-
-// For the rest of the code, all APIs require authentication
-app.use(
-    jwt({
-        secret: jwtSecret,
-        algorithms: ['RS256'],
-        getToken: req => req.cookies.token
-    })
-);
-
-//PLACE HERE ALL APIs THAT REQUIRE AUTHENTICATION
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 app.listen(port, () => {
