@@ -4,7 +4,8 @@ import API from './API/API';
 import LessonsList from './components/LessonsListPage';
 import MyCoursesLessonsStudents from './components/MyCoursesLessonsStudentsPage';
 import {Switch, Route, Redirect, withRouter} from 'react-router-dom';
-import LoginPage from './components/LoginPage';
+//import LoginPage from './components/LoginPage';
+import LoginForm from './components/LoginForm'
 import { AuthContext } from './_services/AuthContext';
 import { history } from './_services/history';
 
@@ -68,11 +69,11 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    authenticationService.user.subscribe(x =>
-      this.setState({
-        user: x
-      })
-    );
+    // authenticationService.user.subscribe(x =>
+    //   this.setState({
+    //     user: x
+    //   })
+    // );
   }
 
   logout = () => {
@@ -87,35 +88,35 @@ class App extends React.Component {
     .then((user) =>{
      this.setState({user, loginError: false});
      if(user.accessLevel==1){
-       this.setState({isTeacher:true,isStudent:false});
-     }
-     if(user.accessLevel==2){
        this.setState({isTeacher:false,isStudent:true});
      }
-    if(isTeacher){
-      API.getTeacherCourses(/*user.personId*/).then((mycourses) =>{
+     if(user.accessLevel==2){
+       this.setState({isTeacher:true,isStudent:false});
+     }
+    if(this.state.isTeacher){
+      API.getTeacherCourses(user.id).then((mycourses) =>{
        this.setState({teacherCourses: mycourses});
       });
-      API.getMyCoursesLessons(/*user.personId*/).then((myLessons) =>{
-        this.setState({myTeachedCoursesLessons: myLessons});
-      });
-      API.getBookedStudent(/*user.personId*/).then((mystudents) =>{
-        this.setState({studentsBookedToMyLessons: mystudents});
-      });
-      API.getStudentsData(/*user.personId*/).then((mystudetsinfo) =>{
-        this.setState({studentsBookedToMyLessons: mystudentsinfo});
-      });
+      // API.getMyCoursesLessons(/*user.personId*/).then((myLessons) =>{
+      //   this.setState({myTeachedCoursesLessons: myLessons});
+      // });
+      // API.getBookedStudent(/*user.personId*/).then((mystudents) =>{
+      //   this.setState({studentsBookedToMyLessons: mystudents});
+      // });
+      // API.getStudentsData(/*user.personId*/).then((mystudetsinfo) =>{
+      //   this.setState({studentsBookedToMyLessons: mystudentsinfo});
+      // });
     }
-    if(isStudent){
+    if(this.state.isStudent){
       API.getStudentCourses(/*user.personId*/).then((mycourses) =>{
         this.setState({courses: mycourses});
       });
-     API.getMyBookableLessons(/*user.personId*/).then((bookableLessons) =>{
-        this.setState({lessons: bookableLessons});
-      });
-     API.getMyBookedLessons(/*user.personId*/).then((myLessons) =>{
-       this.setState({myBookedLessons: myLessons});
-      });
+    //  API.getMyBookableLessons(/*user.personId*/).then((bookableLessons) =>{
+    //     this.setState({lessons: bookableLessons});
+    //   });
+    //  API.getMyBookedLessons(/*user.personId*/).then((myLessons) =>{
+    //    this.setState({myBookedLessons: myLessons});
+    //   });
     } 
     
         //IF STUDENT        
@@ -195,7 +196,7 @@ class App extends React.Component {
             }
           </Route> */}
           <Route path="/login">
-            <LoginPage login={this.login} error={this.state.loginError}/>
+            <LoginForm />
           </Route>
         </Switch>
       </>

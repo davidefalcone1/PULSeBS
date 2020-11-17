@@ -233,12 +233,12 @@ async function login(username, password) {
     };
     return new Promise(async function (resolve, reject) {
         try {
-            const response = await fetch('/users/authenticate',requestOptions);
-            const user = await response.json().then(handleResponse);
+            const response = await fetch('/users/authenticate', requestOptions);
+            //const user = await response.json().then(handleResponse);
             if (response.ok) {
-                localStorage.setItem('user', JSON.stringify(user));
-                currentUserSubject.next(user);
-                resolve(user);
+                response.json().then((user) => {
+                    resolve(user);
+                });
             }
             else
                 reject();
@@ -247,7 +247,7 @@ async function login(username, password) {
             reject();
         }
     });
-
+}
     async function logout() {
         const requestOptions = {
             method: 'POST',
@@ -273,4 +273,4 @@ async function login(username, password) {
 
 const API = {login,logout,getStudentCourses, getMyBookableLessons, getMyBookedLessons, getMyCoursesLessons, bookLesson, 
     deleteBooking, getTeacherCourses, getBookedStudent, getStudentsData };
-export default API;}
+export default API;
