@@ -1,5 +1,6 @@
+'use strict';
 jest.setMock("../db", require("../db.mock"));
-const db = require("../db");
+const db = require('../db')
 const User = require('./User');
 const userDao = require('./userDao');
 

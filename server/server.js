@@ -2,9 +2,7 @@
 
 const express = require("express");//import express
 const morgan = require("morgan"); // logging middleware
-const dao = require("./dao/dao");
 const userDao = require('./dao/userDao');
-const lessonsDao = require('./dao/lessonDao');
 const jwt = require('express-jwt');
 const jsonwebtoken = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
@@ -88,7 +86,7 @@ app.delete('/deleteBooking/:bookingID', (req, res) => {
 
 app.get('/studentCourses', async (req, res) => {
     try{
-        const result = await lessonsDao.getStudentCourses(req.user.user);
+        const result = await bookingDao.getStudentCourses(req.user.user);
         res.json(result);
     }catch(e){
         res.status(505).end();
@@ -98,7 +96,7 @@ app.get('/studentCourses', async (req, res) => {
 // API for getting bookable lectures for a given student
 app.get('/myBookableLessons', async (req, res) => {
     try{
-        const result = await lessonsDao.getBookableLessons(req.user.user);
+        const result = await bookingDao.getBookableLessons(req.user.user);
         res.json(result);
     }
     catch(e){
@@ -109,7 +107,7 @@ app.get('/myBookableLessons', async (req, res) => {
 // API for retrieving lessons booked by a student
 app.get('/myBookedLessons', async(req, res)=>{
     try{
-        const result = await lessonsDao.getBookedLessons(req.user.user);
+        const result = await bookingDao.getBookedLessons(req.user.user);
         res.json(result);
     }
     catch(e){
@@ -119,7 +117,7 @@ app.get('/myBookedLessons', async(req, res)=>{
 
 app.post('/bookLesson', async(req, res)=>{
     try{
-        const result = await lessonsDao.bookLesson(req.user.user, req.body.lessonId);
+        const result = await bookingDao.bookLesson(req.user.user, req.body.lessonId);
         res.end();
     }catch(e){
         res.status(505).end();

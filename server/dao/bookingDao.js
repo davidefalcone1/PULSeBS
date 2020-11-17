@@ -62,7 +62,6 @@ exports.bookLesson = function(studentID, lessonID){
         db.run(sql, [lessonID, studentID], function (err, row) {
             if(err)
                 reject(err);
-            console.log(row);
             resolve();
         })
     });
@@ -78,11 +77,14 @@ exports.deleteBooking = (bookingID) => {
                    SET BookStatus = 2 
                    WHERE BookID = ?`;
 
-        db.run(sql, [bookingID], (err) => {
+        db.run(sql, [bookingID], function(err) {
             if (err) {
                 reject(err);
             }
             else {
+                console.log(this.changes);
+                if(this.changes === 0)
+                    reject('NO BOOKING');
                 sql = `SELECT CourseScheduleID 
                        FROM Booking  
                        WHERE BookID = ?`;
