@@ -1,53 +1,81 @@
 import React from 'react';
-import {Form, Button} from 'react-bootstrap';
-class LoginPage extends React.Component{
-    constructor(props){
+import { Formik, Field, Form, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { AuthContext } from '../_services/AuthContext';
+import { authenticationService } from '../_services/authenticationService';
+
+class LoginPage extends React.Component {
+    constructor(props) {
         super(props);
-        this.state = {
-            validated: false,
-            username: '',
-            password: ''
-        };
-    }
 
-    updateField = (name, value) => {
-        this.setState((state) => {
-          return ({[name]: value});
-        });
-      }
-
-    handleSubmit = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        const form = event.currentTarget;
-        if(form.checkValidity()){
-            this.props.login(this.state.username, this.state.password);
+        // redirect to home if already logged in
+        if (authenticationService.currentUserValue) { 
+            this.props.history.push('/');
         }
-        this.setState({validated: true});
     }
 
-    render(){
+    render() {
         return (
-            <Form noValidate validated = {this.state.validated} onSubmit={this.handleSubmit}>
-                <Form.Row className = 'justify-content-center'>
-                    <Form.Group controlId = "username">
-                        <Form.Label>Username</Form.Label>
-                        <Form.Control required name="username" type="text" placeholder="Username" value = {this.state.username} onChange = {(e) => {this.updateField(e.target.name, e.target.value)}}/>
-                    </Form.Group>
-                </Form.Row>
-                <Form.Row className = 'justify-content-center'>
-                    <Form.Group controlId = "password">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control required name = 'password' className = {this.props.error ? 'is-invalid':''} type="password" placeholder="Password" value = {this.state.password} onChange = {(e) => {this.updateField(e.target.name, e.target.value)}}/>
-                        <Form.Control.Feedback type='invalid'>Username or password are wrong.</Form.Control.Feedback>
-                    </Form.Group>
-                </Form.Row>
-                <Form.Row className = 'justify-content-center'>
-                    <Button type = 'submit'>Login</Button>
-                </Form.Row>
-            </Form>
-        );
+            <AuthContext.Consumer>
+                {(context) => (
+            <div>
+                <div className="alert alert-info">
+                    <strong>Student User</strong> - U: student P: student<br />
+                    <strong>Teacher User</strong> - U: teacher P: teacher
+                </div>
+                <h2>Login</h2>
+                <Formik
+                    initialValues={{
+                        username: '',
+                        password: ''
+                    }}
+                    validationSchema={Yup.object().shape({
+                        username: Yup.string().required('Username is required'),
+                        password: Yup.string().required('Password is required')
+                    })}
+                    onSubmit={({ username, password }, { setStatus, setSubmitting }) => {
+                        setStatus();
+                        context.loginUser(username,password)
+                            .then(
+                                user => {
+                                    const { from } = this.props.location.state || { from: { pathname: "/" } };
+                                    this.props.history.push(from);
+                                },
+                                error => {
+                                    setSubmitting(false);
+                                    setStatus(error);
+                                }
+                            );
+                    }}
+                    render={({ errors, status, touched, isSubmitting }) => (
+                        <Form>
+                            <div className="form-group">
+                                <label htmlFor="username">Username</label>
+                                <Field name="username" type="text" className={'form-control' + (errors.username && touched.username ? ' is-invalid' : '')} />
+                                <ErrorMessage name="username" component="div" className="invalid-feedback" />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="password">Password</label>
+                                <Field name="password" type="password" className={'form-control' + (errors.password && touched.password ? ' is-invalid' : '')} />
+                                <ErrorMessage name="password" component="div" className="invalid-feedback" />
+                            </div>
+                            <div className="form-group">
+                                <button type="submit" className="btn btn-primary" disabled={isSubmitting}>Login</button>
+                                {isSubmitting &&
+                                    <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                                }
+                            </div>
+                            {status &&
+                                <div className={'alert alert-danger'}>{status}</div>
+                            }
+                        </Form>
+                    )}
+                />
+            </div>
+             )}
+             </AuthContext.Consumer>
+        )
     }
 }
 
-export default LoginPage;
+export default { LoginPage }; 
