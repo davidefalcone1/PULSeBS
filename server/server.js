@@ -128,7 +128,7 @@ app.get('/myBookedLessons', async (req, res) => {
 /**
 * Get all courses for the given teacher
 * @route       GET /teacherCourses
-* @param       teacherId
+* @param       teacherId (read from cookie)
 * @access      Private
 * @returns     CourseData(courseId, courseName, teacherId)
 */
@@ -145,7 +145,7 @@ app.get('/teacherCourses', async (req, res) => {
 /**
 * Get all lectures for the given teacher
 * @route       GET /myCoursesLessons
-* @param       teacherId
+* @param       teacherId (read from cookie)
 * @access      Private
 * @returns     LessonsData(scheduleId, courseId, startingTime, endingTime, occupiedSeats, availableSeats)
 */
@@ -160,7 +160,7 @@ app.get('/myCoursesLessons', async (req, res) => {
 });
 
 /**
-* Get all booked student list for the given lessonsIds/CourseScheduleIDs
+* Get a list of booked student for the given lessonsIds/CourseScheduleIDs
 * @route       GET /bookedStudents
 * @param       lessonsIds (CourseScheduleIDs)
 * @access      Private
@@ -173,12 +173,12 @@ app.get('/bookedStudents', async (req, res) => {
         res.status(200).json(result);
     }
     catch (err) {
-        res.status(505).end();
+        res.status(400).json(err.message);
     }
 });
 
 /**
-* Get ...
+* Get a list of student for the given studentsIds
 * @route       GET /studentsData
 * @param       studentsIds
 * @access      Private
@@ -191,7 +191,7 @@ app.get('/studentsData', async (req, res) => {
         res.status(200).json(result);
     }
     catch (err) {
-        res.status(505).end();
+        res.status(400).json(err.message);
     }
 });
 

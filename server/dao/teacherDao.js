@@ -33,28 +33,49 @@ exports.getMyCoursesLessons = function (teacherID) {
 
 exports.getBookedStudents = function (CourseScheduleIDs) {
     return new Promise((resolve, reject) => {
+
+        //Check if the CourseScheduleIDs is an array
+        if (!Array.isArray(CourseScheduleIDs)) {
+            let err = { message: "" };
+            err.message = "The received parameter (CourseScheduleIDs) is not an array!";
+            reject(err);
+            return;
+        }
+        ////////////////////////////////////////////////////////////////////////////
         const sql =
             `SELECT Booking.BookID,Booking.CourseScheduleID,Booking.StudentID,Booking.BookStatus,Booking.Attended 
         FROM CourseSchedule JOIN Booking
         ON CourseSchedule.CourseScheduleID = Booking.CourseScheduleID
-        WHERE CourseSchedule.CourseScheduleID = ?`;
+        WHERE CourseSchedule.CourseScheduleID IN (${CourseScheduleIDs.map(i => '?')})`;
 
-        db.all(sql, [CourseScheduleIDs], function (err, rows) {
+        db.all(sql, [...CourseScheduleIDs], function (err, rows) {
             if (err) {
-                reject();
+                reject(err);
+                return;
             }
             const lessons = rows.map((row) => new BookingData(row.BookID, row.CourseScheduleID, row.StudentID, row.BookStatus, row.Attended));
             resolve(lessons);
         });
+        ////////////////////////////////////////////////////////////////////////////
     });
 }
 
 
 exports.getStudentsData = function (studentsIds) {
     return new Promise((resolve, reject) => {
-        const sql = `SELECT * FROM User WHERE UserID = ?`;
 
-        db.all(sql, [studentsIds], function (err, rows) {
+        //Check if the studentsIds is an array
+        if (!Array.isArray(studentsIds)) {
+            let err = { message: "" };
+            err.message = "The received parameter (studentsIds) is not an array!";
+            reject(err);
+            return;
+        }
+        ////////////////////////////////////////////////////////////////////////////
+
+        const sql = `SELECT * FROM User WHERE UserID IN (${studentsIds.map(i => '?')})`;
+
+        db.all(sql, [...studentsIds], function (err, rows) {
             if (err) {
                 reject();
             }
