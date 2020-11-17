@@ -11,6 +11,7 @@ const cookieParser = require('cookie-parser');
 const emailAPI = require('./emailAPI');
 const bookingDao = require('./dao/bookingDao');
 const dailyMailer = require('./dailyMailer');
+const teacherDao = require('./dao/teacherDao');
 
 const jwtSecret = '123456789';
 const expireTime = 300; //seconds
@@ -125,47 +126,73 @@ app.get('/myBookedLessons', async (req, res) => {
 //Teacher APIs
 
 /**
-* Get all courses for the given teacherId
+* Get all courses for the given teacher
 * @route       GET /teacherCourses
-* @param       teacherId
+* @param       teacherId (read from cookie)
 * @access      Private
 * @returns     CourseData(courseId, courseName, teacherId)
 */
 app.get('/teacherCourses', async (req, res) => {
-
+    try {
+        const result = await teacherDao.getTeacherCourses(req.user.user);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(505).end();
+    }
 });
 
 /**
-* Get ...
+* Get all lectures for the given teacher
 * @route       GET /myCoursesLessons
-* @param       teacherId
+* @param       teacherId (read from cookie)
 * @access      Private
 * @returns     LessonsData(scheduleId, courseId, startingTime, endingTime, occupiedSeats, availableSeats)
 */
 app.get('/myCoursesLessons', async (req, res) => {
-
+    try {
+        const result = await teacherDao.getMyCoursesLessons(req.user.user);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(505).end();
+    }
 });
 
 /**
-* Get ...
+* Get a list of booked student for the given lessonsIds/CourseScheduleIDs
 * @route       GET /bookedStudents
-* @param       lessonsIds
+* @param       lessonsIds (CourseScheduleIDs)
 * @access      Private
 * @returns     BookingData(id, scheduleId, studentId, status, attended)
 */
 app.get('/bookedStudents', async (req, res) => {
-
+    const CourseScheduleIDs = req.body.lessonsIds;
+    try {
+        const result = await teacherDao.getBookedStudents(CourseScheduleIDs);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
+    }
 });
 
 /**
-* Get ...
+* Get a list of student for the given studentsIds
 * @route       GET /studentsData
 * @param       studentsIds
 * @access      Private
 * @returns     UserData(id, personId, fullName, email)
 */
 app.get('/studentsData', async (req, res) => {
-
+    const studentsIds = req.body.studentsIds;
+    try {
+        const result = await teacherDao.getStudentsData(studentsIds);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
+    }
 });
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
