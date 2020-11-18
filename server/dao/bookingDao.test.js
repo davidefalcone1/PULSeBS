@@ -74,7 +74,7 @@ describe("deleteBooking", ()=>{
     afterEach(async ()=>{
         cleanDB();
     });
-    test("booking exists", ()=>{
+    test("booking exists", ()=>{                                                                                                                            
         setTimeout(1000, ()=>{
             expect.assertions(1);
             return bookingDao.deleteBooking(1, '275330').then((result)=>expect(result).toBeNull());

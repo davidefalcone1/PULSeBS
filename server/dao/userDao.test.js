@@ -13,7 +13,7 @@ describe("getUser", ()=>{
         });
     });
     afterEach(()=>{
-        let sql = "DELETE FROM User WHERE UserID='275330'";
+        let sql = "DELETE FROM User";
         db.run((sql), function (err){
             if(err)
                 console.log(err);
@@ -46,7 +46,7 @@ describe("checkPassword", ()=>{
         });
     });
     afterAll(()=>{
-        let sql = "DELETE FROM User WHERE UserID='275330'";
+        let sql = "DELETE FROM User";
         db.run((sql), function (err){
             if(err)
                 console.log(err);
