@@ -27,7 +27,6 @@ exports.getUser = (username) => {
             else if (rows.length === 0)
                 resolve(undefined);
             else {
-                console.log(rows);
                 const user = createUser(rows[0]);
                 resolve(user);
             }
