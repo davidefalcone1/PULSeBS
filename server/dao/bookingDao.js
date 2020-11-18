@@ -70,7 +70,7 @@ exports.bookLesson = function (studentID, lessonID) {
             else {
                 sql = `UPDATE CourseSchedule 
                             SET OccupiedSeat = OccupiedSeat + 1
-                            WHERE CourseScheduleID = ?`;
+                            WHERE CourseScheduleID = ? AND OccupiedSeat <> MaxSeat`;
                 db.run(sql, [lessonID], (err) => {
                     if (err) {
                         reject(err);
