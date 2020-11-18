@@ -90,7 +90,7 @@ describe("deleteBooking", ()=>{
 
 describe("bookLesson", ()=>{
     beforeEach(async()=>{
-        initDB();
+        initDB(); 
     });
     afterEach(async ()=>{
         cleanDB();
