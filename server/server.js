@@ -79,7 +79,7 @@ app.use(
 //PLACE HERE ALL APIs THAT REQUIRE AUTHENTICATION
 // DELETE A BOOKING 
 app.delete('/deleteBooking/:lessonID', (req, res) => {
-    const bookingID = req.params.lessonID;
+    const lessonID = req.params.lessonID;
     bookingDao.deleteBooking(lessonID, req.user.user)
         .then(() => res.status(204).end())
         .catch((err) => res.status(500).json({ error: 'Server error: ' + err }));
