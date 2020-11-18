@@ -57,17 +57,49 @@ class App extends React.Component {
           email: "mail@mail.com"
         }
       ],
-    };
+    };ticketdetails
   }
 
   componentDidMount() {
+    var test = 1; //per test --> 1= student, 2=teacher
+    if(test === 1 ){
+      API.getStudentCourses().then((courseList) => {
+        this.setState({courses: courseList});
+      }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+
+      API.getMyBookableLessons().then((bookableLessons) => {
+        this.setState({lessons: bookableLessons});
+      }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+
+      API.getMyBookedLessons().then((bookedLessons) => {
+        this.setState({myBookedLessons: bookedLessons});
+      }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    }
+    else if(test === 2){
+      API.getTeacherCourses().then((courseList) => {
+        this.setState({courses: courseList});
+      }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+
+      API.getMyCoursesLessons().then((myCoursesLessons) => {
+        this.setState({lessons: myCoursesLessons});
+        
+        var lessonsIds = myCoursesLessons.map((row) => { return row.scheduleId });
+        API.getBookedStudents(lessonsIds).then((bookingData) => {
+          this.setState({studentsBookings: bookingData});
+
+          var studentsIds = bookingData.map((row) => { return row.studentId });
+          API.getStudentsData(studentsIds).then((studentsData) => {
+            this.setState({studentsInfos: studentsData});
+          }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });;
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+      }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    }
   }
   
   login = async (username, password) => {
     API.login(username, password)
     .then((user) =>{
       this.setState({user, loginError: false});
-      this.props.history.push('/ticketdetails');
       //IF STUDENT        
         //fetch from back-end bookable lessons and my booked lessons
           //1.1 --> fetch my courses (where i am enrolled)
@@ -89,9 +121,9 @@ class App extends React.Component {
   }
 
   bookLesson = (lessonId) => {
-    API.bookLesson(lessonId/*, user.personId*/).then(() =>{
+    API.bookLesson(lessonId).then(() =>{
       console.log("Lesson booked.");
-      API.getMyBookableLessons(/*user.personId*/).then((bookableLessons) =>{
+      API.getMyBookableLessons().then((bookableLessons) =>{
         this.setState({lessons: bookableLessons});
       });
     });
@@ -100,7 +132,7 @@ class App extends React.Component {
   deleteLesson = (bookingId) => {
     API.deleteBooking(bookingId).then(() =>{
       console.log("Lesson deleted.");   
-      API.getMyBookableLessons(/*user.personId*/).then((bookableLessons) =>{
+      API.getMyBookableLessons().then((bookableLessons) =>{
         this.setState({lessons: bookableLessons});
       });
     });

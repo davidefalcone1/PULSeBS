@@ -81,9 +81,9 @@ app.use(
 //PLACE HERE ALL APIs THAT REQUIRE AUTHENTICATION
 
 // DELETE A BOOKING 
-app.delete('/deleteBooking/:bookingID', (req, res) => {
-    const bookingID = req.params.bookingID;
-    bookingDao.deleteBooking(bookingID)
+app.delete('/deleteBooking/:lessonID', (req, res) => {
+    const bookingID = req.params.lessonID;
+    bookingDao.deleteBooking(lessonID, req.user.user)
         .then(() => res.status(204).end())
         .catch((err) => res.status(500).json({ error: 'Server error: ' + err }));
 });
@@ -91,7 +91,7 @@ app.delete('/deleteBooking/:bookingID', (req, res) => {
 
 app.get('/studentCourses', async (req, res) => {
     try {
-        const result = await lessonsDao.getStudentCourses(req.user);
+        const result = await lessonsDao.getStudentCourses(req.user.user);
         res.json(result);
     } catch (e) {
         res.status(505).end();
@@ -101,7 +101,7 @@ app.get('/studentCourses', async (req, res) => {
 // API for getting bookable lectures for a given student
 app.get('/myBookableLessons', async (req, res) => {
     try {
-        const result = await lessonsDao.getBookableLessons(req.user);
+        const result = await lessonsDao.getBookableLessons(req.user.user);
         res.json(result);
     }
     catch (e) {
@@ -112,7 +112,7 @@ app.get('/myBookableLessons', async (req, res) => {
 // API for retrieving lessons booked by a student
 app.get('/myBookedLessons', async (req, res) => {
     try {
-        const result = await lessonsDao.getBookedLessons(req.user);
+        const result = await lessonsDao.getBookedLessons(req.user.user);
         res.json(result);
     }
     catch (e) {

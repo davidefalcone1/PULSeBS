@@ -4,14 +4,10 @@ import UserData from './UserData';
 import BookingData from './BookingData';
 
 //student
-function getStudentCourses(studentId) {
+function getStudentCourses() {
     return new Promise(async function (resolve, reject) {
         fetch('/studentCourses', {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({studentId: studentId}),
         })
         .then(async (response) => {
             const coursesJson = await response.json();
@@ -26,14 +22,10 @@ function getStudentCourses(studentId) {
         }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
-function getMyBookableLessons(studentId) {
+function getMyBookableLessons() {
     return new Promise(async function (resolve, reject) {
         fetch('/myBookableLessons', {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({studentId: studentId}),
         })
         .then(async (response) => {
             const lessonsJson = await response.json();
@@ -48,14 +40,10 @@ function getMyBookableLessons(studentId) {
         }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
-function getMyBookedLessons(studentId) {
+function getMyBookedLessons() {
     return new Promise(async function (resolve, reject) {
         fetch('/myBookedLessons', {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({studentId: studentId}),
         })
         .then(async (response) => {
             const lessonsJson = await response.json();
@@ -70,7 +58,7 @@ function getMyBookedLessons(studentId) {
         }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
-async function bookLesson(lessonId, studentId) {
+async function bookLesson(lessonId) {
     return new Promise((resolve, reject) => {
         fetch("/bookLesson", {
             method: 'POST',
@@ -111,14 +99,10 @@ async function deleteBooking(bookingId){
 }
 
 //teacher
-function getTeacherCourses(teacherId) {
+function getTeacherCourses() {
     return new Promise(async function (resolve, reject) {
         fetch('/teacherCourses', {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({teacherId: teacherId}),
         })
         .then(async (response) => {
             const coursesJson = await response.json();
@@ -133,14 +117,10 @@ function getTeacherCourses(teacherId) {
         }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
-function getMyCoursesLessons(teacherId) {
+function getMyCoursesLessons() {
     return new Promise(async function (resolve, reject) {
         fetch('/myCoursesLessons', {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({teacherId: teacherId}),
         })
         .then(async (response) => {
             const coursesJson = await response.json();
@@ -155,7 +135,7 @@ function getMyCoursesLessons(teacherId) {
         }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
-function getBookedStudent(lessonsIds) { //so the course schedule id
+function getBookedStudents(lessonsIds) { //so the course schedule id
     return new Promise(async function (resolve, reject) {
         fetch('/bookedStudents', {
             method: 'GET',
@@ -226,5 +206,5 @@ function login(username, password) {
 }
 
 const API = { login, getStudentCourses, getMyBookableLessons, getMyBookedLessons, getMyCoursesLessons, bookLesson, 
-    deleteBooking, getTeacherCourses, getBookedStudent, getStudentsData };
+    deleteBooking, getTeacherCourses, getBookedStudents, getStudentsData };
 export default API;

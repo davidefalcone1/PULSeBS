@@ -88,11 +88,9 @@ function SelectField(props){
                 <div className="col-sm-2">
                     <Button variant="danger" onClick={(event) => {
                         event.preventDefault();
-                        props.selectLessonFunction(props.id).then((resultString) => {
-                            props.updateSelectionMessage(resultString);
+                        props.selectLessonFunction(props.id).then(() => {
                             props.updateMyBookedLessonsList();
                         });               
-                        props.updateLessonSelectedState(true);
                     }} id={"deleteFieldOfLesson" + props.id}>
                         DELETE
                     </Button>
