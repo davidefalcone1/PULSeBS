@@ -33,23 +33,15 @@ class LoginForm extends React.Component {
             <AuthContext.Consumer>
                 {(context) => (
                     <Fragment>
-                        <div className="col-sm-4 mx-auto">
+                        <div id='form' className="col-sm-4 mx-auto">
                             <div className="card">
                                 <article className="card-group-item">
                                     <header className="card-header">
-                                        <h6 className="title"><em>Trust. </em></h6>
-                                    </header>
+                                        <h5 className="title"><em>Insert your credentials </em></h5>
+                                    </header>   
                                     <div className="filter-content">
                                         <div className="card-body">
                                             <div className="table-responsive">
-
-
-
-
-
-
-
-
 
                                                 <Form method="POST" onSubmit={(event) => this.handleSubmit(event, context.loginUser)}>
                                                     <Form.Group controlId="username">
