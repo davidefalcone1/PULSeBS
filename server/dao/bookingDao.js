@@ -68,7 +68,7 @@ exports.bookLesson = function(studentID, lessonID){
 }
 
 exports.deleteBooking = (bookingID) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
         if (!bookingID) {
             reject('Missing data');
         }
@@ -82,32 +82,32 @@ exports.deleteBooking = (bookingID) => {
                 reject(err);
             }
             else {
-                console.log(this.changes);
                 if(this.changes === 0)
                     reject('NO BOOKING');
-                sql = `SELECT CourseScheduleID 
+                else{
+                    sql = `SELECT CourseScheduleID 
                        FROM Booking  
                        WHERE BookID = ?`;
 
-                db.get(sql, [bookingID], (err, row) => {
-                    if (err) {
-                        reject(err);
-                    }
-                    else {
-                        sql = `UPDATE CourseSchedule 
-                               SET OccupiedSeat = OccupiedSeat - 1
-                               WHERE CourseScheduleID = ?`;
-                        db.run(sql, [row.CourseScheduleID], (err) => {
-                            if (err) {
-                                reject(err);
-                            }
-                            else {
-                                resolve(null);
-                            }
-                        })
-                    }
-                });
-
+                    db.get(sql, [bookingID], (err, row) => {
+                        if (err) {
+                            reject(err);
+                        }
+                        else {
+                            sql = `UPDATE CourseSchedule 
+                                SET OccupiedSeat = OccupiedSeat - 1
+                                WHERE CourseScheduleID = ?`;
+                            db.run(sql, [row.CourseScheduleID], (err) => {
+                                if (err) {
+                                    reject(err);
+                                }
+                                else {
+                                    resolve(null);
+                                }
+                            })
+                        }
+                    });
+                }
             }
         });
     });
