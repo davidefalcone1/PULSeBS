@@ -196,6 +196,26 @@ app.get('/studentsData', async (req, res) => {
 });
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
+//calling by isAuthenticated() API on the front-end
+// retrieve the user after login
+// to check the qualification of the user to access a page
+app.get('/user', (req, res) => {
+    const userID = req.user.user;
+    userDao.getUserByID(userID)
+        .then((user) => {
+            res.json({
+                userID: user.userID,
+                fullName: user.fullName,
+                username: user.username,
+                accessLevel: user.accessLevel
+            });
+        }).catch(
+            (err) => {
+                res.status(401).json(authErrorObj);
+            }
+        );
+});
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 // set automatc email sending to professors
 dailyMailer.setDailyMail();
