@@ -15,7 +15,7 @@ exports.getBookableLessons = function (studentID){
             if(err){
                 reject();
             }
-            const availableLessons = rows.map((row)=>new LessonData(row.CourseScheduleID, row.CourseId, 
+            const availableLessons = rows.map((row)=>new LessonData(row.CourseScheduleID, row.CourseID, 
                 row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat));
             resolve(availableLessons);
         });
@@ -34,7 +34,8 @@ exports.getBookedLessons = function (studentID){
             if(err){
                 reject();
             }
-            const myLessons = rows.map((row)=>new LessonData(row.CourseScheduleID, row.CourseId, 
+            const myLessons = rows.map((row)=>
+            new LessonData(row.CourseScheduleID, row.CourseID, 
                 row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat));
             resolve(myLessons);
         });
@@ -49,7 +50,7 @@ exports.getStudentCourses = function(studentID){
             if(err){
                 reject();
             }
-            const myCourses = rows.map((row)=>new CourseData(row.CourseId, row.CourseName, 
+            const myCourses = rows.map((row)=>new CourseData(row.CourseID, row.CourseName, 
                 row.TeacherId));
             resolve(myCourses);
         });

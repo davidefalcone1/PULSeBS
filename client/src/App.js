@@ -7,9 +7,6 @@ import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 //import LoginPage from './components/LoginPage';
 import LoginForm from './components/LoginForm'
 import { AuthContext } from './_services/AuthContext';
-import { history } from './_services/history';
-
-
 
 class App extends React.Component {
 
@@ -21,87 +18,16 @@ class App extends React.Component {
       isTeacher: false,
       isStudent: false,
       loginError: false,
-      lessons: [
-        {
-          scheduleId: 0,
-          courseId: 1,
-          startingTime: "2013-02-08 09:30:26",
-          endingTime: "2013-02-08 09:30:26",
-          occupiedSeats: 5,
-          availableSeats: 10
-        },
-      ],
-      myBookedLessons: [
-        {
-          scheduleId: 0,
-          courseId: 1,
-          startingTime: "2013-02-08 09:30:26",
-          endingTime: "2013-02-08 09:30:26",
-          occupiedSeats: 5,
-          availableSeats: 10
-        },
-      ],
-      courses: [
-        {
-          courseId: 1,
-          courseName: "CourseName",
-          teacherId: 1
-        },
-      ],
-      studentsBookings: [
-        {
-          id: 0,
-          scheduleId: 0,
-          studentId: 2,
-          status: "active",
-          attended: "true"
-        },
-      ],
-      studentsInfos: [
-        {
-          id: 0,
-          personId: 2,
-          fullName: "Full Name",
-          email: "mail@mail.com"
-        }
-      ],
+      configurationCompleted: false,
+      lessons: [],
+      myBookedLessons: [],
+      courses: [],
+      studentsBookings: [],
+      studentsInfos: [],
     };
   }
 
   componentDidMount() {
-    var test = 1; //per test --> 1= student, 2=teacher
-    if (test === 1) {
-      API.getStudentCourses().then((courseList) => {
-        this.setState({ courses: courseList });
-      }).catch((errorObj) => { console.log(errorObj); });
-
-      API.getMyBookableLessons().then((bookableLessons) => {
-        this.setState({ lessons: bookableLessons });
-      }).catch((errorObj) => { console.log(errorObj); });
-
-      API.getMyBookedLessons().then((bookedLessons) => {
-        this.setState({ myBookedLessons: bookedLessons });
-      }).catch((errorObj) => { console.log(errorObj); });
-    }
-    else if (test === 2) {
-      API.getTeacherCourses().then((courseList) => {
-        this.setState({ courses: courseList });
-      }).catch((errorObj) => { console.log(errorObj); });
-
-      API.getMyCoursesLessons().then((myCoursesLessons) => {
-        this.setState({ lessons: myCoursesLessons });
-
-        var lessonsIds = myCoursesLessons.map((row) => { return row.scheduleId });
-        API.getBookedStudents(lessonsIds).then((bookingData) => {
-          this.setState({ studentsBookings: bookingData });
-
-          var studentsIds = bookingData.map((row) => { return row.studentId });
-          API.getStudentsData(studentsIds).then((studentsData) => {
-            this.setState({ studentsInfos: studentsData });
-          }).catch((errorObj) => { console.log(errorObj); });
-        }).catch((errorObj) => { console.log(errorObj); });
-      }).catch((errorObj) => { console.log(errorObj); });
-    }
   }
 
   logout = () => {
@@ -114,52 +40,48 @@ class App extends React.Component {
   login = async (username, password) => {
     API.login(username, password)
       .then((user) => {
+        console.log("Login completed " + user);
         this.setState({ user, loginError: false });
-        if (user.accessLevel == 1) {
+        if (user.accessLevel === 1) {
           this.setState({ isTeacher: false, isStudent: true });
         }
-        if (user.accessLevel == 2) {
+        if (user.accessLevel === 2) {
           this.setState({ isTeacher: true, isStudent: false });
         }
         if (this.state.isTeacher) {
-          API.getTeacherCourses(user.id).then((mycourses) => {
-            this.setState({ teacherCourses: mycourses });
-          });
-          // API.getMyCoursesLessons(/*user.personId*/).then((myLessons) =>{
-          //   this.setState({myTeachedCoursesLessons: myLessons});
-          // });
-          // API.getBookedStudent(/*user.personId*/).then((mystudents) =>{
-          //   this.setState({studentsBookedToMyLessons: mystudents});
-          // });
-          // API.getStudentsData(/*user.personId*/).then((mystudetsinfo) =>{
-          //   this.setState({studentsBookedToMyLessons: mystudentsinfo});
-          // });
+          console.log("User is teacher");
+          API.getTeacherCourses().then((courseList) => {
+            this.setState({ courses: courseList });
+    
+            API.getMyCoursesLessons().then((myCoursesLessons) => {
+              this.setState({ lessons: myCoursesLessons });
+      
+              var lessonsIds = myCoursesLessons.map((row) => { return row.scheduleId });
+              API.getBookedStudents(lessonsIds).then((bookingData) => {
+                this.setState({ studentsBookings: bookingData });
+      
+                var studentsIds = bookingData.map((row) => { return row.studentId });
+                API.getStudentsData(studentsIds).then((studentsData) => {
+                  this.setState({ studentsInfos: studentsData, configurationCompleted: true });
+                }).catch((errorObj) => { console.log(errorObj); });
+              }).catch((errorObj) => { console.log(errorObj); });
+            }).catch((errorObj) => { console.log(errorObj); });
+          }).catch((errorObj) => { console.log(errorObj); });
         }
         if (this.state.isStudent) {
-          API.getStudentCourses(user.id).then((mycourses) => {
-            this.setState({ courses: mycourses });
-          });
-          //  API.getMyBookableLessons(/*user.personId*/).then((bookableLessons) =>{
-          //     this.setState({lessons: bookableLessons});
-          //   });
-          //  API.getMyBookedLessons(/*user.personId*/).then((myLessons) =>{
-          //    this.setState({myBookedLessons: myLessons});
-          //   });
-        }
+          console.log("User is student");
+          API.getStudentCourses().then((courseList) => {
+            this.setState({ courses: courseList });
 
-        //IF STUDENT        
-        //fetch from back-end bookable lessons and my booked lessons
-        //1.1 --> fetch my courses (where i am enrolled)
-        //1.2 --> fetch bookable lessons for my courses
-        //1.3 --> fetch booked lessons for my courses
-        //IF PROFESSOR
-        //fetch from back-end data on my lessons and students booked to them
-        //1.1 --> fetch my courses (where i teach)
-        //1.2 --> fetch lessons of my courses
-        //1.3 --> fetch my lessons' booked students id
-        //1.4 --> fetch my lessons' booked students data 
-        //IF SUPPORT MANAGER
-        //fetch from back-end something??? TODO
+            API.getMyBookableLessons().then((bookableLessons) => {
+              this.setState({ lessons: bookableLessons });
+    
+              API.getMyBookedLessons().then((bookedLessons) => {
+                this.setState({ myBookedLessons: bookedLessons, configurationCompleted: true });
+              }).catch((errorObj) => { console.log(errorObj); });
+            }).catch((errorObj) => { console.log(errorObj); });
+          }).catch((errorObj) => { console.log(errorObj); });
+        }
       })
       .catch((e) => {
         console.log(e);
@@ -186,7 +108,7 @@ class App extends React.Component {
   }
 
   updateMyBookedLessonsList = () => {
-    API.getMyBookedLessons(/*user.personId*/).then((myLessons) => {
+    API.getMyBookedLessons().then((myLessons) => {
       this.setState({ myBookedLessons: myLessons });
     })
   }
@@ -199,6 +121,7 @@ class App extends React.Component {
       isTeacher: this.state.isTeacher,
       loginUser: this.login,
       logoutUser: this.logout,
+      configurationCompleted: this.state.configurationCompleted
     }
     return (
       <AuthContext.Provider value={value}>
@@ -206,25 +129,22 @@ class App extends React.Component {
           <Navbar />
           <Switch>
             <Route path='/lessonslist'>
-              <LessonsList lessonsList={this.state.lessons} selectLessonFunction={this.bookLesson} courses={this.state.courses}
-                updateMyBookedLessonsList={this.updateMyBookedLessonsList} isMyLessonsList={false} />
+              {!this.state.user ? <Redirect to='/login'/> : <LessonsList lessonsList={this.state.lessons} selectLessonFunction={this.bookLesson} courses={this.state.courses}
+                updateMyBookedLessonsList={this.updateMyBookedLessonsList} isMyLessonsList={false} />}
             </Route>
             <Route path='/myBookedLessonslist'>
-              <LessonsList lessonsList={this.state.myBookedLessons} selectLessonFunction={this.deleteLesson} courses={this.state.courses}
-                updateMyBookedLessonsList={this.updateMyBookedLessonsList} isMyLessonsList={true} />
+               {!this.state.user ? <Redirect to='/login'/> : <LessonsList lessonsList={this.state.myBookedLessons} selectLessonFunction={this.deleteLesson} courses={this.state.courses}
+                updateMyBookedLessonsList={this.updateMyBookedLessonsList} isMyLessonsList={true} />}
             </Route>
             <Route path='/myCoursesLessonslist'>
-              <MyCoursesLessonsStudents teacherCourses={this.state.courses} myTeachedCoursesLessons={this.state.lessons}
-                studentsBookedToMyLessons={this.state.studentsBookings} myBookedStudentsInfos={this.state.studentsInfos} />
+              {!this.state.user ? <Redirect to='/login'/> : <MyCoursesLessonsStudents teacherCourses={this.state.courses} myTeachedCoursesLessons={this.state.lessons}
+                studentsBookedToMyLessons={this.state.studentsBookings} myBookedStudentsInfos={this.state.studentsInfos} />}
             </Route>
-            {/* <Route path="/ticketdetails">
-            {
-              !this.state.user ? <Redirect to='/login'/> : <TicketDetails tickets={this.state.tickets} differentCounterIds = {this.state.differentCounterIds} 
-                callNextCustomerFunction={API.callNextCustomer} updateTicketList={this.updateTicketList}/>
-            }
-          </Route> */}
             <Route path="/login">
               <LoginForm />
+            </Route>
+            <Route path="/">
+              <Redirect to="/login" />
             </Route>
           </Switch>
         </>
