@@ -64,9 +64,9 @@ class LoginForm extends React.Component {
                                                             <Button variant="primary" type="submit">Login</Button>
                                                         </Form>
 
-                                                        {context.authErr &&
+                                                        {context.loginError &&
                                                             <Alert variant="danger">
-                                                                {context.authErr.msg}
+                                                                {context.loginError}
                                                             </Alert>
                                                         }
                                                     </div>

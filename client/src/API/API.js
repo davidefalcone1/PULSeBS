@@ -234,11 +234,12 @@ async function login(username, password) {
                     resolve(user);
                 });
             }
-            else
-                reject();
+            else {
+                response.json().then(errorObj => reject(errorObj.error));
+            }
         }
         catch (e) {
-            reject();
+            reject(e);
         }
     });
 }

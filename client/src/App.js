@@ -84,7 +84,7 @@ class App extends React.Component {
       })
       .catch((e) => {
         console.log(e);
-        this.setState((state) => { return { ...state, user: null, loginError: true } });
+        this.setState((state) => { return { ...state, user: null, loginError: e } });
       });
   }
 
