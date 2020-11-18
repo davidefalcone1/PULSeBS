@@ -61,6 +61,7 @@ describe("checkPassword", ()=>{
         const user = new User("275330", "john@poltesto.test", "$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S", 1);
         expect(userDao.checkPassword(user, "adminadmin")).toBeTruthy();
     });
+    
     test("password wrong", ()=>{
         const user = new User("275330", "john@poltesto.test", "$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S", 1);
         expect(userDao.checkPassword(user, "adminadmn")).toBeFalsy();

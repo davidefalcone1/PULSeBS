@@ -73,7 +73,7 @@ function getMyBookedLessons() {
                     const list = lessonsJson.map((lesson) => {
                         return LessonsData.fromJson(lesson);
                     });
-                    resolve(list);
+                    resolve(list);                    
                 } else {
                     reject();
                 }
@@ -161,17 +161,17 @@ function getMyCoursesLessons() {
 function getBookedStudents(lessonsIds) { //so the course schedule id
     return new Promise(async function (resolve, reject) {
         fetch('/bookedStudents', {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ lessonsIds: lessonsIds }),
+            body: JSON.stringify({lessonsIds}),
         })
             .then(async (response) => {
                 const bookedStudentsJson = await response.json();
                 if (response.ok) {
-                    const list = bookedStudentsJson.map((course) => {
-                        return BookingData.fromJson(course);
+                        const list = bookedStudentsJson.map((booking) => {
+                        return BookingData.fromJson(booking);
                     });
                     resolve(list);
                 } else {
@@ -183,11 +183,11 @@ function getBookedStudents(lessonsIds) { //so the course schedule id
 function getStudentsData(studentsIds) { //REMEMBER TO SEND A LIST, from bookedStudent create a list with the studentsIds
     return new Promise(async function (resolve, reject) {
         fetch('/studentsData', {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ studentsIds: studentsIds }),
+            body: JSON.stringify({ studentsIds }),
         })
             .then(async (response) => {
                 const studentsJson = await response.json();
@@ -231,6 +231,8 @@ async function login(username, password) {
             //const user = await response.json().then(handleResponse);
             if (response.ok) {
                 response.json().then((user) => {
+                    console.log("HERE");
+                    console.log(user);
                     resolve(user);
                 });
             }
@@ -266,7 +268,7 @@ async function logout() {
 
 
 const API = {
-    login, getStudentCourses, getMyBookableLessons, getMyBookedLessons, getMyCoursesLessons, bookLesson,
+    login, logout, getStudentCourses, getMyBookableLessons, getMyBookedLessons, getMyCoursesLessons, bookLesson,
     deleteBooking, getTeacherCourses, getBookedStudents, getStudentsData, isAuthenticated
 };
 export default API;

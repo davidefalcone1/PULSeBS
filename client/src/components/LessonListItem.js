@@ -3,8 +3,6 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 
 const lessonListItem = (props) => {
-    console.log(props.lesson);
-    console.log(props.coursesList);
   return (
     <ListGroup.Item id = {"lesson-" + props.lesson.id}>
         <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
@@ -24,6 +22,8 @@ const lessonListItem = (props) => {
 }
 
 function CourseField(props){
+    console.log(props.courseId);
+    console.log(props.coursesList);
     return(
         <div className="col-sm-4">
             {props.coursesList.map((course) => 
@@ -41,7 +41,7 @@ function StartingTimeField(props){
     return(
         <div className="col-sm-2">
             <p id={"startingTimeOfLesson" + props.id}>
-                {props.startingTime}
+                {props.startingTime.format("ddd DD-MM-YYYY").toString()}
             </p>
         </div>
     );
@@ -51,7 +51,7 @@ function EndingTimeField(props){
     return(
         <div className="col-sm-2">
             <p id={"endingTimeOfLesson" + props.id}>
-                {props.endingTime}
+                {props.endingTime.format("ddd DD-MM-YYYY").toString()}
             </p>
         </div>
     );
