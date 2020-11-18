@@ -3,6 +3,8 @@ import LessonListItem from './LessonListItem';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button'
+import { Redirect } from 'react-router-dom';
+import { AuthContext } from '../_services/AuthContext'
 
 const lessonsList = (props) => {
   return(
@@ -25,26 +27,29 @@ class LessonListPageRender extends React.Component {
 
   render(){
     return(
-      <>        
-        {this.props.lessonsList && 
-          <ListGroup as="ul" variant="flush">
-              <ListHeader />
-              {this.props.lessonsList.map((lesson) => 
+      <AuthContext.Consumer>
+        {(context) => (
+          <>        
+            {context.user && this.props.lessonsList && 
+              <ListGroup as="ul" variant="flush">
+                <ListHeader />
+                {this.props.lessonsList.map((lesson) => 
                   <LessonListItem key = {lesson.scheduleId} lesson = {lesson}
                     updateSelectionMessage = {this.updateSelectionMessage}
                     updateLessonSelectedState = {this.updateLessonSelectedState}
                     selectLessonFunction = {this.props.selectLessonFunction}
                     isMyLessonsList={this.props.isMyLessonsList}
                     coursesList={this.props.coursesList}/>
-                    )
-              }
-          </ListGroup>
-        }
-
-        {!this.props.lessonsList &&
-          <NoItemsImage/>
-        }
-      </>
+                )}
+              </ListGroup>
+            }
+            {context.user && !this.props.lessonsList &&
+              <NoItemsImage/>
+            }
+            {!context.user && <Redirect to="/login"/>}
+          </>
+        )}
+      </AuthContext.Consumer>
     )
   }
 }

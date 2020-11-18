@@ -10,7 +10,6 @@ class LoginPage extends React.Component {
 
         // redirect to home if already logged in
         if (authenticationService.currentUserValue) { 
-            this.props.history.push('/');
         }
     }
 
@@ -39,7 +38,7 @@ class LoginPage extends React.Component {
                             .then(
                                 user => {
                                     const { from } = this.props.location.state || { from: { pathname: "/" } };
-                                    this.props.history.push(from);
+                                    // this.props.history.push(from);
                                 },
                                 error => {
                                     setSubmitting(false);

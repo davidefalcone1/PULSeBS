@@ -31,9 +31,9 @@ const navbar = (props) => {
                                 <Navbar.Brand>
                                     Welcome {context.user.fullname ? context.user.fullname : context.user.name}!
                                 </Navbar.Brand> 
-                                {/* <Nav.Link onClick = {() => {
+                                <Nav.Link onClick = {() => {
                                     context.logoutUser();
-                                }}>Logout</Nav.Link> */}
+                                }}>Logout</Nav.Link>
                             </>}
                         {!context.user && <Nav.Link as = {NavLink} to = "/login">Login</Nav.Link>}
                     </Nav>

@@ -32,8 +32,7 @@ class App extends React.Component {
 
   logout = () => {
     API.logout().then(() => {
-      this.setState({ user: undefined, loginError: undefined });
-      this.props.history.push('/login');
+      this.setState({ user: null, loginError: null, configurationCompleted: false });
     });
   }
 
@@ -104,7 +103,7 @@ class App extends React.Component {
   deleteLesson = (lessonId) => {
     API.deleteBooking(lessonId).then(() => {
       console.log("Lesson deleted.");
-      
+
       API.getMyBookableLessons().then((bookableLessons) => {
         this.setState({ lessons: bookableLessons });
       }).catch((errorObj) => { console.log(errorObj); });
