@@ -17,3 +17,19 @@ body{
     min-width: min-content;
     margin: 0 auto;
 }
+
+#form{
+    padding-top: 50px;
+}
+
+#form-title{
+    font-style: normal;
+}
+
+
+input:required:focus:invalid{
+    box-shadow: 0 0 8px rgb(202, 15, 15);
+}
+input:required:valid{
+    border-color: black;
+}

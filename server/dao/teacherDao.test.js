@@ -1,10 +1,8 @@
 "use strict";
-/* I used setTimeout() because test start to run before DB initialization ends.
-    Another solution is to substitute sqlite3 node module with sqlite node module,
-    since the latter supports await/async mechanisms */
+
 jest.setMock("../db", require("../db.mock"));
 const db = require("../db");
-const bookingDao = require('./bookingDao');
+const teacherDao = require('./teacherDao');
 
 function initDB() {
     //Insert student
@@ -31,12 +29,7 @@ function initDB() {
         if(err)
             console.log(err);
     });
-    // Insert booking
-    sql = "INSERT INTO Booking(CourseScheduleID, StudentID, BookStatus, Attended) VALUES(1, '275330', 1, 0)";
-    db.run((sql), function (err){
-        if(err)
-            console.log(err);
-    });
+   
 }
 
 function cleanDB(){
@@ -67,44 +60,41 @@ function cleanDB(){
     });
 }
 
-describe("deleteBooking", ()=>{
-    beforeEach(async()=>{
-        initDB();
-    });
-    afterEach(async ()=>{
-        cleanDB();
-    });
-    test("booking exists", ()=>{
-        setTimeout(1000, ()=>{
-            expect.assertions(1);
-            return bookingDao.deleteBooking(1, '275330').then((result)=>expect(result).toBeNull());
-        });
-    });
-    test("booking does not exist", async()=>{
-        setTimeout(1000, ()=>{
-            expect.assertions(1);
-            expect(bookingDao.deleteBooking(454, '275330')).rejects.toEqual('NO BOOKING');
-        });
-    });
-});
+function insertBooking(){
+     // Insert booking
+     const sql = "INSERT INTO Booking(CourseScheduleID, StudentID, BookStatus, Attended) VALUES(1, '275330', 1, 0)";
+     db.run((sql), function (err){
+         if(err)
+             console.log(err);
+     });
+}
 
-describe("bookLesson", ()=>{
-    beforeEach(async()=>{
+describe("getBookedStudents", ()=>{
+    beforeAll(async()=>{
         initDB();
     });
-    afterEach(async ()=>{
+    afterAll(async ()=>{
         cleanDB();
     });
-    test("the lesson exists and can be booked", ()=>{
+    test("No students booked", ()=>{
         setTimeout(1000, ()=>{
             expect.assertions(1);
-            return bookingDao.bookLesson(275330,1).then((result)=>expect(result).toEqual('Success'));
+            return teacherDao.getBookedStudents([1])
+                .then((bookedStudents)=>expect(bookedStudents).toHaveLength(0));
         });
     });
-    test("the lesson does not exist and can't be booked", ()=>{
-        setTimeout(1000, async()=>{
+    test("One student is booked", ()=>{
+        insertBooking();
+        setTimeout(1000, ()=>{
             expect.assertions(1);
-            await expect(bookingDao.bookLesson(275330,454)).rejects.toEqual('Error');
+            return teacherDao.getBookedStudents([1])
+                .then((bookedStudents)=>expect(bookedStudents[0]).toEqual({
+                    BookID:1,
+                    CourseScheduleID:1,
+                    StudentID:1,
+                    BookStatus:1,
+                    Attended:1
+                }));
         });
     });
 });

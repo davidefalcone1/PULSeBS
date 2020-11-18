@@ -190,11 +190,34 @@ app.get('/studentsData', async (req, res) => {
         res.status(400).json(err.message);
     }
 });
-app.post('/bookLesson', async(req, res)=>{
-    try{
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//calling by isAuthenticated() API on the front-end
+// retrieve the user after login
+// to check the qualification of the user to access a page
+app.get('/user', (req, res) => {
+    const userID = req.user.user;
+    userDao.getUserByID(userID)
+        .then((user) => {
+            res.json({
+                userID: user.userID,
+                fullName: user.fullName,
+                username: user.username,
+                accessLevel: user.accessLevel
+            });
+        }).catch(
+            (err) => {
+                res.status(401).json(authErrorObj);
+            }
+        );
+});
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+app.post('/bookLesson', async (req, res) => {
+    try {
         const result = await bookingDao.bookLesson(req.user.user, req.body.lessonId);
         res.end();
-    }catch(e){
+    } catch (e) {
         res.status(505).end();
     }
 });
@@ -203,7 +226,9 @@ app.post('/logout', (req, res) => {
     res.clearCookie('token').end();
 });
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
+// set automatc email sending to professors
+dailyMailer.setDailyMail();
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
