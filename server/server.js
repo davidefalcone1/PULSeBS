@@ -51,7 +51,7 @@ app.post('/users/authenticate', async (req, res) => {
                 // AUTHENTICATION SUCCESS
                 const token = jsonwebtoken.sign({ user: user.userID }, jwtSecret, { expiresIn: expireTime });
                 res.cookie('token', token, { httpOnly: true, sameSite: true, maxAge: 1000 * expireTime });
-                res.status(200).json({ id: user.userID, name: user.username, accessLevel: user.accessLevel });
+                res.status(200).json({ id: user.userID, username: user.username, fullname: user.fullName, accessLevel: user.accessLevel });
             }
         }
 
@@ -157,12 +157,12 @@ app.get('/myCoursesLessons', async (req, res) => {
 
 /**
 * Get a list of booked student for the given lessonsIds/CourseScheduleIDs
-* @route       GET /bookedStudents
+* @route       POST /bookedStudents
 * @param       lessonsIds (CourseScheduleIDs)
 * @access      Private
 * @returns     BookingData(id, scheduleId, studentId, status, attended)
 */
-app.get('/bookedStudents', async (req, res) => {
+app.post('/bookedStudents', async (req, res) => {
     const CourseScheduleIDs = req.body.lessonsIds;
     try {
         const result = await teacherDao.getBookedStudents(CourseScheduleIDs);
@@ -175,12 +175,12 @@ app.get('/bookedStudents', async (req, res) => {
 
 /**
 * Get a list of student for the given studentsIds
-* @route       GET /studentsData
+* @route       POST /studentsData
 * @param       studentsIds
 * @access      Private
 * @returns     UserData(id, personId, fullName, email)
 */
-app.get('/studentsData', async (req, res) => {
+app.post('/studentsData', async (req, res) => {
     const studentsIds = req.body.studentsIds;
     try {
         const result = await teacherDao.getStudentsData(studentsIds);
