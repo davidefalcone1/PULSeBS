@@ -6,6 +6,7 @@ const userDao = require('./dao/userDao');
 const jwt = require('express-jwt');
 const jsonwebtoken = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const moment = require('moment');
 const emailAPI = require('./emailAPI');
 const bookingDao = require('./dao/bookingDao');
 const dailyMailer = require('./dailyMailer');
@@ -207,24 +208,38 @@ app.get('/user', (req, res) => {
             });
         }).catch(
             (err) => {
-                res.status(401).json(authErrorObj);
+                res.status(401).json({ error: 'Server error: ' + err });
             }
         );
 });
-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.post('/bookLesson', async (req, res) => {
     try {
-        const result = await bookingDao.bookLesson(req.user.user, req.body.lessonId);
-        res.end();
-    } catch (e) {
-        res.status(505).end();
+        const userID = req.user.user;
+        const lectureID = req.body.lessonId;
+        let result = await bookingDao.bookLesson(userID, lectureID);
+        const user = await userDao.getUserByID(userID);
+        const lectureData = await bookingDao.getLectureDataById(lectureID);
+        const email = user.username;
+        const info = {
+            notificationType: 1,
+            course: lectureData.CourseName,
+            date: moment(lectureData.TimeStart).format('MM/DD/YYYY'),
+            start: moment(lectureData.TimeStart).format('HH:mm'),
+            end: moment(lectureData.TimeEnd).format('HH:mm')
+        }
+        result = await emailAPI.sendNotification(email, info);
+        res.status(200).end();
+    } catch (err) {
+        res.status(505).json({ error: 'Server error: ' + err });
     }
 });
 
 app.post('/logout', (req, res) => {
     res.clearCookie('token').end();
 });
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 // set automatc email sending to professors
 dailyMailer.setDailyMail();

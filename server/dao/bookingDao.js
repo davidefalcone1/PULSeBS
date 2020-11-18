@@ -98,3 +98,27 @@ exports.deleteBooking = (lessonID, studentID) => {
         });
     });
 }
+
+exports.getLectureDataById = (lectureID) => {
+
+    return new Promise ((resolve, reject) => {
+
+        if (!lectureID){
+            reject('Missing data');
+        }
+        else {
+            const sql = `SELECT CS.TimeStart, CS.TimeEnd, C.CourseName 
+                         FROM CourseSchedule CS, Course C 
+                         WHERE CS.CourseScheduleID = ? AND   
+                               CS.CourseID = C.CourseID`;
+            db.get(sql, [lectureID], (err, row) => {
+                if(err){
+                    reject (err);
+                }
+                else {
+                    resolve(row);
+                }     
+            });
+        }
+    });
+}
