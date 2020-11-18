@@ -86,7 +86,7 @@ app.delete('/deleteBooking/:bookingID', (req, res) => {
 });
 
 app.get('/studentCourses', async (req, res) => {
-    try{
+    try {
         const result = await bookingDao.getStudentCourses(req.user.user);
         res.json(result);
     } catch (e) {
@@ -96,7 +96,7 @@ app.get('/studentCourses', async (req, res) => {
 
 // API for getting bookable lectures for a given student
 app.get('/myBookableLessons', async (req, res) => {
-    try{
+    try {
         const result = await bookingDao.getBookableLessons(req.user.user);
         res.json(result);
     }
@@ -106,8 +106,8 @@ app.get('/myBookableLessons', async (req, res) => {
 });
 
 // API for retrieving lessons booked by a student
-app.get('/myBookedLessons', async(req, res)=>{
-    try{
+app.get('/myBookedLessons', async (req, res) => {
+    try {
         const result = await bookingDao.getBookedLessons(req.user.user);
         res.json(result);
     }
@@ -155,11 +155,11 @@ app.get('/myCoursesLessons', async (req, res) => {
     }
 });
 
-app.post('/bookLesson', async(req, res)=>{
-    try{
+app.post('/bookLesson', async (req, res) => {
+    try {
         const result = await bookingDao.bookLesson(req.user.user, req.body.lessonId);
         res.end();
-    }catch(e){
+    } catch (e) {
         res.status(505).end();
     }
 });
@@ -169,6 +169,30 @@ app.post('/logout', (req, res) => {
 });
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
+//calling by isAuthenticated() API on the front-end
+// retrieve the user after login
+// to check the qualification of the user to access a page
+app.get('/user', (req, res) => {
+    const userID = req.user.user;
+    userDao.getUserByID(userID)
+        .then((user) => {
+            res.json({
+                userID: user.userID,
+                fullName: user.fullName,
+                username: user.username,
+                accessLevel: user.accessLevel
+            });
+        }).catch(
+            (err) => {
+                res.status(401).json(authErrorObj);
+            }
+        );
+});
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// set automatc email sending to professors
+dailyMailer.setDailyMail();
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
