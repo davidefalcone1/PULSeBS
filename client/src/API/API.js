@@ -65,7 +65,7 @@ async function bookLesson(lessonId) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ "lessonId": lessonId, "studentId": studentId}),
+            body: JSON.stringify({ "lessonId": lessonId }),
         }).then(async (response) => {
             if (response.ok) {
                 resolve(`Your lesson has been correctly booked.`);
