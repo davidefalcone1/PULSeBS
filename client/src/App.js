@@ -57,7 +57,7 @@ class App extends React.Component {
           email: "mail@mail.com"
         }
       ],
-    };ticketdetails
+    };
   }
 
   componentDidMount() {
@@ -65,20 +65,20 @@ class App extends React.Component {
     if(test === 1 ){
       API.getStudentCourses().then((courseList) => {
         this.setState({courses: courseList});
-      }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+      }).catch((errorObj) => { console.log(errorObj); });
 
       API.getMyBookableLessons().then((bookableLessons) => {
         this.setState({lessons: bookableLessons});
-      }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+      }).catch((errorObj) => { console.log(errorObj); });
 
       API.getMyBookedLessons().then((bookedLessons) => {
         this.setState({myBookedLessons: bookedLessons});
-      }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+      }).catch((errorObj) => { console.log(errorObj); });
     }
     else if(test === 2){
       API.getTeacherCourses().then((courseList) => {
         this.setState({courses: courseList});
-      }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+      }).catch((errorObj) => { console.log(errorObj); });
 
       API.getMyCoursesLessons().then((myCoursesLessons) => {
         this.setState({lessons: myCoursesLessons});
@@ -90,9 +90,9 @@ class App extends React.Component {
           var studentsIds = bookingData.map((row) => { return row.studentId });
           API.getStudentsData(studentsIds).then((studentsData) => {
             this.setState({studentsInfos: studentsData});
-          }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });;
-        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
-      }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+          }).catch((errorObj) => { console.log(errorObj); });
+        }).catch((errorObj) => { console.log(errorObj); });
+      }).catch((errorObj) => { console.log(errorObj); });
     }
   }
   
