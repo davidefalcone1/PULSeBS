@@ -10,7 +10,7 @@ exports.getBookableLessons = function (studentID) {
             "FROM CourseSchedule CS, StudentCourse SC " +
             "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
             "AND TimeStart > TIME() AND CS.CourseType=1 AND CS.CourseScheduleID NOT IN (" +
-            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=?)"
+            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=? AND BookStatus = 1)"
         db.all(sql, [studentID, studentID], function (err, rows) {
             if (err) {
                 reject();
@@ -59,10 +59,24 @@ exports.getStudentCourses = function (studentID) {
 
 exports.bookLesson = function (studentID, lessonID) {
     return new Promise((resolve, reject) => {
-        const sql = "INSERT INTO Booking(CourseScheduleID, StudentID, BookStatus, attended) VALUES(?, ?, 1, 0)";
+        let sql = "INSERT INTO Booking(CourseScheduleID, StudentID, BookStatus, attended) VALUES(?, ?, 1, 0)";
         db.run(sql, [lessonID, studentID], function (err, row) {
-            if (err)
+            if (err) {
                 reject('Error');
+            }
+            else {
+                sql = `UPDATE CourseSchedule 
+                            SET OccupiedSeat = OccupiedSeat + 1
+                            WHERE CourseScheduleID = ?`;
+                db.run(sql, [lessonID], (err) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        resolve(null);
+                    }
+                })
+            }
             resolve('Success');
         })
     });
@@ -97,5 +111,29 @@ exports.deleteBooking = (lessonID, studentID) => {
 
             }
         });
+    });
+}
+
+exports.getLectureDataById = (lectureID) => {
+
+    return new Promise((resolve, reject) => {
+
+        if (!lectureID) {
+            reject('Missing data');
+        }
+        else {
+            const sql = `SELECT CS.TimeStart, CS.TimeEnd, C.CourseName 
+                         FROM CourseSchedule CS, Course C 
+                         WHERE CS.CourseScheduleID = ? AND   
+                               CS.CourseID = C.CourseID`;
+            db.get(sql, [lectureID], (err, row) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(row);
+                }
+            });
+        }
     });
 }

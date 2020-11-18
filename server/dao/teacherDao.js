@@ -46,7 +46,7 @@ exports.getBookedStudents = function (CourseScheduleIDs) {
             `SELECT Booking.BookID,Booking.CourseScheduleID,Booking.StudentID,Booking.BookStatus,Booking.Attended 
         FROM CourseSchedule JOIN Booking
         ON CourseSchedule.CourseScheduleID = Booking.CourseScheduleID
-        WHERE CourseSchedule.CourseScheduleID IN (${CourseScheduleIDs.map(i => '?')})`;
+        WHERE CourseSchedule.CourseScheduleID IN (${CourseScheduleIDs.map(i => '?')}) AND Booking.BookStatus = 1`;
 
         db.all(sql, [...CourseScheduleIDs], function (err, rows) {
             if (err) {

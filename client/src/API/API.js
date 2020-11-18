@@ -102,9 +102,9 @@ async function bookLesson(lessonId) {
         }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
-async function deleteBooking(bookingId) {
+async function deleteBooking(lessonId) {
     return new Promise((resolve, reject) => {
-        fetch("/deleteBooking/" + bookingId, {
+        fetch("/deleteBooking/" + lessonId, {
             method: 'DELETE'
         }).then((response) => {
             if (response.ok) {
@@ -231,8 +231,6 @@ async function login(username, password) {
             //const user = await response.json().then(handleResponse);
             if (response.ok) {
                 response.json().then((user) => {
-                    console.log("HERE");
-                    console.log(user);
                     resolve(user);
                 });
             }

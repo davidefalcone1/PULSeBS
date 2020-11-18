@@ -1,5 +1,5 @@
 class User{    
-    constructor(userID,fullName, username, passwordHash, accessLevel) {
+    constructor(userID, fullName, username, passwordHash, accessLevel) {
         
         this.userID = userID;
         this.fullName = fullName;

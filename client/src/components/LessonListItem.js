@@ -11,9 +11,6 @@ const lessonListItem = (props) => {
                 <EndingTimeField id = {props.lesson.scheduleId} endingTime = {props.lesson.endingTime}/>
                 <BookingStatusField id = {props.lesson.scheduleId} occupiedSeats = {props.lesson.occupiedSeats} availableSeats = {props.lesson.availableSeats}/>
                 <SelectField id = {props.lesson.scheduleId} selectLessonFunction = {props.selectLessonFunction}
-                    updateSelectionMessage = {props.updateSelectionMessage}
-                    updateLessonSelectedState = {props.updateLessonSelectedState}
-                    updateMyBookedLessonsList = {props.updateMyBookedLessonsList}
                     isMyLessonsList={props.isMyLessonsList}
                 />
         </div>
@@ -22,8 +19,6 @@ const lessonListItem = (props) => {
 }
 
 function CourseField(props){
-    console.log(props.courseId);
-    console.log(props.coursesList);
     return(
         <div className="col-sm-4">
             {props.coursesList.map((course) => 
@@ -74,23 +69,17 @@ function SelectField(props){
                 <div className="col-sm-2">
                     <Button variant="info" onClick={(event) => {
                         event.preventDefault();
-                        props.selectLessonFunction(props.id).then((resultString) => {
-                            props.updateSelectionMessage(resultString);
-                            props.updateMyBookedLessonsList();
-                        });               
-                        props.updateLessonSelectedState(true);
+                        props.selectLessonFunction(props.id);  
                     }} id={"selectFieldOfLesson" + props.id}>
                         SELECT
                     </Button>
                 </div>
             }
-            {props.isMyLessonsList && 
+            {props.isMyLessonsList &&
                 <div className="col-sm-2">
                     <Button variant="danger" onClick={(event) => {
                         event.preventDefault();
-                        props.selectLessonFunction(props.id).then(() => {
-                            props.updateMyBookedLessonsList();
-                        });               
+                        props.selectLessonFunction(props.id);               
                     }} id={"deleteFieldOfLesson" + props.id}>
                         DELETE
                     </Button>
