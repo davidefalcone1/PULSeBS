@@ -108,7 +108,7 @@ class App extends React.Component {
       // });
     }
     if(this.state.isStudent){
-      API.getStudentCourses(/*user.personId*/).then((mycourses) =>{
+      API.getStudentCourses(user.id).then((mycourses) =>{
         this.setState({courses: mycourses});
       });
     //  API.getMyBookableLessons(/*user.personId*/).then((bookableLessons) =>{

@@ -61,8 +61,8 @@ exports.bookLesson = function(studentID, lessonID){
         const sql = "INSERT INTO Booking(CourseScheduleID, StudentID, BookStatus, attended) VALUES(?, ?, 1, 0)";
         db.run(sql, [lessonID, studentID], function (err, row) {
             if(err)
-                reject(err);
-            resolve();
+                reject('Error');
+            resolve('Success');
         })
     });
 }
