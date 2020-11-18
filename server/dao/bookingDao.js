@@ -10,7 +10,7 @@ exports.getBookableLessons = function (studentID) {
             "FROM CourseSchedule CS, StudentCourse SC " +
             "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
             "AND TimeStart > TIME() AND CS.CourseType=1 AND CS.CourseScheduleID NOT IN (" +
-            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=?)"
+            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=? AND BookStatus = 1)"
         db.all(sql, [studentID, studentID], function (err, rows) {
             if (err) {
                 reject();
