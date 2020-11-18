@@ -37,8 +37,8 @@ class LoginForm extends React.Component {
                             <div className="card">
                                 <article className="card-group-item">
                                     <header className="card-header">
-                                        <h5 className="title"><em>Insert your credentials </em></h5>
-                                    </header>   
+                                        <h5 className="title"><em id ='form-title'>Insert your credentials </em></h5>
+                                    </header>  
                                     <div className="filter-content">
                                         <div className="card-body">
                                             <div className="table-responsive">
@@ -46,12 +46,16 @@ class LoginForm extends React.Component {
                                                 <Form method="POST" onSubmit={(event) => this.handleSubmit(event, context.loginUser)}>
                                                     <Form.Group controlId="username">
                                                         <Form.Label>E-mail</Form.Label>
-                                                        <Form.Control type="email" name="email" placeholder="E-mail" value={this.state.username} onChange={(ev) => this.onChangeUsername(ev)} required autoFocus />
+                                                        <Form.Control className="inputEmail" type="email" name="email" placeholder="E-mail" value={this.state.username} onChange={(ev) => this.onChangeUsername(ev)} required autoFocus />
+                                                        <small class="form-text text-muted">Email is required</small>
                                                     </Form.Group>
+
+
 
                                                     <Form.Group controlId="password">
                                                         <Form.Label>Password</Form.Label>
                                                         <Form.Control type="password" name="password" placeholder="Password" value={this.state.password} onChange={(ev) => this.onChangePassword(ev)} required />
+                                                        <small class="form-text text-muted">Password is required</small>
                                                     </Form.Group>
 
                                                     <Button variant="primary" type="submit">Login</Button>
