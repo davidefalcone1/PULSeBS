@@ -2,9 +2,7 @@
 
 const express = require("express");//import express
 const morgan = require("morgan"); // logging middleware
-const dao = require("./dao/dao");
 const userDao = require('./dao/userDao');
-const lessonsDao = require('./dao/lessonDao');
 const jwt = require('express-jwt');
 const jsonwebtoken = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
@@ -22,7 +20,7 @@ const port = 3001;
 
 app.use(morgan("tiny"));// Set-up logging
 app.use(express.json());// Process body content
-
+app.use(cookieParser());
 
 app.get('/', (req, res) => {
     res.send('Hello SoftENG members!');
@@ -79,7 +77,6 @@ app.use(
 );
 
 //PLACE HERE ALL APIs THAT REQUIRE AUTHENTICATION
-
 // DELETE A BOOKING 
 app.delete('/deleteBooking/:bookingID', (req, res) => {
     const bookingID = req.params.bookingID;
@@ -88,10 +85,9 @@ app.delete('/deleteBooking/:bookingID', (req, res) => {
         .catch((err) => res.status(500).json({ error: 'Server error: ' + err }));
 });
 
-
 app.get('/studentCourses', async (req, res) => {
-    try {
-        const result = await lessonsDao.getStudentCourses(req.user);
+    try{
+        const result = await bookingDao.getStudentCourses(req.user.user);
         res.json(result);
     } catch (e) {
         res.status(505).end();
@@ -100,8 +96,8 @@ app.get('/studentCourses', async (req, res) => {
 
 // API for getting bookable lectures for a given student
 app.get('/myBookableLessons', async (req, res) => {
-    try {
-        const result = await lessonsDao.getBookableLessons(req.user);
+    try{
+        const result = await bookingDao.getBookableLessons(req.user.user);
         res.json(result);
     }
     catch (e) {
@@ -110,9 +106,9 @@ app.get('/myBookableLessons', async (req, res) => {
 });
 
 // API for retrieving lessons booked by a student
-app.get('/myBookedLessons', async (req, res) => {
-    try {
-        const result = await lessonsDao.getBookedLessons(req.user);
+app.get('/myBookedLessons', async(req, res)=>{
+    try{
+        const result = await bookingDao.getBookedLessons(req.user.user);
         res.json(result);
     }
     catch (e) {
@@ -159,47 +155,20 @@ app.get('/myCoursesLessons', async (req, res) => {
     }
 });
 
-/**
-* Get a list of booked student for the given lessonsIds/CourseScheduleIDs
-* @route       GET /bookedStudents
-* @param       lessonsIds (CourseScheduleIDs)
-* @access      Private
-* @returns     BookingData(id, scheduleId, studentId, status, attended)
-*/
-app.get('/bookedStudents', async (req, res) => {
-    const CourseScheduleIDs = req.body.lessonsIds;
-    try {
-        const result = await teacherDao.getBookedStudents(CourseScheduleIDs);
-        res.status(200).json(result);
-    }
-    catch (err) {
-        res.status(400).json(err.message);
+app.post('/bookLesson', async(req, res)=>{
+    try{
+        const result = await bookingDao.bookLesson(req.user.user, req.body.lessonId);
+        res.end();
+    }catch(e){
+        res.status(505).end();
     }
 });
 
-/**
-* Get a list of student for the given studentsIds
-* @route       GET /studentsData
-* @param       studentsIds
-* @access      Private
-* @returns     UserData(id, personId, fullName, email)
-*/
-app.get('/studentsData', async (req, res) => {
-    const studentsIds = req.body.studentsIds;
-    try {
-        const result = await teacherDao.getStudentsData(studentsIds);
-        res.status(200).json(result);
-    }
-    catch (err) {
-        res.status(400).json(err.message);
-    }
+app.post('/logout', (req, res) => {
+    res.clearCookie('token').end();
 });
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-
-// set automatc email sending to professors
-dailyMailer.setDailyMail();
-
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
