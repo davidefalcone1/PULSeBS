@@ -88,7 +88,7 @@ function CourseHeader(props) {
 function LessonHeader(props) {
   return(
     <div className="d-flex w-100 pt-3 justify-content-between no-gutters" id = {"lesson-" + props.startingTime + "----" + props.endingTime}>
-      <h6>Lezione del {props.startingTime.format("ddd DD-MM-YYYY").toString()} -- {props.endingTime.format("ddd DD-MM-YYYY").toString()}</h6>
+      <h6>Lezione del {props.startingTime.format("ddd DD-MM-YYYY HH:mm").toString()} -- {props.endingTime.format("ddd DD-MM-YYYY HH:mm").toString()}</h6>
     </div>
   );
 }

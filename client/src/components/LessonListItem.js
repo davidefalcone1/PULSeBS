@@ -36,7 +36,7 @@ function StartingTimeField(props){
     return(
         <div className="col-sm-2">
             <p id={"startingTimeOfLesson" + props.id}>
-                {props.startingTime.format("ddd DD-MM-YYYY").toString()}
+                {props.startingTime.format("ddd DD-MM-YYYY HH:mm").toString()}
             </p>
         </div>
     );
@@ -46,7 +46,7 @@ function EndingTimeField(props){
     return(
         <div className="col-sm-2">
             <p id={"endingTimeOfLesson" + props.id}>
-                {props.endingTime.format("ddd DD-MM-YYYY").toString()}
+                {props.endingTime.format("ddd DD-MM-YYYY HH:mm").toString()}
             </p>
         </div>
     );
