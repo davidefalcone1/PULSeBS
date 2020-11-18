@@ -2,6 +2,7 @@
 const db = require('../db');
 const LessonData = require('./LessonsData.js');
 const CourseData = require('./CourseData.js');
+const moment = require('moment');
 
 exports.getBookableLessons = function (studentID) {
     return new Promise((resolve, reject) => {
@@ -9,13 +10,14 @@ exports.getBookableLessons = function (studentID) {
             "SELECT CS.CourseScheduleID, CS.CourseId, Classroom, OccupiedSeat, MaxSeat, TimeStart, TimeEnd " +
             "FROM CourseSchedule CS, StudentCourse SC " +
             "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
-            "AND TimeStart > TIME() AND CS.CourseType=1 AND CS.CourseScheduleID NOT IN (" +
-            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=? AND BookStatus = 1)"
+            "AND CS.CourseType=1 AND CS.CourseScheduleID NOT IN (" +
+            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=? AND BookStatus = 1)";
         db.all(sql, [studentID, studentID], function (err, rows) {
             if (err) {
                 reject();
             }
-            const availableLessons = rows.map((row) => new LessonData(row.CourseScheduleID, row.CourseID,
+            const availableLessons = rows.filter(row => checkStart(row.TimeStart))
+            .map((row) => new LessonData(row.CourseScheduleID, row.CourseID,
                 row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat));
             resolve(availableLessons);
         });
@@ -28,13 +30,14 @@ exports.getBookedLessons = function (studentID) {
             "SELECT CS.CourseScheduleID, CS.CourseId, Classroom, OccupiedSeat, MaxSeat, TimeStart, TimeEnd " +
             "FROM CourseSchedule CS, StudentCourse SC " +
             "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
-            "AND TimeStart > TIME() AND CS.CourseType=1 AND CS.CourseScheduleID IN (" +
+            "AND CS.CourseType=1 AND CS.CourseScheduleID IN (" +
             "SELECT CourseScheduleID FROM Booking WHERE StudentID=?)"
         db.all(sql, [studentID, studentID], function (err, rows) {
             if (err) {
                 reject();
             }
-            const myLessons = rows.map((row) =>
+            const myLessons = rows.filter(row => checkStart(row.TimeStart))
+            .map((row) =>
                 new LessonData(row.CourseScheduleID, row.CourseID,
                     row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat));
             resolve(myLessons);
@@ -136,4 +139,9 @@ exports.getLectureDataById = (lectureID) => {
             });
         }
     });
+}
+
+const checkStart = (startDate) => {
+    const now = moment();
+    return moment(startDate).isAfter(now);
 }
