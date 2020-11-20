@@ -15,6 +15,7 @@ const lessonsList = (props) => {
   return(
     <LessonListPageRender coursesList={props.courses}
         lessonsList={props.lessonsList}
+        waitingBookings={props.waitingBookings}
         selectLessonFunction={props.selectLessonFunction}
         updateMyBookedLessonsList={props.updateMyBookedLessonsList}/>
   );
@@ -86,7 +87,7 @@ class LessonListPageRender extends React.Component {
       <AuthContext.Consumer>
         {(context) => (
           <>        
-            {context.user && this.props.lessonsList && 
+            {context.user && (this.props.lessonsList || this.props.waitingBookings )&& 
             <div style={{padding: "15px"}}>
               <h5>Filter your lessons!</h5>
               <Form method="POST" action="" id="lessonFilterForm" onSubmit={(ev) => {
@@ -126,33 +127,94 @@ class LessonListPageRender extends React.Component {
                     
               <br/>
               <Accordion>
-                {this.props.coursesList.map((course) => //per ogni mio corso
-                  (this.isCourseSelected(course.courseName)) &&
+                {this.props.lessonsList &&
                   <Card>
                     <Card.Header>
-                      <Accordion.Toggle as={Button} variant="link" eventKey = {"course-" + course.courseName}>
-                        <CourseHeader course = {course.courseName}/>
+                      <Accordion.Toggle as={Button} variant="link" eventKey = {"bookedLessons"}>
+                        <div className="d-flex w-100 pt-3 justify-content-between no-gutters" id = {"bookedLessons"}>
+                            <h3>Booked Lessons</h3>
+                        </div>
                       </Accordion.Toggle>
                     </Card.Header>
-                    <Accordion.Collapse eventKey={"course-" + course.courseName}>
+                    <Accordion.Collapse eventKey={"bookedLessons"}>
                       <Card.Body>
-                      <ListGroup as="ul" variant="flush">
-                        <ListHeader />
-                        {this.props.lessonsList.map((lesson) => 
-                          (course.courseId === lesson.courseId) &&
-                          (this.isLessonInDateBoundaries(lesson.startingTime, lesson.endingTime)) &&
-                          <LessonListItem key = {lesson.scheduleId} lesson = {lesson}
-                            updateSelectionMessage = {this.updateSelectionMessage}
-                            updateLessonSelectedState = {this.updateLessonSelectedState}
-                            selectLessonFunction = {this.props.selectLessonFunction}
-                            updateModalMessage={this.updateModalMessage}/>
-                        )}
-                      </ListGroup>
+                        <Accordion>
+                          {this.props.coursesList.map((course) => //per ogni mio corso
+                            (this.isCourseSelected(course.courseName)) &&
+                            <Card>
+                              <Card.Header>
+                                <Accordion.Toggle as={Button} variant="link" eventKey = {"course-" + course.courseName}>
+                                  <CourseHeader course = {course.courseName}/>
+                                </Accordion.Toggle>
+                              </Card.Header>
+                              <Accordion.Collapse eventKey={"course-" + course.courseName}>
+                                <Card.Body>
+                                  <ListGroup as="ul" variant="flush">
+                                    <ListHeader />
+                                    {this.props.lessonsList.map((lesson) => 
+                                      (course.courseId === lesson.courseId) &&
+                                      (this.isLessonInDateBoundaries(lesson.startingTime, lesson.endingTime)) &&
+                                      <LessonListItem key = {lesson.scheduleId} lesson = {lesson}
+                                        updateSelectionMessage = {this.updateSelectionMessage}
+                                        updateLessonSelectedState = {this.updateLessonSelectedState}
+                                        selectLessonFunction = {this.props.selectLessonFunction}
+                                        updateModalMessage={this.updateModalMessage}/>
+                                    )}
+                                  </ListGroup>
+                                </Card.Body>
+                              </Accordion.Collapse>
+                            </Card>
+                          )}
+                        </Accordion>
                       </Card.Body>
                     </Accordion.Collapse>
                   </Card>
-                )}
-              </Accordion>  
+                }
+                {this.props.waitingBookings &&
+                  <Card>
+                    <Card.Header>
+                      <Accordion.Toggle as={Button} variant="link" eventKey = {"pendingBookedLessons"}>
+                        <div className="d-flex w-100 pt-3 justify-content-between no-gutters" id = {"pendingBookedLessons"}>
+                            <h3>Pending Booked Lesson</h3>
+                        </div>
+                      </Accordion.Toggle>
+                    </Card.Header>
+                    <Accordion.Collapse eventKey={"pendingBookedLessons"}>
+                      <Card.Body>
+                        <Accordion>
+                          {this.props.coursesList.map((course) => //per ogni mio corso
+                            (this.isCourseSelected(course.courseName)) &&
+                            <Card>
+                              <Card.Header>
+                                <Accordion.Toggle as={Button} variant="link" eventKey = {"course-" + course.courseName}>
+                                  <CourseHeader course = {course.courseName}/>
+                                </Accordion.Toggle>
+                              </Card.Header>
+                              <Accordion.Collapse eventKey={"course-" + course.courseName}>
+                                <Card.Body>
+                                  <ListGroup as="ul" variant="flush">
+                                    <ListHeader />
+                                    {this.props.waitingBookings.map((lesson) => 
+                                      (course.courseId === lesson.courseId) &&
+                                      (this.isLessonInDateBoundaries(lesson.startingTime, lesson.endingTime)) &&
+                                      <LessonListItem key = {lesson.scheduleId} lesson = {lesson}
+                                        updateSelectionMessage = {this.updateSelectionMessage}
+                                        updateLessonSelectedState = {this.updateLessonSelectedState}
+                                        selectLessonFunction = {this.props.selectLessonFunction}
+                                        updateModalMessage={this.updateModalMessage}/>
+                                    )}
+                                  </ListGroup>
+                                </Card.Body>
+                              </Accordion.Collapse>
+                            </Card>
+                          )}
+                        </Accordion>
+                      </Card.Body>
+                    </Accordion.Collapse>
+                  </Card>
+                }
+                
+              </Accordion>                
             </div>
             }
             {context.user && this.props.lessonsList && this.state.bookingCompleted &&

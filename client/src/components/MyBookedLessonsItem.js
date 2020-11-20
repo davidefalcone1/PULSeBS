@@ -49,17 +49,11 @@ function BookingStatusField(props){
 function SelectField(props){
     return(
         <div className="col-sm-3">
-            <Button variant="info" onClick={(event) => {
+            <Button variant="danger" onClick={(event) => {
                 event.preventDefault();
-                props.selectLessonFunction(props.id).then((res) => {
-                    props.updateModalMessage(res ? "Your booking has been completed successfully!" : 
-                        "Sorry, there are no more available seats. Don't worry, we will contact you as soon as a seat becomes available.");
-                }).catch((errorObj) => { 
-                    console.log(errorObj); 
-                    props.updateModalMessage("Sorry, there was an error!\n" + errorObj);
-                });
-            }} id={"selectFieldOfLesson" + props.id}>
-                SELECT
+                props.selectLessonFunction(props.id);               
+            }} id={"deleteFieldOfLesson" + props.id}>
+                DELETE
             </Button>
         </div>
     );

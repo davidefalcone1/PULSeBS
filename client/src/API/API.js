@@ -80,6 +80,24 @@ function getMyBookedLessons() {
             }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
+function getMyWaitingBookedLessons() {
+    return new Promise(async function (resolve, reject) {
+        fetch('/myWaitingBookedLessons', {
+            method: 'GET',
+        })
+            .then(async (response) => {
+                const lessonsJson = await response.json();
+                if (response.ok) {
+                    const list = lessonsJson.map((lesson) => {
+                        return LessonsData.fromJson(lesson);
+                    });
+                    resolve(list);                    
+                } else {
+                    reject();
+                }
+            }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
+}
 async function bookLesson(lessonId) {
     return new Promise((resolve, reject) => {
         fetch("/bookLesson", {
@@ -264,10 +282,9 @@ async function logout() {
     });
 }
 
-
-
 const API = {
-    login, logout, getStudentCourses, getMyBookableLessons, getMyBookedLessons, getMyCoursesLessons, bookLesson,
-    deleteBooking, getTeacherCourses, getBookedStudents, getStudentsData, isAuthenticated
+    login, logout, getStudentCourses, getMyBookableLessons, getMyBookedLessons, getMyWaitingBookedLessons,
+    getMyCoursesLessons, bookLesson, deleteBooking, getTeacherCourses, getBookedStudents,
+    getStudentsData, isAuthenticated
 };
 export default API;
