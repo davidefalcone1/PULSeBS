@@ -1,5 +1,5 @@
 import React from 'react';
-import LessonListItem from './LessonListItem';
+import LessonListItem from './MyBookedLessonsItem';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button'
@@ -30,10 +30,6 @@ class LessonListPageRender extends React.Component {
         bookingMessage: undefined, bookingCompleted:false,
         startingDay: '', endingDay: '', courseName: 'Select course name'
       }
-  }
-
-  updateModalMessage = (msg) => {
-    this.setState({bookingMessage: msg, bookingCompleted: true});
   }
 
   updateField = (name, value) => {
@@ -157,8 +153,7 @@ class LessonListPageRender extends React.Component {
                                       <LessonListItem key = {lesson.scheduleId} lesson = {lesson}
                                         updateSelectionMessage = {this.updateSelectionMessage}
                                         updateLessonSelectedState = {this.updateLessonSelectedState}
-                                        selectLessonFunction = {this.props.selectLessonFunction}
-                                        updateModalMessage={this.updateModalMessage}/>
+                                        selectLessonFunction = {this.props.selectLessonFunction}/>
                                     )}
                                   </ListGroup>
                                 </Card.Body>
@@ -170,7 +165,7 @@ class LessonListPageRender extends React.Component {
                     </Accordion.Collapse>
                   </Card>
                 }
-                {this.props.waitingBookings &&
+                {this.props.waitingBookings && (console.log(this.props.waitingBookings) || true) &&
                   <Card>
                     <Card.Header>
                       <Accordion.Toggle as={Button} variant="link" eventKey = {"pendingBookedLessons"}>
@@ -200,8 +195,7 @@ class LessonListPageRender extends React.Component {
                                       <LessonListItem key = {lesson.scheduleId} lesson = {lesson}
                                         updateSelectionMessage = {this.updateSelectionMessage}
                                         updateLessonSelectedState = {this.updateLessonSelectedState}
-                                        selectLessonFunction = {this.props.selectLessonFunction}
-                                        updateModalMessage={this.updateModalMessage}/>
+                                        selectLessonFunction = {this.props.selectLessonFunction}/>
                                     )}
                                   </ListGroup>
                                 </Card.Body>

@@ -9,8 +9,7 @@ const lessonListItem = (props) => {
                 <StartingTimeField id = {props.lesson.scheduleId} startingTime = {props.lesson.startingTime}/>
                 <EndingTimeField id = {props.lesson.scheduleId} endingTime = {props.lesson.endingTime}/>
                 <BookingStatusField id = {props.lesson.scheduleId} occupiedSeats = {props.lesson.occupiedSeats} availableSeats = {props.lesson.availableSeats}/>
-                <SelectField id = {props.lesson.scheduleId} selectLessonFunction = {props.selectLessonFunction} updateModalMessage = {props.updateModalMessage}
-                />
+                <SelectField id = {props.lesson.scheduleId} selectLessonFunction = {props.selectLessonFunction} />
         </div>
     </ListGroup.Item>
   );

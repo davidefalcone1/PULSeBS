@@ -100,9 +100,9 @@ class App extends React.Component {
       this.setState({ myBookedLessons: myLessons });
     }).catch((errorObj) => { console.log(errorObj); });
 
-    API.getMyWaitingBookedLessons().then((myWaitingBookedLessons) => {
-      this.setState({ waitingBookings: myWaitingBookedLessons });
-    }).catch((errorObj) => { console.log(errorObj); });
+    // API.getMyWaitingBookedLessons().then((myWaitingBookedLessons) => {
+    //   this.setState({ waitingBookings: myWaitingBookedLessons });
+    // }).catch((errorObj) => { console.log(errorObj); });
   }
 
   bookLesson = async (lessonId) => {
@@ -157,7 +157,7 @@ class App extends React.Component {
             </Route>
             <Route path='/myBookedLessonslist'>
                {!this.state.user ? <Redirect to='/login'/> : <MyLessonsList lessonsList={this.state.myBookedLessons}
-                waitingBookings={this.state.waitingBookings} selectLessonFunction={this.deleteLesson} courses={this.state.courses}/>}
+                waitingBookings={this.state.myWaitingBookedLessons} selectLessonFunction={this.deleteLesson} courses={this.state.courses}/>}
             </Route>
             <Route path='/myCoursesLessonslist'>
               {!this.state.user ? <Redirect to='/login'/> : <MyCoursesLessonsStudents teacherCourses={this.state.courses}
