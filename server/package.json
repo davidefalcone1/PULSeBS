@@ -4,17 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "jest --coverage",
     "start": "node server.js"
-  },
-  "jest": {
-    "testResultsProcessor": "jest-sonar-reporter",
-    "collectCoverage": true,
-    "coveragePathIgnorePatterns": [
-      "server/node_modules/",
-      "./__tests__/",
-      "./__mocks__/"
-    ]
   },
   "author": "",
   "license": "ISC",
@@ -23,13 +13,13 @@
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
     "express-jwt": "^6.0.0",
-    "jest": "^26.6.3",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
     "morgan": "^1.10.0",
     "node-cron": "^2.0.3",
     "nodemailer": "^6.4.15",
     "nodemon": "^2.0.5",
+    "sqlite": "^4.0.17",
     "sqlite3": "^5.0.0"
   }
 }

@@ -62,7 +62,7 @@ exports.getStudentCourses = function (studentID) {
 
 exports.bookLesson = function (studentID, lessonID) {
     return new Promise((resolve, reject) => {
-        let sql = "INSERT INTO Booking(CourseScheduleID, StudentID, BookStatus, attended) VALUES(?, ?, 1, 0)";
+        let sql = "INSERT INTO Booking(CourseScheduleID, StudentID, BookStatus, Attended) VALUES(?, ?, 1, 0)";
         db.run(sql, [lessonID, studentID], function (err, row) {
             if (err) {
                 reject('Error');
@@ -95,11 +95,13 @@ exports.deleteBooking = (lessonID, studentID) => {
                    SET BookStatus = 2 
                    WHERE CourseScheduleID = ? AND StudentID = ?`;
 
-        db.run(sql, [lessonID, studentID], (err) => {
+        db.run(sql, [lessonID, studentID], function(err) {
             if (err) {
                 reject(err);
             }
             else {
+                if(this.changes === 0)
+                    reject('NO BOOKING');
                 sql = `UPDATE CourseSchedule 
                         SET OccupiedSeat = OccupiedSeat - 1
                         WHERE CourseScheduleID = ?`;
