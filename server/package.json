@@ -30,6 +30,7 @@
     "node-cron": "^2.0.3",
     "nodemailer": "^6.4.15",
     "nodemon": "^2.0.5",
+    "opencollective-postinstall": "^2.0.3",
     "sqlite3": "^5.0.0"
   }
 }
