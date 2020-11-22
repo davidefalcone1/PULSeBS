@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
     res.send('Hello SoftENG members!');
 });
 
-app.get('/test/:deletedCourse', async (req, res) => {
+/*app.get('/test/:deletedCourse', async (req, res) => {
     
     try{
         const deletedCourseID = req.params.deletedCourse;
@@ -46,7 +46,7 @@ app.get('/test/:deletedCourse', async (req, res) => {
         res.status(500).json(error);
     }
     
-})
+})*/
 // LOGIN API
 app.post('/users/authenticate', async (req, res) => {
     const username = req.body.username;
