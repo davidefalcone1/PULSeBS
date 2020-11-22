@@ -11,6 +11,7 @@ const emailAPI = require('./emailAPI');
 const bookingDao = require('./dao/bookingDao');
 const dailyMailer = require('./dailyMailer');
 const teacherDao = require('./dao/teacherDao');
+const emailDao = require('./dao/emailDao');
 
 const jwtSecret = '123456789';
 const expireTime = 300; //seconds
@@ -27,6 +28,25 @@ app.get('/', (req, res) => {
     res.send('Hello SoftENG members!');
 });
 
+app.get('/test/:deletedCourse', async (req, res) => {
+    
+    try{
+        const deletedCourseID = req.params.deletedCourse;
+        const emails = await emailDao.getStudentsToNotify (deletedCourseID);
+        const info = await emailDao.getDeletedLectureInfo(deletedCourseID);
+        info.notificationType = 3;
+        
+        //The for loop is used because the forEach callback cannot handle async calls!
+        for(let i = 0; i < emails.length; i++){
+            await emailAPI.sendNotification(emails[i].UserName, info);
+        }
+        res.status(200).end();
+    }
+    catch(error){
+        res.status(500).json(error);
+    }
+    
+})
 // LOGIN API
 app.post('/users/authenticate', async (req, res) => {
     const username = req.body.username;
