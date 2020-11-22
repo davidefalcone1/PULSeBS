@@ -12,10 +12,7 @@ exports.setDailyMail = async () => {
             for(let i = 0; i < professors.length; i++){
                 const{email, ...info} = professors[i];
                 info.notificationType = 2;
-                const response = await emailAPI.sendNotification(email, info);
-                if(!response){
-                    console.log('Automatic email sending failed');
-                }
+                await emailAPI.sendNotification(email, info);
             }
         }
         catch(error){
