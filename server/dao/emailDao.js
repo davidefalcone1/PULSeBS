@@ -76,3 +76,62 @@ exports.getProfessorsToNotify = () => {
             });
     });
 }
+
+// the courseScheduleID must be a string!!
+exports.getDeletedLectureInfo = (courseScheduleID) => {
+    return new Promise((resolve, reject) => {
+        
+        const sql = 'SELECT CourseName, TimeStart, TimeEnd ' +
+                    'FROM CourseSchedule CS, Course C ' +
+                    'WHERE C.CourseID = CS.CourseID AND CourseScheduleID = ?';
+        db.get(sql, [courseScheduleID], (err, row) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                const info = {
+                    course: row.CourseName,
+                    date: moment(row.TimeStart).format('MM/DD/YYYY'),
+                    start: moment(row.TimeStart).format('HH:mm'),
+                    end: moment(row.TimeEnd).format('HH:mm') 
+                };
+                resolve(info);
+            }
+        });
+    });
+}
+
+// the id of the lecture just canceled is needed!
+exports.getStudentsToNotify = (courseScheduleID) => {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT Username ' +
+        'FROM User U, Booking B ' +
+        'WHERE B.CourseScheduleID = ? AND U.UserID = B.StudentID';
+        db.all(sql, [courseScheduleID], (err, rows) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(rows);
+            }
+        });
+    });
+}
+
+/*CODICE DA METTERE NELLA DELETE LECTURE DEL PROFESSORE!
+   try{
+        const deletedCourseID = req.params.deletedCourse;
+        const emails = await emailDao.getStudentsToNotify (deletedCourseID);
+        const info = await emailDao.getDeletedLectureInfo(deletedCourseID);
+        info.notificationType = 3;
+        
+        //The for loop is used because the forEach callback cannot handle async calls!
+        for(let i = 0; i < emails.length; i++){
+            await emailAPI.sendNotification(emails[i].UserName, info);
+        }
+        res.status(200).end();
+    }
+    catch(error){
+        res.status(500).json(error);
+    }
+*/
