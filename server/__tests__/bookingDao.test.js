@@ -19,27 +19,29 @@ describe("deleteBooking", ()=>{
     });
     test("booking exists", ()=>{                                                                                                                            
         expect.assertions(1);
-        return bookingDao.deleteBooking(1, '123456').then((result)=>expect(result).toBeNull());
+        expect(bookingDao.deleteBooking(1, '123456')).resolves.toEqual('Success');
     });
     test("booking does not exist", async()=>{
         expect.assertions(1);
-            expect(bookingDao.deleteBooking(454, '123456')).rejects.toEqual('NO BOOKING');
+        expect(bookingDao.deleteBooking(345, '123456')).rejects.toEqual('NO BOOKING');
     });
 });
 
 describe("bookLesson", ()=>{
     beforeEach(async ()=>{
         await testHelper.initDB();
+        await testHelper.insertUser();
+        await testHelper.insertBooking();
     });
     afterEach(async ()=>{
         await testHelper.cleanDB();
     });
     test("the lesson exists and can be booked", ()=>{
         expect.assertions(1);
-            return bookingDao.bookLesson('123456',1).then((result)=>expect(result).toEqual('Success'));
+        expect(bookingDao.bookLesson('123456', 1)).resolves.toEqual('Success');
     });
-    test("the lesson does not exist and can't be booked", async()=>{
+    test("the lesson does not exist and can't be booked", ()=>{
         expect.assertions(1);
-        await expect(bookingDao.bookLesson('123456',454)).rejects.toEqual('Error');
+        expect(bookingDao.bookLesson('123456', 134)).rejects.toEqual('Error');
     });
 });

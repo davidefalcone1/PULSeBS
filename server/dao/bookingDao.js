@@ -63,9 +63,10 @@ exports.getStudentCourses = function (studentID) {
 exports.bookLesson = function (studentID, lessonID) {
     return new Promise((resolve, reject) => {
         let sql = "INSERT INTO Booking(CourseScheduleID, StudentID, BookStatus, Attended) VALUES(?, ?, 1, 0)";
-        db.run(sql, [lessonID, studentID], function (err, row) {
+        db.run(sql, [lessonID, studentID], function (err) {
             if (err) {
                 reject('Error');
+                return;
             }
             else {
                 sql = `UPDATE CourseSchedule 
@@ -76,11 +77,10 @@ exports.bookLesson = function (studentID, lessonID) {
                         reject(err);
                     }
                     else {
-                        resolve(null);
+                        resolve('Success');
                     }
                 })
             }
-            resolve('Success');
         })
     });
 }
@@ -110,7 +110,7 @@ exports.deleteBooking = (lessonID, studentID) => {
                         reject(err);
                     }
                     else {
-                        resolve(null);
+                        resolve('Success');
                     }
                 })
 

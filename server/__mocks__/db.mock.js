@@ -16,4 +16,6 @@ db.pRun = util.promisify(db.run, db);
 db.pGet = util.promisify(db.get, db);
 db.pAll = util.promisify(db.all, db);
 
+db.get("PRAGMA foreign_keys = ON");
+
 module.exports = db;

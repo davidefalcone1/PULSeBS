@@ -11,7 +11,7 @@ async function initDB() {
     await db.pRun(sql);
     // Insert course
     sql = "INSERT INTO Course(CourseName, TeacherID) VALUES('Mobile Application development', '141216')";
-    await db.pRun(sql);
+    db.pRun(sql);
     // Insert course schedule
     sql = "INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom) VALUES(1, 1, 1, '2020-11-09T14:00:00', '2020-11-09T15:30:00', 3, 50, 'A1')";
     await db.pRun(sql);
@@ -42,7 +42,7 @@ async function insertBooking() {
 async function insertUser() {
     const sql = 'INSERT INTO User(UserID, FullName, UserName, Password, AccessLevel)' + 
         " VALUES('123456','Davide Falcone', 'davide.falcone@studenti.polito.it', '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S', 1)";
-    await db.pRun(sql);
+    db.pRun(sql);
 }
 
 async function insertCourseSchedule(){
