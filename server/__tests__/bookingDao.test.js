@@ -8,17 +8,11 @@ const bookingDao = require('../dao/bookingDao');
 
 const db = require("../db");
 
-async function insertBooking() {
-    const sql = 'INSERT INTO Booking(CourseScheduleID, StudentID, BookStatus, Attended)' +
-        " VALUES(1, '123456', 1, 0)";
-    await db.pRun(sql);
-}
-
 describe("deleteBooking", ()=>{
     beforeEach(async ()=>{
         await testHelper.initDB();
         await testHelper.insertUser();
-        await insertBooking();
+        await testHelper.insertBooking();
     });
     afterEach(async ()=>{
         await testHelper.cleanDB();

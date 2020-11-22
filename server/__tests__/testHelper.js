@@ -33,6 +33,12 @@ async function cleanDB(){
     await db.pRun(sql);
 }
 
+async function insertBooking() {
+    const sql = 'INSERT INTO Booking(CourseScheduleID, StudentID, BookStatus, Attended)' +
+        " VALUES(1, '123456', 1, 0)";
+    await db.pRun(sql);
+}
+
 async function insertUser() {
     const sql = 'INSERT INTO User(UserID, FullName, UserName, Password, AccessLevel)' + 
         " VALUES('123456','Davide Falcone', 'davide.falcone@studenti.polito.it', '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S', 1)";
@@ -45,4 +51,4 @@ async function insertCourseSchedule(){
     await db.pRun(sql);
 }
 
-module.exports = {initDB, cleanDB, insertUser, insertCourseSchedule};
+module.exports = {initDB, cleanDB, insertUser, insertCourseSchedule, insertBooking};
