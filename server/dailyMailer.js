@@ -5,7 +5,7 @@ const emailDao = require('./dao/emailDao');
 const emailAPI = require('./emailAPI');
 
 exports.setDailyMail = async () => {
-    cron.schedule('00 23 * * *', async() => {
+    cron.schedule('0 23 * * *', async() => {
 
         try{
             const professors = await emailDao.getProfessorsToNotify();
@@ -14,14 +14,14 @@ exports.setDailyMail = async () => {
                 info.notificationType = 2;
                 const response = await emailAPI.sendNotification(email, info);
                 if(!response){
-                    console.log('Automatic email sending failed, thecause is the following error')
+                    console.log('Automatic email sending failed');
                 }
             }
         }
         catch(error){
-            console.log('Automatic email sending failed, thecause is the following error:');
+            console.log('Automatic email sending failed, the cause is the following error:');
             console.log(error);
-    
+        }   
     });
 
 }
