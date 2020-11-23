@@ -220,20 +220,41 @@ function getStudentsData(studentsIds) { //REMEMBER TO SEND A LIST, from bookedSt
             }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
-function handleResponse(response) {
-    return response.text().then(text => {
-        const data = text && JSON.parse(text);
-        if (!response.ok) {
-            if ([401, 403].indexOf(response.status) !== -1) {
-                // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
-                authenticationService.logout();
+async function makeLessonRemote(lessonId) {
+    return new Promise((resolve, reject) => {
+        fetch("/makeLessonRemote/" + lessonId, {
+            method: 'PUT'
+        }).then((response) => {
+            if (response.ok) {
+                resolve(null);
             }
-
-            const error = (data && data.message) || response.statusText;
-            return Promise.reject(error);
-        }
-
-        return data;
+            else {
+                response.json()
+                    .then((obj) => { reject(obj); })
+                    .catch((err) => {
+                        reject(
+                            { errors: [{ param: "Application", msg: "Cannot parse server response" }] })
+                    });
+            }
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
+}
+async function cancelLesson(lessonId) {
+    return new Promise((resolve, reject) => {
+        fetch("/cancelLesson/" + lessonId, {
+            method: 'DELETE'
+        }).then((response) => {
+            if (response.ok) {
+                resolve(null);
+            } else {
+                response.json()
+                    .then((obj) => { reject(obj); })
+                    .catch((err) => {
+                        reject(
+                            { errors: [{ param: "Application", msg: "Cannot parse server response" }] })
+                    });
+            }
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
 
@@ -285,6 +306,6 @@ async function logout() {
 const API = {
     login, logout, getStudentCourses, getMyBookableLessons, getMyBookedLessons, getMyWaitingBookedLessons,
     getMyCoursesLessons, bookLesson, deleteBooking, getTeacherCourses, getBookedStudents,
-    getStudentsData, isAuthenticated
+    getStudentsData, makeLessonRemote, cancelLesson, isAuthenticated
 };
 export default API;
