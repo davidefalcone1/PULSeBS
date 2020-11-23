@@ -206,7 +206,30 @@ app.put('/lessonType/:courseScheduleId', async (req, res) => {
     const status = (req.body.status || 0);
     const courseScheduleId = req.params.courseScheduleId;
     try {
-        const result = await teacherDao.UpdateLessonType(courseScheduleId, status);
+        const result = await teacherDao.updateLessonType(courseScheduleId, status);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
+    }
+});
+
+/**
+* Update CourseStatus of lectures to (1 = active) / (0 = canceled)
+* (Cancel a lecture 1 hour before its scheduled time)
+* @route       PUT /lessonStatus/:courseScheduleId
+* @param       status
+* @access      Private
+* @returns     0 (the courseScheduleId does not exist or the 60 minutes limitation passes)
+*              1 (the lecture has been canceled, and also all related booking canceled too)
+*/
+app.put('/lessonStatus/:courseScheduleId', async (req, res) => {
+    const status = (req.body.status || 0);
+    const courseScheduleId = req.params.courseScheduleId;
+    try {
+        const result = await teacherDao.updateLessonStatus(courseScheduleId, status);
+        if (result)
+            await teacherDao.cancelAllBooking(courseScheduleId);
         res.status(200).json(result);
     }
     catch (err) {
