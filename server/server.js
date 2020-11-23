@@ -202,7 +202,7 @@ app.post('/studentsData', async (req, res) => {
 * @returns     0 (the courseScheduleId does not exist or the 30 minutes limitation passes)
 *              1 (the lecture has been changed to distance)
 */
-app.put('/lessonType/:courseScheduleId', async (req, res) => {
+app.put('/makeLessonRemote/:courseScheduleId', async (req, res) => {
     const status = (req.body.status || 0);
     const courseScheduleId = req.params.courseScheduleId;
     try {
@@ -214,6 +214,7 @@ app.put('/lessonType/:courseScheduleId', async (req, res) => {
     }
 });
 
+
 /**
 * Update CourseStatus of lectures to (1 = active) / (0 = canceled)
 * (Cancel a lecture 1 hour before its scheduled time)
@@ -223,7 +224,7 @@ app.put('/lessonType/:courseScheduleId', async (req, res) => {
 * @returns     0 (the courseScheduleId does not exist or the 60 minutes limitation passes)
 *              1 (the lecture has been canceled, and also all related booking canceled too)
 */
-app.put('/lessonStatus/:courseScheduleId', async (req, res) => {
+app.put('/cancelLesson/:courseScheduleId', async (req, res) => {
     const status = (req.body.status || 0);
     const courseScheduleId = req.params.courseScheduleId;
     try {
