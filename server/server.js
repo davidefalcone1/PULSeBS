@@ -28,24 +28,27 @@ app.get('/', (req, res) => {
     res.send('Hello SoftENG members!');
 });
 
-/*app.get('/test/:deletedCourse', async (req, res) => {
+/*app.post('/test', async (req, res) => {
     
-    try{
-        const deletedCourseID = req.params.deletedCourse;
-        const emails = await emailDao.getStudentsToNotify (deletedCourseID);
-        const info = await emailDao.getDeletedLectureInfo(deletedCourseID);
-        info.notificationType = 3;
-        
-        //The for loop is used because the forEach callback cannot handle async calls!
-        for(let i = 0; i < emails.length; i++){
-            await emailAPI.sendNotification(emails[i].UserName, info);
+    try {
+        const userID = 275330;
+        const lectureID = req.body.lessonId;
+        const a = await bookingDao.bookLesson(userID, lectureID);
+        const user = await userDao.getUserByID(userID);
+        const lectureData = await bookingDao.getLectureDataById(lectureID);
+        const email = user.username;
+        const info = {
+            notificationType: 1,
+            course: lectureData.CourseName,
+            date: moment(lectureData.TimeStart).format('MM/DD/YYYY'),
+            start: moment(lectureData.TimeStart).format('HH:mm'),
+            end: moment(lectureData.TimeEnd).format('HH:mm')
         }
-        res.status(200).end();
+        emailAPI.sendNotification(email, info);
+        res.status(200).json(a);
+    } catch (err) {
+        res.status(505).json({ error: 'Server error: ' + err });
     }
-    catch(error){
-        res.status(500).json(error);
-    }
-    
 })*/
 // LOGIN API
 app.post('/users/authenticate', async (req, res) => {
@@ -295,6 +298,7 @@ app.post('/bookLesson', async (req, res) => {
             end: moment(lectureData.TimeEnd).format('HH:mm')
         }
         emailAPI.sendNotification(email, info);
+        // we need to adjust the return object: waiting list or booking confirmed!
         res.status(200).end();
     } catch (err) {
         res.status(505).json({ error: 'Server error: ' + err });

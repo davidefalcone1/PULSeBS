@@ -70,41 +70,52 @@ exports.bookLesson = function (studentID, lessonID) {
         db.get(sql, [lessonID], (err, row) => {
             if (err) {
                 reject(err);
+                return;
             }
             else {
+
+                if(row === undefined){
+                    reject("Some error occurred, server request failed!");
+                    return;
+                }
+                
                 //flag to understand if the student has to wait
                 const waiting = row.OccupiedSeat === row.MaxSeat;
 
                 // 2 CHECK IF THERE ARE PREVIOUSLY CANCELED BOOKING (STATUS = 2)
                 sql = 'SELECT BookID ' +
                     'FROM Booking ' +
-                    'WHERE CourseScheduleID = ? AND StudentID = ? AND Status = 2';
+                    'WHERE CourseScheduleID = ? AND StudentID = ? AND BookStatus = 2';
                 db.get(sql, [lessonID, studentID], (err, row) => {
                     if (err) {
                         reject(err);
+                        return;
                     }
                     else {
-                        const previouBookingID = row.BookID; //used also to understand if there is an existing deleted booking
+                        const previousBookingID = row ? row.BookID : undefined; //used also to understand if there is an existing deleted booking
                         const status = waiting ? 3 : 1; //status = 3 if waiting, 1 otherwise
 
                         // UPDATE PREVIOUS INSERTED BOOKING
-                        if (previouBookingID) {
+                        if (previousBookingID) {
                             sql = 'UPDATE Booking ' +
                                 'SET BookStatus = ? ' +
-                                'WHERE CourseScheduleID = ?';
-                            db.run(sql, [status, previouBookingID], (err, row) => {
+                                'WHERE BookID = ?';
+                            db.run(sql, [status, previousBookingID], (err, row) => {
                                 if (err) {
                                     reject(err);
+                                    return;
                                 }
                             });
                         }
                         // INSERT NEW BOOKING
                         else {
+            
                             sql = 'INSERT INTO Booking (CourseScheduleID, StudentID, BookStatus, attended) ' +
                                 'VALUES (?, ?, ?, 0) ';
                             db.run(sql, [lessonID, studentID, status], (err, row) => {
                                 if (err) {
                                     reject(err);
+                                    return;
                                 }
                             });
                         }
@@ -118,11 +129,16 @@ exports.bookLesson = function (studentID, lessonID) {
                             db.run(sql, [lessonID], (err) => {
                                 if (err) {
                                     reject(err);
+                                    return;
                                 }
                                 else {
-                                    resolve(this.change);
+                                    resolve('Booking Confirmed');
+                                    return;
                                 }
                             });
+                        }
+                        else {
+                            resolve("Waiting list");
                         }
                     }
                 });
