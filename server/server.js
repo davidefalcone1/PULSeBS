@@ -213,6 +213,7 @@ app.put('/lessonType/:courseScheduleId', async (req, res) => {
         res.status(400).json(err.message);
     }
 });
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //calling by isAuthenticated() API on the front-end
 // retrieve the user after login
