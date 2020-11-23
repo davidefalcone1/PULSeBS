@@ -17,8 +17,8 @@ exports.getBookableLessons = function (studentID) {
                 reject();
             }
             const availableLessons = rows.filter(row => checkStart(row.TimeStart))
-            .map((row) => new LessonData(row.CourseScheduleID, row.CourseID,
-                row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat));
+                .map((row) => new LessonData(row.CourseScheduleID, row.CourseID,
+                    row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat));
             resolve(availableLessons);
         });
     });
@@ -37,9 +37,9 @@ exports.getBookedLessons = function (studentID) {
                 reject();
             }
             const myLessons = rows.filter(row => checkStart(row.TimeStart))
-            .map((row) =>
-                new LessonData(row.CourseScheduleID, row.CourseID,
-                    row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat));
+                .map((row) =>
+                    new LessonData(row.CourseScheduleID, row.CourseID,
+                        row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat));
             resolve(myLessons);
         });
     });
@@ -62,26 +62,58 @@ exports.getStudentCourses = function (studentID) {
 
 exports.bookLesson = function (studentID, lessonID) {
     return new Promise((resolve, reject) => {
-        let sql = "INSERT INTO Booking(CourseScheduleID, StudentID, BookStatus, attended) VALUES(?, ?, 1, 0)";
-        db.run(sql, [lessonID, studentID], function (err, row) {
+        let sql = `
+        SELECT * FROM Booking 
+        WHERE Booking.CourseScheduleID = ? AND Booking.StudentID = ?`;
+
+        db.all(sql, [lessonID, studentID], function (err, row) {
             if (err) {
-                reject('Error');
+                reject(err);
+                return;
             }
-            else {
-                sql = `UPDATE CourseSchedule 
-                            SET OccupiedSeat = OccupiedSeat + 1
-                            WHERE CourseScheduleID = ? AND OccupiedSeat <> MaxSeat`;
-                db.run(sql, [lessonID], (err) => {
+            if (row.length > 0) {// if there is a booking for this student that canceled by him befor (if status == 2)            
+                sql = `
+                UPDATE Booking
+                SET BookStatus = 1
+                WHERE Booking.CourseScheduleID = ? AND Booking.StudentID = ?`
+
+                //switch the status to 1
+                db.run(sql, [lessonID, studentID], function (err) {
                     if (err) {
                         reject(err);
-                    }
-                    else {
-                        resolve(null);
+                        return;
                     }
                 })
             }
-            resolve('Success');
-        })
+            if (row.length < 1) {// for this student there is no record in Booking, so a new record should be inserted                
+                sql = `INSERT INTO Booking(CourseScheduleID, StudentID, BookStatus, attended) VALUES(?, ?, 1, 0)`;
+
+                //insert new record in Booking
+                db.run(sql, [lessonID, studentID], function (err) {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                });
+            }
+
+            sql = `
+            UPDATE CourseSchedule 
+            SET OccupiedSeat = OccupiedSeat + 1
+            WHERE CourseScheduleID = ? AND OccupiedSeat <> MaxSeat`;
+
+            //any way increase the OccupiedSeat
+            db.run(sql, [lessonID], (err) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                else {
+                    resolve(this.change);
+                }
+            });
+
+        });
     });
 }
 
