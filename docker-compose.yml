@@ -8,8 +8,7 @@ services:
     ports:
       - "3001:3001"
     volumes:
-      - ./server:/project
-      - /project/node_modules
+      - ./server:/project/PULSeBS
   frontend:
     image: alessiodeioanni/pulsebs_group2:frontend
     build: 
@@ -18,8 +17,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./client:/project
-      - /project/node_modules
+      - ./client:/project/PULSeBS
     stdin_open: true
     tty: true
     links: 

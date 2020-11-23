@@ -2,13 +2,12 @@ FROM node:latest
 
 RUN mkdir /project
 
-WORKDIR /project
+COPY . /project
 
-COPY package*.json /project/
+WORKDIR /project/PULSeBS/server/
 
 RUN npm install 
 
 EXPOSE 3001
-COPY . /project
 
 CMD ["node","server.js"]

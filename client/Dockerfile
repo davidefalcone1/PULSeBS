@@ -2,15 +2,12 @@ FROM node:latest
 
 RUN mkdir /project
 
-WORKDIR /project
+COPY . /project
 
-
-COPY package*.json /project/
+WORKDIR /project/PULSeBS/client/
 
 RUN npm install
 
 EXPOSE 3000
-COPY . /project
-
 
 CMD ["npm","start"]
