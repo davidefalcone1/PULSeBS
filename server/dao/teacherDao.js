@@ -86,6 +86,36 @@ exports.getStudentsData = function (studentsIds) {
 }
 
 
+exports.UpdateLessonType = function (courseScheduleId, status) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+        UPDATE CourseSchedule
+        SET CourseType = ?
+        WHERE Cast ((JulianDay(CourseSchedule.TimeStart)-JulianDay('now', 'localtime') ) * 24 * 60 As Integer) > 30 
+        AND CourseSchedule.CourseScheduleID = ?`;
+
+        db.run(sql, [status, courseScheduleId], function (err) {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(this.changes);
+        });
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

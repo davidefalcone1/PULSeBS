@@ -192,6 +192,27 @@ app.post('/studentsData', async (req, res) => {
     }
 });
 
+
+/**
+* Update CourseType of lectures to (1 = presence) / (0 = distance)
+* (turn a presence lecture into a distance one)
+* @route       PUT /lessonType/:courseScheduleId
+* @param       status
+* @access      Private
+* @returns     0 (the courseScheduleId does not exist or the 30 minutes limitation passes)
+*              1 (the lecture has been changed to distance)
+*/
+app.put('/lessonType/:courseScheduleId', async (req, res) => {
+    const status = (req.body.status || 0);
+    const courseScheduleId = req.params.courseScheduleId;
+    try {
+        const result = await teacherDao.UpdateLessonType(courseScheduleId, status);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
+    }
+});
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //calling by isAuthenticated() API on the front-end
 // retrieve the user after login
