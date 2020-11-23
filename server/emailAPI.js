@@ -85,37 +85,37 @@ const createMessage = (info) => {
 
 } 
 
-// if username is a group of users it has to be a string with all emails
-// separated by a comma
 exports.sendNotification = (username, emailInfo) => {
+    return new Promise ((resolve, reject) => {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: 'pulsebs2020@gmail.com',
+              pass: 'gruppo-2-P'
+            }
+          });
     
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'pulsebs2020@gmail.com',
-          pass: 'gruppo-2-P'
-        }
-      });
-
-      const emailFields = createMessage(emailInfo);
-      if(!emailFields) {
-          return false;
-      }
-      
-      const mailOptions = {
-        from: 'pulsebs2020@gmail.com',
-        to: username,
-        subject: emailFields.subject,
-        html: emailFields.html
-      };
-      
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.log(error);
-          return false;
-        } else {
-          console.log('Email sent: ' + info.response);
-          return true;
-        }
-      });
+          const emailFields = createMessage(emailInfo);
+          if(!emailFields) {
+              return false;
+          }
+          
+          const mailOptions = {
+            from: 'pulsebs2020@gmail.com',
+            to: username,
+            subject: emailFields.subject,
+            html: emailFields.html
+          };
+          
+          transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              console.log(error);
+              reject(error);
+            } else {
+              console.log('Email sent: ' + info.response);
+              resolve(null);
+            }
+          });
+    });
+    
 }

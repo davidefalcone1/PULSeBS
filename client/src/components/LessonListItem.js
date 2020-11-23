@@ -3,8 +3,6 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 
 const lessonListItem = (props) => {
-    console.log(props.lesson);
-    console.log(props.coursesList);
   return (
     <ListGroup.Item id = {"lesson-" + props.lesson.id}>
         <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
@@ -13,9 +11,6 @@ const lessonListItem = (props) => {
                 <EndingTimeField id = {props.lesson.scheduleId} endingTime = {props.lesson.endingTime}/>
                 <BookingStatusField id = {props.lesson.scheduleId} occupiedSeats = {props.lesson.occupiedSeats} availableSeats = {props.lesson.availableSeats}/>
                 <SelectField id = {props.lesson.scheduleId} selectLessonFunction = {props.selectLessonFunction}
-                    updateSelectionMessage = {props.updateSelectionMessage}
-                    updateLessonSelectedState = {props.updateLessonSelectedState}
-                    updateMyBookedLessonsList = {props.updateMyBookedLessonsList}
                     isMyLessonsList={props.isMyLessonsList}
                 />
         </div>
@@ -41,7 +36,7 @@ function StartingTimeField(props){
     return(
         <div className="col-sm-2">
             <p id={"startingTimeOfLesson" + props.id}>
-                {props.startingTime}
+                {props.startingTime.format("ddd DD-MM-YYYY HH:mm").toString()}
             </p>
         </div>
     );
@@ -51,7 +46,7 @@ function EndingTimeField(props){
     return(
         <div className="col-sm-2">
             <p id={"endingTimeOfLesson" + props.id}>
-                {props.endingTime}
+                {props.endingTime.format("ddd DD-MM-YYYY HH:mm").toString()}
             </p>
         </div>
     );
@@ -74,25 +69,17 @@ function SelectField(props){
                 <div className="col-sm-2">
                     <Button variant="info" onClick={(event) => {
                         event.preventDefault();
-                        props.selectLessonFunction(props.id).then((resultString) => {
-                            props.updateSelectionMessage(resultString);
-                            props.updateMyBookedLessonsList();
-                        });               
-                        props.updateLessonSelectedState(true);
+                        props.selectLessonFunction(props.id);  
                     }} id={"selectFieldOfLesson" + props.id}>
                         SELECT
                     </Button>
                 </div>
             }
-            {props.isMyLessonsList && 
+            {props.isMyLessonsList &&
                 <div className="col-sm-2">
                     <Button variant="danger" onClick={(event) => {
                         event.preventDefault();
-                        props.selectLessonFunction(props.id).then((resultString) => {
-                            props.updateSelectionMessage(resultString);
-                            props.updateMyBookedLessonsList();
-                        });               
-                        props.updateLessonSelectedState(true);
+                        props.selectLessonFunction(props.id);               
                     }} id={"deleteFieldOfLesson" + props.id}>
                         DELETE
                     </Button>

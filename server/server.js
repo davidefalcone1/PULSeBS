@@ -6,6 +6,7 @@ const userDao = require('./dao/userDao');
 const jwt = require('express-jwt');
 const jsonwebtoken = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const moment = require('moment');
 const emailAPI = require('./emailAPI');
 const bookingDao = require('./dao/bookingDao');
 const dailyMailer = require('./dailyMailer');
@@ -51,7 +52,7 @@ app.post('/users/authenticate', async (req, res) => {
                 // AUTHENTICATION SUCCESS
                 const token = jsonwebtoken.sign({ user: user.userID }, jwtSecret, { expiresIn: expireTime });
                 res.cookie('token', token, { httpOnly: true, sameSite: true, maxAge: 1000 * expireTime });
-                res.status(200).json({ id: user.userID, name: user.username, accessLevel: user.accessLevel });
+                res.status(200).json({ id: user.userID, username: user.username, fullname: user.fullName, accessLevel: user.accessLevel });
             }
         }
 
@@ -78,9 +79,9 @@ app.use(
 
 //PLACE HERE ALL APIs THAT REQUIRE AUTHENTICATION
 // DELETE A BOOKING 
-app.delete('/deleteBooking/:bookingID', (req, res) => {
-    const bookingID = req.params.bookingID;
-    bookingDao.deleteBooking(bookingID)
+app.delete('/deleteBooking/:lessonID', (req, res) => {
+    const lessonID = req.params.lessonID;
+    bookingDao.deleteBooking(lessonID, req.user.user)
         .then(() => res.status(204).end())
         .catch((err) => res.status(500).json({ error: 'Server error: ' + err }));
 });
@@ -155,17 +156,40 @@ app.get('/myCoursesLessons', async (req, res) => {
     }
 });
 
-app.post('/bookLesson', async (req, res) => {
+/**
+* Get a list of booked student for the given lessonsIds/CourseScheduleIDs
+* @route       POST /bookedStudents
+* @param       lessonsIds (CourseScheduleIDs)
+* @access      Private
+* @returns     BookingData(id, scheduleId, studentId, status, attended)
+*/
+app.post('/bookedStudents', async (req, res) => {
+    const CourseScheduleIDs = req.body.lessonsIds;
     try {
-        const result = await bookingDao.bookLesson(req.user.user, req.body.lessonId);
-        res.end();
-    } catch (e) {
-        res.status(505).end();
+        const result = await teacherDao.getBookedStudents(CourseScheduleIDs);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
     }
 });
 
-app.post('/logout', (req, res) => {
-    res.clearCookie('token').end();
+/**
+* Get a list of student for the given studentsIds
+* @route       POST /studentsData
+* @param       studentsIds
+* @access      Private
+* @returns     UserData(id, personId, fullName, email)
+*/
+app.post('/studentsData', async (req, res) => {
+    const studentsIds = req.body.studentsIds;
+    try {
+        const result = await teacherDao.getStudentsData(studentsIds);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
+    }
 });
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,10 +208,37 @@ app.get('/user', (req, res) => {
             });
         }).catch(
             (err) => {
-                res.status(401).json(authErrorObj);
+                res.status(401).json({ error: 'Server error: ' + err });
             }
         );
 });
+
+app.post('/bookLesson', async (req, res) => {
+    try {
+        const userID = req.user.user;
+        const lectureID = req.body.lessonId;
+        let result = await bookingDao.bookLesson(userID, lectureID);
+        const user = await userDao.getUserByID(userID);
+        const lectureData = await bookingDao.getLectureDataById(lectureID);
+        const email = user.username;
+        const info = {
+            notificationType: 1,
+            course: lectureData.CourseName,
+            date: moment(lectureData.TimeStart).format('MM/DD/YYYY'),
+            start: moment(lectureData.TimeStart).format('HH:mm'),
+            end: moment(lectureData.TimeEnd).format('HH:mm')
+        }
+        result = await emailAPI.sendNotification(email, info);
+        res.status(200).end();
+    } catch (err) {
+        res.status(505).json({ error: 'Server error: ' + err });
+    }
+});
+
+app.post('/logout', (req, res) => {
+    res.clearCookie('token').end();
+});
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 // set automatc email sending to professors

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testExecutions version="1">
+  <file path="/Users/davidefalcone/Universita/Polito/Software engineering 2/PULSeBS/server/__tests__/emailDao.test.js">
+    <testCase name="getProfessorsToNotify no courses tomorrow" duration="5"/>
+    <testCase name="getProfessorsToNotify there is only a course tomorrow" duration="0"/>
+  </file>
+  <file path="/Users/davidefalcone/Universita/Polito/Software engineering 2/PULSeBS/server/__tests__/bookingDao.test.js">
+    <testCase name="deleteBooking booking exists" duration="5"/>
+    <testCase name="deleteBooking booking does not exist" duration="1"/>
+    <testCase name="bookLesson the lesson exists and can be booked" duration="1"/>
+    <testCase name="bookLesson the lesson does not exist and can&apos;t be booked" duration="0"/>
+  </file>
+  <file path="/Users/davidefalcone/Universita/Polito/Software engineering 2/PULSeBS/server/__tests__/teacherDao.test.js">
+    <testCase name="getBookedStudents No students booked" duration="1"/>
+    <testCase name="getBookedStudents One student is booked" duration="0"/>
+  </file>
+  <file path="/Users/davidefalcone/Universita/Polito/Software engineering 2/PULSeBS/server/__tests__/userDao.test.js">
+    <testCase name="getUser user exists" duration="8"/>
+    <testCase name="getUser user doesn&apos;t exists" duration="4"/>
+    <testCase name="checkPassword password ok" duration="447"/>
+    <testCase name="checkPassword password wrong" duration="279"/>
+  </file>
+</testExecutions>

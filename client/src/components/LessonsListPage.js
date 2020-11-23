@@ -3,6 +3,8 @@ import LessonListItem from './LessonListItem';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button'
+import { Redirect } from 'react-router-dom';
+import { AuthContext } from '../_services/AuthContext'
 
 const lessonsList = (props) => {
   return(
@@ -19,60 +21,35 @@ class LessonListPageRender extends React.Component {
   constructor(props) {
       super(props);
       this.props = props;
-      this.state = {lessonSelected: false, selectionMessage: ""}
+      this.state = {}
   }
 
-  updateLessonSelectedState = (status) => {
-    this.setState({lessonSelected: status});
-  }
-  updateSelectionMessage = (msg) => {
-    this.setState({selectionMessage: msg});
-  }
 
   render(){
     return(
-      <>        
-        {this.props.lessonsList && 
-          <ListGroup as="ul" variant="flush">
-              <ListHeader />
-              <>{console.log(this.props.lessonsList)}</>
-              {this.props.lessonsList.map((lesson) => 
+      <AuthContext.Consumer>
+        {(context) => (
+          <>        
+            {context.user && this.props.lessonsList && 
+              <ListGroup as="ul" variant="flush">
+                <ListHeader />
+                {this.props.lessonsList.map((lesson) => 
                   <LessonListItem key = {lesson.scheduleId} lesson = {lesson}
                     updateSelectionMessage = {this.updateSelectionMessage}
                     updateLessonSelectedState = {this.updateLessonSelectedState}
                     selectLessonFunction = {this.props.selectLessonFunction}
-                    updateMyBookedLessonsList = {this.props.updateMyBookedLessonsList}
                     isMyLessonsList={this.props.isMyLessonsList}
                     coursesList={this.props.coursesList}/>
-                    )
-              }
-          </ListGroup>
-        }
-
-        {!this.props.lessonsList &&
-          <NoItemsImage/>
-        }
-
-        {this.state.lessonSelected && 
-          <Modal show={this.state.lessonSelected} animation={false}>
-            <Modal.Header>
-              <Modal.Title>Lesson Selection</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <div className="row-md-6">
-                {this.state.selectionMessage}
-              </div>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" type="button" 
-                onClick={(event) => {
-                  event.preventDefault();
-                  this.setState({lessonSelected: false});
-                }}>Close</Button>
-            </Modal.Footer>
-          </Modal>
-        }
-      </>
+                )}
+              </ListGroup>
+            }
+            {context.user && !this.props.lessonsList &&
+              <NoItemsImage/>
+            }
+            {!context.user && <Redirect to="/login"/>}
+          </>
+        )}
+      </AuthContext.Consumer>
     )
   }
 }
