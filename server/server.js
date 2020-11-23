@@ -13,7 +13,7 @@ const dailyMailer = require('./dailyMailer');
 const teacherDao = require('./dao/teacherDao');
 
 const jwtSecret = '123456789';
-const expireTime = 300; //seconds
+const expireTime = 900; //seconds
 
 const app = express();
 const port = 3001;
@@ -262,7 +262,7 @@ app.post('/bookLesson', async (req, res) => {
     try {
         const userID = req.user.user;
         const lectureID = req.body.lessonId;
-        let result = await bookingDao.bookLesson(userID, lectureID);
+        await bookingDao.bookLesson(userID, lectureID);
         const user = await userDao.getUserByID(userID);
         const lectureData = await bookingDao.getLectureDataById(lectureID);
         const email = user.username;
@@ -273,7 +273,7 @@ app.post('/bookLesson', async (req, res) => {
             start: moment(lectureData.TimeStart).format('HH:mm'),
             end: moment(lectureData.TimeEnd).format('HH:mm')
         }
-        result = await emailAPI.sendNotification(email, info);
+        emailAPI.sendNotification(email, info);
         res.status(200).end();
     } catch (err) {
         res.status(505).json({ error: 'Server error: ' + err });
