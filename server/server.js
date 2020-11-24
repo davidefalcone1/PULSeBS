@@ -24,9 +24,6 @@ app.use(morgan("tiny"));// Set-up logging
 app.use(express.json());// Process body content
 app.use(cookieParser());
 
-app.get('/', (req, res) => {
-    res.send('Hello SoftENG members!');
-});
 
 /*app.post('/test', async (req, res) => {
     

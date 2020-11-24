@@ -18,7 +18,13 @@ exports.getBookableLessons = function (studentID) {
             }
             const availableLessons = rows.filter(row => checkStart(row.TimeStart))
                 .map((row) => new LessonData(row.CourseScheduleID, row.CourseID,
-                    row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat));
+                    row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat))
+                    .sort((lesson1, lesson2) => {
+                        // sort in ASCEDING ORDER by starting time
+                        const start1 = moment(lesson1.startingTime);
+                        const start2 = moment(lesson2.startingTime);
+                        return start1.isBefore(start2) ? -1 : 1;
+                    });
             resolve(availableLessons);
         });
     });
@@ -39,7 +45,13 @@ exports.getBookedLessons = function (studentID) {
             const myLessons = rows.filter(row => checkStart(row.TimeStart))
                 .map((row) =>
                     new LessonData(row.CourseScheduleID, row.CourseID,
-                        row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat));
+                        row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat))
+                        .sort((lesson1, lesson2) => {
+                            // sort in ASCEDING ORDER by starting time
+                            const start1 = moment(lesson1.startingTime);
+                            const start2 = moment(lesson2.startingTime);
+                            return start1.isBefore(start2) ? -1 : 1;
+                        });
             resolve(myLessons);
         });
     });
