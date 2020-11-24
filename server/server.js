@@ -254,6 +254,15 @@ app.put('/cancelLesson/:courseScheduleId', async (req, res) => {
         const result = await teacherDao.updateLessonStatus(courseScheduleId, status);
         if (result)
             await teacherDao.cancelAllBooking(courseScheduleId);
+        
+        // handle email notification to all booked students
+        const emails = await emailDao.getStudentsToNotify(courseScheduleId);
+        const info = await emailDao.getDeletedLectureInfo(courseScheduleId);
+        info.notificationType = 3;
+        emails.forEach((email) => {
+            emailAPI.sendNotification(email.UserName, info);
+        });
+        
         res.status(200).json(result);
     }
     catch (err) {
@@ -292,7 +301,7 @@ app.post('/bookLesson', async (req, res) => {
         const lectureData = await bookingDao.getLectureDataById(lectureID);
         const email = user.username;
 
-        if(!booked){
+        if (!booked) {
             res.json(false);
         }
         else {
@@ -306,7 +315,7 @@ app.post('/bookLesson', async (req, res) => {
             emailAPI.sendNotification(email, info);
             res.json(true);
         }
-        
+
     } catch (err) {
         res.status(505).json({ error: 'Server error: ' + err });
     }
