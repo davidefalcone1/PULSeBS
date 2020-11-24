@@ -11,7 +11,7 @@ const navbar = (props) => {
                 <Navbar bg="dark" variant="dark" expand="md">
                     <Navbar.Toggle data-toggle="collapse" data-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation" />
                     <Navbar.Brand>
-                        PUL Project
+                        PULSeBS Project
                     </Navbar.Brand>
 
                     <Nav className="mr-auto">
