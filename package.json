@@ -7,7 +7,7 @@
     "supertest": "^6.0.1"
   },
   "scripts": {
-    "test": "jest --coverage"
+    "test": "jest --coverage --runInBand"
   },
   "jest": {
     "testResultsProcessor": "jest-sonar-reporter",
