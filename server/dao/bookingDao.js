@@ -133,13 +133,13 @@ exports.bookLesson = function (studentID, lessonID) {
                                     return;
                                 }
                                 else {
-                                    resolve('Booking Confirmed');
+                                    resolve(true);
                                     return;
                                 }
                             });
                         }
                         else {
-                            resolve("Waiting list");
+                            resolve(false);
                         }
                     }
                 });

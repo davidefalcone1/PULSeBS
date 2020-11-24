@@ -282,24 +282,31 @@ app.get('/user', (req, res) => {
         );
 });
 
+// return true if lecture booked, false if student put into waiting list
 app.post('/bookLesson', async (req, res) => {
     try {
         const userID = req.user.user;
         const lectureID = req.body.lessonId;
-        await bookingDao.bookLesson(userID, lectureID);
+        const booked = await bookingDao.bookLesson(userID, lectureID);
         const user = await userDao.getUserByID(userID);
         const lectureData = await bookingDao.getLectureDataById(lectureID);
         const email = user.username;
-        const info = {
-            notificationType: 1,
-            course: lectureData.CourseName,
-            date: moment(lectureData.TimeStart).format('MM/DD/YYYY'),
-            start: moment(lectureData.TimeStart).format('HH:mm'),
-            end: moment(lectureData.TimeEnd).format('HH:mm')
+
+        if(!booked){
+            res.json(false);
         }
-        emailAPI.sendNotification(email, info);
-        // we need to adjust the return object: waiting list or booking confirmed!
-        res.status(200).end();
+        else {
+            const info = {
+                notificationType: 1,
+                course: lectureData.CourseName,
+                date: moment(lectureData.TimeStart).format('MM/DD/YYYY'),
+                start: moment(lectureData.TimeStart).format('HH:mm'),
+                end: moment(lectureData.TimeEnd).format('HH:mm')
+            }
+            emailAPI.sendNotification(email, info);
+            res.json(true);
+        }
+        
     } catch (err) {
         res.status(505).json({ error: 'Server error: ' + err });
     }
