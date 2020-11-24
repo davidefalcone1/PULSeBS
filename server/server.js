@@ -24,9 +24,6 @@ app.use(morgan("tiny"));// Set-up logging
 app.use(express.json());// Process body content
 app.use(cookieParser());
 
-app.get('/', (req, res) => {
-    res.send('Hello SoftENG members!');
-});
 
 /*app.post('/test', async (req, res) => {
     
@@ -254,6 +251,15 @@ app.put('/cancelLesson/:courseScheduleId', async (req, res) => {
         const result = await teacherDao.updateLessonStatus(courseScheduleId, status);
         if (result)
             await teacherDao.cancelAllBooking(courseScheduleId);
+        
+        // handle email notification to all booked students
+        const emails = await emailDao.getStudentsToNotify(courseScheduleId);
+        const info = await emailDao.getDeletedLectureInfo(courseScheduleId);
+        info.notificationType = 3;
+        emails.forEach((email) => {
+            emailAPI.sendNotification(email.UserName, info);
+        });
+
         res.status(200).json(result);
     }
     catch (err) {
@@ -282,24 +288,31 @@ app.get('/user', (req, res) => {
         );
 });
 
+// return true if lecture booked, false if student put into waiting list
 app.post('/bookLesson', async (req, res) => {
     try {
         const userID = req.user.user;
         const lectureID = req.body.lessonId;
-        await bookingDao.bookLesson(userID, lectureID);
+        const booked = await bookingDao.bookLesson(userID, lectureID);
         const user = await userDao.getUserByID(userID);
         const lectureData = await bookingDao.getLectureDataById(lectureID);
         const email = user.username;
-        const info = {
-            notificationType: 1,
-            course: lectureData.CourseName,
-            date: moment(lectureData.TimeStart).format('MM/DD/YYYY'),
-            start: moment(lectureData.TimeStart).format('HH:mm'),
-            end: moment(lectureData.TimeEnd).format('HH:mm')
+
+        if (!booked) {
+            res.json(false);
         }
-        emailAPI.sendNotification(email, info);
-        // we need to adjust the return object: waiting list or booking confirmed!
-        res.status(200).end();
+        else {
+            const info = {
+                notificationType: 1,
+                course: lectureData.CourseName,
+                date: moment(lectureData.TimeStart).format('MM/DD/YYYY'),
+                start: moment(lectureData.TimeStart).format('HH:mm'),
+                end: moment(lectureData.TimeEnd).format('HH:mm')
+            }
+            emailAPI.sendNotification(email, info);
+            res.json(true);
+        }
+
     } catch (err) {
         res.status(505).json({ error: 'Server error: ' + err });
     }

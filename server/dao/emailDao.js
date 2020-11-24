@@ -117,21 +117,3 @@ exports.getStudentsToNotify = (courseScheduleID) => {
         });
     });
 }
-
-/*CODICE DA METTERE NELLA DELETE LECTURE DEL PROFESSORE!
-   try{
-        const deletedCourseID = req.params.deletedCourse;
-        const emails = await emailDao.getStudentsToNotify (deletedCourseID);
-        const info = await emailDao.getDeletedLectureInfo(deletedCourseID);
-        info.notificationType = 3;
-        
-        //The for loop is used because the forEach callback cannot handle async calls!
-        for(let i = 0; i < emails.length; i++){
-            await emailAPI.sendNotification(emails[i].UserName, info);
-        }
-        res.status(200).end();
-    }
-    catch(error){
-        res.status(500).json(error);
-    }
-*/

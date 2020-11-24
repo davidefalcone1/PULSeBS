@@ -24,7 +24,13 @@ exports.getMyCoursesLessons = function (teacherID) {
             if (err) {
                 reject();
             }
-            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat));
+            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat))
+            .sort((lesson1, lesson2) => {
+                // sort in DESCEDING ORDER by starting time
+                const start1 = moment(lesson1.startingTime);
+                const start2 = moment(lesson2.startingTime);
+                return start1.isBefore(start2) ? 1 : -1;
+            });
             resolve(lessons);
         });
     });
