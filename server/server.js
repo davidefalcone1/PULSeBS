@@ -262,7 +262,7 @@ app.put('/cancelLesson/:courseScheduleId', async (req, res) => {
         emails.forEach((email) => {
             emailAPI.sendNotification(email.UserName, info);
         });
-        
+
         res.status(200).json(result);
     }
     catch (err) {
