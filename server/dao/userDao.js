@@ -14,7 +14,7 @@ const createUser = function (row) {
     const username = row.UserName;
     const passwordHash = row.Password;
     const accessLevel = row.AccessLevel; 
-    return new User(userID,fullName, username, passwordHash, accessLevel);
+    return new User(userID, fullName, username, passwordHash, accessLevel);
 }
 
 exports.getUser = (username) => {

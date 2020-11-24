@@ -4,8 +4,17 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
     "start": "node server.js"
+  },
+  "jest": {
+    "testResultsProcessor": "jest-sonar-reporter",
+    "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
+      "server/node_modules/",
+      "./__tests__/",
+      "./__mocks__/"
+    ]
   },
   "author": "",
   "license": "ISC",

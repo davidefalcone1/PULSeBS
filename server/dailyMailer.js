@@ -12,7 +12,8 @@ exports.setDailyMail = () => {
                 professors.forEach((professor) => {
                     const {email, ...info} = professor;
                     info.notificationType = 2;
-                    emailAPI.sendNotification(email, info);
+                    emailAPI.sendNotification(email, info)
+                    .then();
                 })
                 
             })
