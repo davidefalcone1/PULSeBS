@@ -94,13 +94,14 @@ exports.bookLesson = function (studentID, lessonID) {
                     else {
                         const previousBookingID = row ? row.BookID : undefined; //used also to understand if there is an existing deleted booking
                         const status = waiting ? 3 : 1; //status = 3 if waiting, 1 otherwise
-
+                        const now = moment().format('YYYY:MM:DDTHH:mm:ss');
+                        
                         // UPDATE PREVIOUS INSERTED BOOKING
                         if (previousBookingID) {
                             sql = 'UPDATE Booking ' +
-                                'SET BookStatus = ? ' +
+                                'SET BookStatus = ?, Timestamp = ? ' +
                                 'WHERE BookID = ?';
-                            db.run(sql, [status, previousBookingID], (err, row) => {
+                            db.run(sql, [status, now, previousBookingID], (err, row) => {
                                 if (err) {
                                     reject(err);
                                     return;
@@ -110,9 +111,9 @@ exports.bookLesson = function (studentID, lessonID) {
                         // INSERT NEW BOOKING
                         else {
             
-                            sql = 'INSERT INTO Booking (CourseScheduleID, StudentID, BookStatus, attended) ' +
-                                'VALUES (?, ?, ?, 0) ';
-                            db.run(sql, [lessonID, studentID, status], (err, row) => {
+                            sql = 'INSERT INTO Booking (CourseScheduleID, StudentID, BookStatus, attended, Timestamp) ' +
+                                'VALUES (?, ?, ?, 0, ?) ';
+                            db.run(sql, [lessonID, studentID, status, now], (err, row) => {
                                 if (err) {
                                     reject(err);
                                     return;
@@ -120,7 +121,7 @@ exports.bookLesson = function (studentID, lessonID) {
                             });
                         }
                         //IF THE BOOKING HAS BEEN COMPLETED (STATUS = 1, NOT IN WAITING LIST!) UPDATE THE
-                        //COURSESCHEDULE TABLE OCCUPIEDSEATS
+                        //COURSESCHEDULE COLUMN OCCUPIEDSEATS
                         if (!waiting) {
                             sql = 'UPDATE CourseSchedule ' +  
                                   'SET OccupiedSeat = OccupiedSeat + 1 ' +
