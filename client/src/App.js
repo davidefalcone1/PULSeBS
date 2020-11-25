@@ -106,13 +106,13 @@ class App extends React.Component {
   }
 
   bookLesson = async (lessonId) => {
-    return API.bookLesson(lessonId).then(() => {//TODO bookLesson will return if it was an actual booking or the student is in the waiting queue
+    return API.bookLesson(lessonId).then((response) => {//TODO bookLesson will return if it was an actual booking or the student is in the waiting queue
       console.log("Lesson booked.");
       
       this.updateBookableLessons();
       this.updateMyBookedLessons();
 
-      return true; //TODO true if actual booking, false if waiting queue
+      return response; //TODO true if actual booking, false if waiting queue
     }).catch((errorObj) => { console.log(errorObj); });
   }
   deleteLesson = (lessonId) => {

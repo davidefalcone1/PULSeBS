@@ -108,7 +108,12 @@ async function bookLesson(lessonId) {
             body: JSON.stringify({ "lessonId": lessonId }),
         }).then(async (response) => {
             if (response.ok) {
-                resolve(`Your lesson has been correctly booked.`);
+                response.json()
+                    .then((obj) => { resolve(obj); })
+                    .catch((err) => {
+                        reject(
+                            { errors: [{ param: "Application", msg: "Cannot parse server response" }] })
+                    });
             } else {
                 response.json()
                     .then((obj) => { reject(obj); })
