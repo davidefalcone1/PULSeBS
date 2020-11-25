@@ -76,3 +76,46 @@ exports.getProfessorsToNotify = () => {
             });
     });
 }
+
+// the courseScheduleID must be a string!!
+exports.getLectureInfo = (courseScheduleID) => {
+    return new Promise((resolve, reject) => {
+        
+        const sql = 'SELECT CourseName, TimeStart, TimeEnd ' +
+                    'FROM CourseSchedule CS, Course C ' +
+                    'WHERE C.CourseID = CS.CourseID AND CourseScheduleID = ?';
+        db.get(sql, [courseScheduleID], (err, row) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            else {
+                console.log(row)
+                const info = {
+                    course: row.CourseName,
+                    date: moment(row.TimeStart).format('MM/DD/YYYY'),
+                    start: moment(row.TimeStart).format('HH:mm'),
+                    end: moment(row.TimeEnd).format('HH:mm') 
+                };
+                resolve(info);
+            }
+        });
+    });
+}
+
+// the id of the lecture just canceled is needed!
+exports.getStudentsToNotify = (courseScheduleID) => {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT Username ' +
+        'FROM User U, Booking B ' +
+        'WHERE B.CourseScheduleID = ? AND U.UserID = B.StudentID';
+        db.all(sql, [courseScheduleID], (err, rows) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(rows);
+            }
+        });
+    });
+}
