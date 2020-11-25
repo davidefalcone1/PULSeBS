@@ -223,9 +223,9 @@ exports.checkWaitingList = function (lessonID) {
                     SET OccupiedSeat = OccupiedSeat + 1
                     WHERE CourseScheduleID = ?`;
                     db.run(sql, [lessonID], (err) => {
-                        if (err) { reject(err); } else { resolve(row.StudentID); }
-                    })
-                })
+                        if (err) { reject(err); } else { resolve({studentID: row.StudentID, lectureID: row.CourseScheduleID}); }
+                    });
+                });
             } else {
                 resolve(0);
             }

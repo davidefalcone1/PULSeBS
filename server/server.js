@@ -105,7 +105,22 @@ app.delete('/deleteBooking/:lessonID', (req, res) => {
         .then(bookingDao.checkWaitingList(lessonID).
             then((result) => {
                 console.log(result);
-                res.status(204).json();
+                if (result === 0) {
+                    res.status(204).json();
+                }
+                else {
+                    // a new student has been extracted from the waiting queue
+                    // so he needs to be notified
+                    emailDao.getLectureInfo(result.CourseScheduleID)
+                        .then((info) => {
+                            userDao.getUserByID(req.user.user)
+                                .then((userData) => {
+                                    info.notificationType = 4;
+                                    emailAPI.sendNotification(userData.UserName, info);
+                                    res.status(204).json();
+                                })
+                        });
+                }
             }))
         .catch((err) => res.status(500).json({ error: 'Server error: ' + err }));
 });
@@ -258,7 +273,7 @@ app.delete('/cancelLesson/:courseScheduleId', async (req, res) => {
 
             // handle email notification to all booked students
             const emails = await emailDao.getStudentsToNotify(courseScheduleId);
-            const info = await emailDao.getDeletedLectureInfo(courseScheduleId);
+            const info = await emailDao.getLectureInfo(courseScheduleId);
             info.notificationType = 3;
             emails.forEach((email) => {
                 emailAPI.sendNotification(email.UserName, info);

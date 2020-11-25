@@ -78,7 +78,7 @@ exports.getProfessorsToNotify = () => {
 }
 
 // the courseScheduleID must be a string!!
-exports.getDeletedLectureInfo = (courseScheduleID) => {
+exports.getLectureInfo = (courseScheduleID) => {
     return new Promise((resolve, reject) => {
         
         const sql = 'SELECT CourseName, TimeStart, TimeEnd ' +
