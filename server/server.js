@@ -102,7 +102,11 @@ app.use(
 app.delete('/deleteBooking/:lessonID', (req, res) => {
     const lessonID = req.params.lessonID;
     bookingDao.deleteBooking(lessonID, req.user.user)
-        .then(() => res.status(204).end())
+        .then(bookingDao.checkWaitingList(lessonID).
+            then((result) => {
+                console.log(result);
+                res.status(204).json();
+            }))
         .catch((err) => res.status(500).json({ error: 'Server error: ' + err }));
 });
 
@@ -244,22 +248,22 @@ app.put('/makeLessonRemote/:courseScheduleId', async (req, res) => {
 * @returns     0 (the courseScheduleId does not exist or the 60 minutes limitation passes)
 *              1 (the lecture has been canceled, and also all related booking canceled too)
 */
-app.put('/cancelLesson/:courseScheduleId', async (req, res) => {
+app.delete('/cancelLesson/:courseScheduleId', async (req, res) => {
     const status = (req.body.status || 0);
     const courseScheduleId = req.params.courseScheduleId;
     try {
         const result = await teacherDao.updateLessonStatus(courseScheduleId, status);
-        if (result)
+        if (result === 1) {
             await teacherDao.cancelAllBooking(courseScheduleId);
-        
-        // handle email notification to all booked students
-        const emails = await emailDao.getStudentsToNotify(courseScheduleId);
-        const info = await emailDao.getDeletedLectureInfo(courseScheduleId);
-        info.notificationType = 3;
-        emails.forEach((email) => {
-            emailAPI.sendNotification(email.UserName, info);
-        });
 
+            // handle email notification to all booked students
+            const emails = await emailDao.getStudentsToNotify(courseScheduleId);
+            const info = await emailDao.getDeletedLectureInfo(courseScheduleId);
+            info.notificationType = 3;
+            emails.forEach((email) => {
+                emailAPI.sendNotification(email.UserName, info);
+            });
+        }
         res.status(200).json(result);
     }
     catch (err) {

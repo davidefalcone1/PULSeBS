@@ -19,12 +19,12 @@ exports.getBookableLessons = function (studentID) {
             const availableLessons = rows.filter(row => checkStart(row.TimeStart))
                 .map((row) => new LessonData(row.CourseScheduleID, row.CourseID,
                     row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat))
-                    .sort((lesson1, lesson2) => {
-                        // sort in ASCEDING ORDER by starting time
-                        const start1 = moment(lesson1.startingTime);
-                        const start2 = moment(lesson2.startingTime);
-                        return start1.isBefore(start2) ? -1 : 1;
-                    });
+                .sort((lesson1, lesson2) => {
+                    // sort in ASCEDING ORDER by starting time
+                    const start1 = moment(lesson1.startingTime);
+                    const start2 = moment(lesson2.startingTime);
+                    return start1.isBefore(start2) ? -1 : 1;
+                });
             resolve(availableLessons);
         });
     });
@@ -46,12 +46,12 @@ exports.getBookedLessons = function (studentID) {
                 .map((row) =>
                     new LessonData(row.CourseScheduleID, row.CourseID,
                         row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat))
-                        .sort((lesson1, lesson2) => {
-                            // sort in ASCEDING ORDER by starting time
-                            const start1 = moment(lesson1.startingTime);
-                            const start2 = moment(lesson2.startingTime);
-                            return start1.isBefore(start2) ? -1 : 1;
-                        });
+                .sort((lesson1, lesson2) => {
+                    // sort in ASCEDING ORDER by starting time
+                    const start1 = moment(lesson1.startingTime);
+                    const start2 = moment(lesson2.startingTime);
+                    return start1.isBefore(start2) ? -1 : 1;
+                });
             resolve(myLessons);
         });
     });
@@ -86,11 +86,11 @@ exports.bookLesson = function (studentID, lessonID) {
             }
             else {
 
-                if(row === undefined){
+                if (row === undefined) {
                     reject("Some error occurred, server request failed!");
                     return;
                 }
-                
+
                 //flag to understand if the student has to wait
                 const waiting = row.OccupiedSeat === row.MaxSeat;
 
@@ -107,7 +107,7 @@ exports.bookLesson = function (studentID, lessonID) {
                         const previousBookingID = row ? row.BookID : undefined; //used also to understand if there is an existing deleted booking
                         const status = waiting ? 3 : 1; //status = 3 if waiting, 1 otherwise
                         const now = moment().format('YYYY:MM:DDTHH:mm:ss');
-                        
+
                         // UPDATE PREVIOUS INSERTED BOOKING
                         if (previousBookingID) {
                             sql = 'UPDATE Booking ' +
@@ -122,7 +122,7 @@ exports.bookLesson = function (studentID, lessonID) {
                         }
                         // INSERT NEW BOOKING
                         else {
-            
+
                             sql = 'INSERT INTO Booking (CourseScheduleID, StudentID, BookStatus, attended, Timestamp) ' +
                                 'VALUES (?, ?, ?, 0, ?) ';
                             db.run(sql, [lessonID, studentID, status, now], (err, row) => {
@@ -135,9 +135,9 @@ exports.bookLesson = function (studentID, lessonID) {
                         //IF THE BOOKING HAS BEEN COMPLETED (STATUS = 1, NOT IN WAITING LIST!) UPDATE THE
                         //COURSESCHEDULE COLUMN OCCUPIEDSEATS
                         if (!waiting) {
-                            sql = 'UPDATE CourseSchedule ' +  
-                                  'SET OccupiedSeat = OccupiedSeat + 1 ' +
-                                  'WHERE CourseScheduleID = ?';
+                            sql = 'UPDATE CourseSchedule ' +
+                                'SET OccupiedSeat = OccupiedSeat + 1 ' +
+                                'WHERE CourseScheduleID = ?';
 
                             db.run(sql, [lessonID], (err) => {
                                 if (err) {
@@ -190,6 +190,48 @@ exports.deleteBooking = (lessonID, studentID) => {
             }
         });
     });
+}
+
+exports.checkWaitingList = function (lessonID) {
+    return new Promise((resolve, reject) => {
+
+        //find information about student (student with most priority) in waiting list if any
+        let sql = `
+        SELECT * FROM Booking
+        WHERE CourseScheduleID = ? AND BookStatus = 3
+        ORDER BY Timestamp ASC LIMIT 1`
+        db.get(sql, [lessonID], function (err, row) {
+            if (err) {
+                reject(err);
+                return;
+            }
+            if (row) {
+
+                // if there is someone in waiting queue, set his status to 1
+                sql = `
+                UPDATE Booking
+                SET BookStatus = 1
+                WHERE BookID = ?`;
+                db.run(sql, [row.BookID], function (err) {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    //then increase the occupied seat
+                    sql = `
+                    UPDATE CourseSchedule 
+                    SET OccupiedSeat = OccupiedSeat + 1
+                    WHERE CourseScheduleID = ?`;
+                    db.run(sql, [lessonID], (err) => {
+                        if (err) { reject(err); } else { resolve(row.StudentID); }
+                    })
+                })
+            } else {
+                resolve(0);
+            }
+
+        })
+    })
 }
 
 exports.getLectureDataById = (lectureID) => {
