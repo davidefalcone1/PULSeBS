@@ -1,8 +1,6 @@
 import React from 'react';
 import LessonListItem from './LessonListItem';
 import ListGroup from 'react-bootstrap/ListGroup';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button'
 import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../_services/AuthContext'
 

@@ -97,7 +97,7 @@ class App extends React.Component {
       API.getMyBookedLessons().then((myLessons) => {
         this.setState({ myBookedLessons: myLessons });
       }).catch((errorObj) => { console.log(errorObj); });
-    }).catch((errorObj) => { console.log(errorObj); });;
+    }).catch((errorObj) => { console.log(errorObj); });
   }
 
   deleteLesson = (lessonId) => {
