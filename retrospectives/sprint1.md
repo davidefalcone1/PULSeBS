@@ -11,7 +11,7 @@
 
 | Hours planned | Hours spent |
 | --- | --- |
-| 60 | 72 |
+| 64 | 72 |
 
 ### Detailed statistics
 
@@ -34,6 +34,9 @@ Average hours per task: 72/17 = 4,23
 | 30 | 2 | 6 | 8 |
 | 31 | 0 | 1 | 4 |
 | 32 | 5 | 15 | 15 |
+| 62 | 0 | 3 | 6 |
+| 49 | 0 | 4 | 4 |
+| 40 | 5 | 10 | 11 |
 
 Task estimation error ratio: 60/72 = 0,83
 
