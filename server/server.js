@@ -24,29 +24,6 @@ app.use(morgan("tiny"));// Set-up logging
 app.use(express.json());// Process body content
 app.use(cookieParser());
 
-
-/*app.post('/test', async (req, res) => {
-    
-    try {
-        const userID = 275330;
-        const lectureID = req.body.lessonId;
-        const a = await bookingDao.bookLesson(userID, lectureID);
-        const user = await userDao.getUserByID(userID);
-        const lectureData = await bookingDao.getLectureDataById(lectureID);
-        const email = user.username;
-        const info = {
-            notificationType: 1,
-            course: lectureData.CourseName,
-            date: moment(lectureData.TimeStart).format('MM/DD/YYYY'),
-            start: moment(lectureData.TimeStart).format('HH:mm'),
-            end: moment(lectureData.TimeEnd).format('HH:mm')
-        }
-        emailAPI.sendNotification(email, info);
-        res.status(200).json(a);
-    } catch (err) {
-        res.status(505).json({ error: 'Server error: ' + err });
-    }
-})*/
 // LOGIN API
 app.post('/users/authenticate', async (req, res) => {
     const username = req.body.username;
@@ -111,12 +88,12 @@ app.delete('/deleteBooking/:lessonID', (req, res) => {
                 else {
                     // a new student has been extracted from the waiting queue
                     // so he needs to be notified
-                    emailDao.getLectureInfo(result.CourseScheduleID)
+                    emailDao.getLectureInfo(result.lectureID)
                         .then((info) => {
-                            userDao.getUserByID(req.user.user)
+                            userDao.getUserByID(result.studentID)
                                 .then((userData) => {
                                     info.notificationType = 4;
-                                    emailAPI.sendNotification(userData.UserName, info);
+                                    emailAPI.sendNotification(userData.username, info);
                                     res.status(204).json();
                                 })
                         });

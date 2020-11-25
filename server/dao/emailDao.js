@@ -87,8 +87,10 @@ exports.getLectureInfo = (courseScheduleID) => {
         db.get(sql, [courseScheduleID], (err, row) => {
             if (err) {
                 reject(err);
+                return;
             }
             else {
+                console.log(row)
                 const info = {
                     course: row.CourseName,
                     date: moment(row.TimeStart).format('MM/DD/YYYY'),
