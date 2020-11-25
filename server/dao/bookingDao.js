@@ -75,88 +75,108 @@ exports.getStudentCourses = function (studentID) {
 exports.bookLesson = function (studentID, lessonID) {
     return new Promise((resolve, reject) => {
 
-        // 1 CHECK IF THE STUDENT CAN BOOK OR HAS TO BE PUT INTO THE WAITNING LIST
-        let sql = 'SELECT OccupiedSeat, MaxSeat ' +
-            'FROM CourseSchedule ' +
-            'WHERE CourseScheduleID = ?';
-        db.get(sql, [lessonID], (err, row) => {
+        //check if the student is already on the waiting list
+        let sql = `
+        SELECT COUNT(*) as count
+        FROM Booking 
+        WHERE CourseScheduleID = ? AND StudentID = ? AND BookStatus = 3`
+        db.get(sql, [lessonID, studentID], (err, row) => {
             if (err) {
                 reject(err);
                 return;
             }
-            else {
+            if (row.count < 1) {
 
-                if (row === undefined) {
-                    reject("Some error occurred, server request failed!");
-                    return;
-                }
-
-                //flag to understand if the student has to wait
-                const waiting = row.OccupiedSeat === row.MaxSeat;
-
-                // 2 CHECK IF THERE ARE PREVIOUSLY CANCELED BOOKING (STATUS = 2)
-                sql = 'SELECT BookID ' +
-                    'FROM Booking ' +
-                    'WHERE CourseScheduleID = ? AND StudentID = ? AND BookStatus = 2';
-                db.get(sql, [lessonID, studentID], (err, row) => {
+                // 1 CHECK IF THE STUDENT CAN BOOK OR HAS TO BE PUT INTO THE WAITNING LIST
+                sql = 'SELECT OccupiedSeat, MaxSeat ' +
+                    'FROM CourseSchedule ' +
+                    'WHERE CourseScheduleID = ?';
+                db.get(sql, [lessonID], (err, row) => {
                     if (err) {
                         reject(err);
                         return;
                     }
                     else {
-                        const previousBookingID = row ? row.BookID : undefined; //used also to understand if there is an existing deleted booking
-                        const status = waiting ? 3 : 1; //status = 3 if waiting, 1 otherwise
-                        const now = moment().format('YYYY:MM:DDTHH:mm:ss');
 
-                        // UPDATE PREVIOUS INSERTED BOOKING
-                        if (previousBookingID) {
-                            sql = 'UPDATE Booking ' +
-                                'SET BookStatus = ?, Timestamp = ? ' +
-                                'WHERE BookID = ?';
-                            db.run(sql, [status, now, previousBookingID], (err, row) => {
-                                if (err) {
-                                    reject(err);
-                                    return;
-                                }
-                            });
+                        if (row === undefined) {
+                            reject("Some error occurred, server request failed!");
+                            return;
                         }
-                        // INSERT NEW BOOKING
-                        else {
 
-                            sql = 'INSERT INTO Booking (CourseScheduleID, StudentID, BookStatus, attended, Timestamp) ' +
-                                'VALUES (?, ?, ?, 0, ?) ';
-                            db.run(sql, [lessonID, studentID, status, now], (err, row) => {
-                                if (err) {
-                                    reject(err);
-                                    return;
+                        //flag to understand if the student has to wait
+                        const waiting = row.OccupiedSeat === row.MaxSeat;
+
+                        // 2 CHECK IF THERE ARE PREVIOUSLY CANCELED BOOKING (STATUS = 2)
+                        sql = 'SELECT BookID ' +
+                            'FROM Booking ' +
+                            'WHERE CourseScheduleID = ? AND StudentID = ? AND BookStatus = 2';
+                        db.get(sql, [lessonID, studentID], (err, row) => {
+                            if (err) {
+                                reject(err);
+                                return;
+                            }
+                            else {
+                                const previousBookingID = row ? row.BookID : undefined; //used also to understand if there is an existing deleted booking
+                                const status = waiting ? 3 : 1; //status = 3 if waiting, 1 otherwise
+                                const now = moment().format('YYYY:MM:DDTHH:mm:ss');
+
+                                // UPDATE PREVIOUS INSERTED BOOKING
+                                if (previousBookingID) {
+                                    sql = 'UPDATE Booking ' +
+                                        'SET BookStatus = ?, Timestamp = ? ' +
+                                        'WHERE BookID = ?';
+                                    db.run(sql, [status, now, previousBookingID], (err, row) => {
+                                        if (err) {
+                                            reject(err);
+                                            return;
+                                        }
+                                    });
                                 }
-                            });
-                        }
-                        //IF THE BOOKING HAS BEEN COMPLETED (STATUS = 1, NOT IN WAITING LIST!) UPDATE THE
-                        //COURSESCHEDULE COLUMN OCCUPIEDSEATS
-                        if (!waiting) {
-                            sql = 'UPDATE CourseSchedule ' +
-                                'SET OccupiedSeat = OccupiedSeat + 1 ' +
-                                'WHERE CourseScheduleID = ?';
+                                // INSERT NEW BOOKING
+                                else {
 
-                            db.run(sql, [lessonID], (err) => {
-                                if (err) {
-                                    reject(err);
-                                    return;
+                                    sql = 'INSERT INTO Booking (CourseScheduleID, StudentID, BookStatus, attended, Timestamp) ' +
+                                        'VALUES (?, ?, ?, 0, ?) ';
+                                    db.run(sql, [lessonID, studentID, status, now], (err, row) => {
+                                        if (err) {
+                                            reject(err);
+                                            return;
+                                        }
+                                    });
+                                }
+                                //IF THE BOOKING HAS BEEN COMPLETED (STATUS = 1, NOT IN WAITING LIST!) UPDATE THE
+                                //COURSESCHEDULE COLUMN OCCUPIEDSEATS
+                                if (!waiting) {
+                                    sql = 'UPDATE CourseSchedule ' +
+                                        'SET OccupiedSeat = OccupiedSeat + 1 ' +
+                                        'WHERE CourseScheduleID = ?';
+
+                                    db.run(sql, [lessonID], (err) => {
+                                        if (err) {
+                                            reject(err);
+                                            return;
+                                        }
+                                        else {
+                                            resolve(true);
+                                            return;
+                                        }
+                                    });
                                 }
                                 else {
-                                    resolve(true);
-                                    return;
+                                    resolve(false);
                                 }
-                            });
-                        }
-                        else {
-                            resolve(false);
-                        }
+                            }
+                        });
                     }
                 });
+
+            } else {
+                resolve(false);
             }
-        });
+
+        })
+
+
     });
 }
 
@@ -223,7 +243,7 @@ exports.checkWaitingList = function (lessonID) {
                     SET OccupiedSeat = OccupiedSeat + 1
                     WHERE CourseScheduleID = ?`;
                     db.run(sql, [lessonID], (err) => {
-                        if (err) { reject(err); } else { resolve({studentID: row.StudentID, lectureID: row.CourseScheduleID}); }
+                        if (err) { reject(err); } else { resolve({ studentID: row.StudentID, lectureID: row.CourseScheduleID }); }
                     });
                 });
             } else {
