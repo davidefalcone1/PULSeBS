@@ -23,72 +23,104 @@ class MyCoursesLessonsPageRender extends React.Component {
     super(props);
     this.props = props;
     this.state = {
-      startingDay: undefined, endingDay: undefined
+      startingDay: undefined, endingDay: undefined, 
+      modalMessage: "", showModal: false
     }
+  }
+
+  activateModal = (message)  => {
+    this.setState({showModal: false, modalMessage: message});
   }
 
   render() {
     return (
-      <>
-        {this.props.teacherCourses && this.props.myTeachedCoursesLessons &&
-          <div style={{ padding: "15px" }}>
-            <Accordion>
-              {this.props.teacherCourses.map((teacherCourse) => //per ogni mio corso
-                <Card>
-                  <Card.Header>
-                    <Accordion.Toggle as={Button} variant="link" eventKey={"course-" + teacherCourse.courseName}>
-                      <CourseHeader course={teacherCourse.courseName} />
-                    </Accordion.Toggle>
-                  </Card.Header>
-                  <Accordion.Collapse eventKey={"course-" + teacherCourse.courseName}>
-                    <Card.Body>
-                      <Accordion>
-                        {this.props.myTeachedCoursesLessons.map((courseLesson) => //per ogni lezione del mio corso
-                          (courseLesson.courseId === teacherCourse.courseId) &&
-                          <Card>
-                            <Card.Header>
-                              <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
-                                <Accordion.Toggle as={Button} variant="link" eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
-                                  <LessonHeader id={courseLesson.scheduleId} startingTime={courseLesson.startingTime} endingTime={courseLesson.endingTime}
-                                    cancelLesson={this.props.cancelLesson} changeLessonToRemote={this.props.changeLessonToRemote} />
-                                </Accordion.Toggle>
-                                <LessonsHeaderButtons id={courseLesson.scheduleId} startingTime={courseLesson.startingTime} endingTime={courseLesson.endingTime}
-                                  cancelLesson={this.props.cancelLesson} changeLessonToRemote={this.props.changeLessonToRemote}
-                                  isLessonRemote={courseLesson.isLessonRemote}
-                                  isLessonCancelled={courseLesson.isLessonCancelled} />
-                              </div>
-                            </Card.Header>
-                            <Accordion.Collapse eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
-                              <Card.Body>
-                                <StudentHeader />
-                                <ListGroup as="ul" variant="flush">
-                                  {this.props.studentsBookedToMyLessons.map((studentBooking) => //per ogni prenotazione alla lezione del mio corso
-                                    (studentBooking.scheduleId === courseLesson.scheduleId) &&
-                                    <ListGroup.Item key={studentBooking.studentId} id={teacherCourse.courseName + "-" + courseLesson.scheduleId + "-" + studentBooking.studentId}>
-                                      {this.props.myBookedStudentsInfos.map((student) => //trova e mostra i dati dello studente
-                                        (studentBooking.studentId === student.personId) &&
-                                        <MyCourseLessonsStudentItem key={student.personId} student={student} />
-                                      )}
-                                    </ListGroup.Item>
-                                  )}
-                                </ListGroup>
-                              </Card.Body>
-                            </Accordion.Collapse>
-                          </Card>
-                        )}
-                      </Accordion>
-                    </Card.Body>
-                  </Accordion.Collapse>
-                </Card>
-              )}
-            </Accordion>
-          </div>
-        }
-
-        {!this.props.teacherCourses && !this.props.myTeachedCoursesLessons &&
-          <NoItemsImage />
-        }
-      </>
+      <AuthContext.Consumer>
+        {(context) => (
+          <>
+            {context.user &&
+              <>        
+                {this.props.teacherCourses && this.props.myTeachedCoursesLessons &&
+                <div style={{padding: "15px"}}>
+                  <Accordion>
+                    {this.props.teacherCourses.map((teacherCourse) => //per ogni mio corso
+                      <Card>
+                        <Card.Header>
+                          <Accordion.Toggle as={Button} variant="link" eventKey = {"course-" + teacherCourse.courseName}>
+                            <CourseHeader course = {teacherCourse.courseName}/>
+                          </Accordion.Toggle>
+                        </Card.Header>
+                        <Accordion.Collapse eventKey={"course-" + teacherCourse.courseName}>
+                          <Card.Body>
+                            <Accordion>
+                              {this.props.myTeachedCoursesLessons.map((courseLesson) => //per ogni lezione del mio corso
+                                (courseLesson.courseId === teacherCourse.courseId) &&
+                                  <Card>
+                                    <Card.Header>
+                                      <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
+                                        <Accordion.Toggle as={Button} variant="link" eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
+                                          <LessonHeader id = {courseLesson.scheduleId} startingTime = {courseLesson.startingTime} endingTime = {courseLesson.endingTime}
+                                            cancelLesson = {this.props.cancelLesson} changeLessonToRemote = {this.props.changeLessonToRemote}/>
+                                        </Accordion.Toggle>
+                                        <LessonsHeaderButtons id = {courseLesson.scheduleId} startingTime = {courseLesson.startingTime} endingTime = {courseLesson.endingTime}
+                                            cancelLesson = {this.props.cancelLesson} changeLessonToRemote = {this.props.changeLessonToRemote} activateModal = {this.activateModal}/>
+                                      </div>
+                                    </Card.Header>
+                                    <Accordion.Collapse eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
+                                      <Card.Body>
+                                        <StudentHeader/>
+                                        <ListGroup as="ul" variant="flush">
+                                          {this.props.studentsBookedToMyLessons.map((studentBooking) => //per ogni prenotazione alla lezione del mio corso
+                                            (studentBooking.scheduleId === courseLesson.scheduleId) &&
+                                            <ListGroup.Item key = {studentBooking.studentId} id = {teacherCourse.courseName + "-" + courseLesson.scheduleId + "-" + studentBooking.studentId}>
+                                              {this.props.myBookedStudentsInfos.map((student) => //trova e mostra i dati dello studente
+                                              (studentBooking.studentId === student.personId) &&
+                                                <MyCourseLessonsStudentItem key = {student.personId} student = {student}/> 
+                                              )}
+                                            </ListGroup.Item>  
+                                          )}
+                                        </ListGroup>
+                                      </Card.Body>
+                                    </Accordion.Collapse>
+                                  </Card>
+                              )}
+                            </Accordion>
+                          </Card.Body>
+                        </Accordion.Collapse>
+                      </Card>
+                    )}
+                  </Accordion>
+                </div>
+                }
+        
+                {!this.props.teacherCourses && !this.props.myTeachedCoursesLessons &&
+                  <NoItemsImage/>
+                }
+        
+                {this.state.showModal &&
+                  <Modal show={this.state.showModal} animation={false}>
+                    <Modal.Header>
+                      <Modal.Title>Operation response</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <div className="row-md-6">
+                        {this.state.modalMessage}
+                      </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                      <Button variant="secondary" type="button" 
+                        onClick={(event) => {
+                          event.preventDefault();
+                          this.setState({showModal: false, modalMessage: ""});
+                        }}>Close</Button>
+                    </Modal.Footer>
+                  </Modal>
+                }
+              </>
+            }
+            {!context.user && <Redirect to="/login"/>}
+          </>
+        )}
+      </AuthContext.Consumer>
     )
   }
 }
@@ -116,7 +148,17 @@ function LessonsHeaderButtons(props) {
         {(moment().isBefore(moment(props.startingTime).subtract(30, 'm'))) && !props.isLessonRemote && !props.isLessonCancelled &&
           <Button variant="warning" onClick={(event) => {
             event.preventDefault();
-            props.changeLessonToRemote(props.id);
+            if(moment().isBefore(moment(props.startingTime).subtract(30, 'm'))){
+              props.changeLessonToRemote(props.id).then(() =>{
+                props.activateModal("Operation completed successfully. Your lesson is now remote!");
+              })
+              .catch((errorObj) => { 
+                props.activateModal("Something went wrong: " + errorObj);
+              });
+            }
+            else{
+              props.activateModal("Sorry, your time to make this lesson remote is over.");
+            }
           }} id={"makeRemoteFieldOfLesson" + props.id}>
             Make Remote
           </Button>
@@ -125,7 +167,17 @@ function LessonsHeaderButtons(props) {
         {(moment().isBefore(moment(props.startingTime).subtract(1, 'h'))) && !props.isLessonCancelled &&
           <Button variant="danger" onClick={(event) => {
             event.preventDefault();
-            props.cancelLesson(props.id);
+            if(moment().isBefore(moment(props.startingTime).subtract(1, 'h'))){
+              props.cancelLesson(props.id).then(() =>{
+                props.activateModal("Operation completed successfully. Your lesson is now cancelled!");
+              })
+              .catch((errorObj) => { 
+                props.activateModal("Something went wrong: " + errorObj);
+              });
+            }
+            else{
+              props.activateModal("Sorry, your time to cancel this lesson is over.");
+            }
           }} id={"cancelFieldOfLesson" + props.id}>
             CANCEL
           </Button>
