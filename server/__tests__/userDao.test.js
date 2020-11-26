@@ -13,7 +13,7 @@ describe("getUser", ()=>{
         await testHelper.cleanDB();
     });
     test("user exists", async ()=>{
-        await testHelper.insertUser();
+        await testHelper.insertStudent();
         expect.assertions(1);
         return userDao.getUser("davide.falcone@studenti.polito.it")
             .then(user=>expect(user.userID).toEqual('123456'));
@@ -28,7 +28,7 @@ describe("getUser", ()=>{
 describe("checkPassword", ()=>{
     beforeAll(async ()=>{
         await testHelper.initDB();
-        await testHelper.insertUser();
+        await testHelper.insertStudent();
     });
     afterAll(async ()=>{
         await testHelper.cleanDB();

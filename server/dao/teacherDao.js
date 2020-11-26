@@ -33,7 +33,6 @@ exports.getMyCoursesLessons = function (teacherID) {
 
 exports.getBookedStudents = function (CourseScheduleIDs) {
     return new Promise((resolve, reject) => {
-
         //Check if the CourseScheduleIDs is an array
         if (!Array.isArray(CourseScheduleIDs)) {
             let err = { message: "" };
@@ -84,6 +83,70 @@ exports.getStudentsData = function (studentsIds) {
         });
     });
 }
+
+
+exports.updateLessonType = function (courseScheduleId, status) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+        UPDATE CourseSchedule
+        SET CourseType = ?
+        WHERE Cast ((JulianDay(CourseSchedule.TimeStart)-JulianDay('now', 'localtime') ) * 24 * 60 As Integer) > 30 
+        AND CourseSchedule.CourseScheduleID = ?`;
+
+        db.run(sql, [status, courseScheduleId], function (err) {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(this.changes);
+        });
+    });
+}
+
+exports.updateLessonStatus = function (courseScheduleId, status) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+        UPDATE CourseSchedule
+        SET CourseStatus = ?
+        WHERE Cast ((JulianDay(CourseSchedule.TimeStart)-JulianDay('now', 'localtime') ) * 24 * 60 As Integer) > 60 
+        AND CourseSchedule.CourseScheduleID = ?`;
+
+        db.run(sql, [status, courseScheduleId], function (err) {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(this.changes);
+        });
+    });
+}
+
+exports.cancelAllBooking = function (courseScheduleId) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+        UPDATE Booking
+        SET BookStatus = 4
+        WHERE CourseScheduleID = ?`;
+
+        db.run(sql, [courseScheduleId], function (err) {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve();
+        });
+    });
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

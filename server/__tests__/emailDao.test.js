@@ -8,30 +8,29 @@ const emailDao = require('../dao/emailDao');
 
 const db = require("../db");
 
-async function insertCourseTomorrow(){
-    const sql = 'INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom)' +
-        " VALUES(1, 1, 1, DATETIME('now', '+1 day', 'localtime'), DATETIME('now', '+1 day', '+1 hour', 'localtime'), 1, 50 ,'A1')";
-    await db.pRun(sql);
-}
-
 describe('getProfessorsToNotify', ()=>{
+    let course, teacher;
     afterEach(async ()=>{
         await testHelper.cleanDB();
     });
     beforeEach(async ()=>{
         await testHelper.initDB();
+        teacher = await testHelper.insertTeacher();
+        course = await testHelper.insertCourse('Software engineering 2', teacher);
     });
-    test('no courses tomorrow', ()=>{
+    test('no lectures tomorrow', ()=>{
         expect.assertions(1);
         return emailDao.getProfessorsToNotify()
             .then((profList)=>expect(profList).toHaveLength(0));
     });
-    test('there is only a course tomorrow', async ()=>{
-        await insertCourseTomorrow();
+    test('there is a lecture tomorrow', async ()=>{
         expect.assertions(1);
+        await testHelper.insertCourseSchedule(course);
         return emailDao.getProfessorsToNotify()
-            .then((profList)=>{
-                expect(profList[0].email).toEqual('marco@polito.it');
+            .then(async(profList)=>{
+                const expectedEmail = await testHelper.getUserEmail(teacher);
+                const emails = profList.map(prof=>prof.email);
+                expect(emails).toContain(expectedEmail);
             });
     });
 });

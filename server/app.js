@@ -1,5 +1,3 @@
-"use strict";
-
 const express = require("express");//import express
 const morgan = require("morgan"); // logging middleware
 const userDao = require('./dao/userDao');
@@ -13,13 +11,11 @@ const dailyMailer = require('./dailyMailer');
 const teacherDao = require('./dao/teacherDao');
 
 const jwtSecret = '123456789';
-const expireTime = 300; //seconds
+const expireTime = 900; //seconds
 
 const app = express();
-const port = 3001;
 
-
-app.use(morgan("tiny"));// Set-up logging
+app.use(morgan("tiny", { skip: (req, res) => process.env.NODE_ENV === 'test' }));// Set-up logging
 app.use(express.json());// Process body content
 app.use(cookieParser());
 
@@ -45,10 +41,12 @@ app.post('/users/authenticate', async (req, res) => {
         const user = await userDao.getUser(username, password);
         if (user === undefined) {
             res.status(401).send({ error: 'Invalid username' });
+            return;
         }
         else {
             if (!userDao.checkPassword(user, password)) {
                 res.status(401).send({ error: 'Invalid password' });
+                return;
             }
             else {
                 // AUTHENTICATION SUCCESS
@@ -62,12 +60,6 @@ app.post('/users/authenticate', async (req, res) => {
     catch (error) {
         res.status(500).json({ msg: "Server error!" });
     }
-});
-
-app.use(cookieParser());
-
-app.post('/logout', (req, res) => {
-    res.clearCookie('token').end();
 });
 
 // For the rest of the code, all APIs require authentication
@@ -118,9 +110,6 @@ app.get('/myBookedLessons', async (req, res) => {
         res.status(505).end();
     }
 });
-
-
-
 
 //Teacher APIs
 
@@ -194,6 +183,52 @@ app.post('/studentsData', async (req, res) => {
     }
 });
 
+
+/**
+* Update CourseType of lectures to (1 = presence) / (0 = distance)
+* (turn a presence lecture into a distance one)
+* @route       PUT /lessonType/:courseScheduleId
+* @param       status
+* @access      Private
+* @returns     0 (the courseScheduleId does not exist or the 30 minutes limitation passes)
+*              1 (the lecture has been changed to distance)
+*/
+app.put('/makeLessonRemote/:courseScheduleId', async (req, res) => {
+    const status = (req.body.status || 0);
+    const courseScheduleId = req.params.courseScheduleId;
+    try {
+        const result = await teacherDao.updateLessonType(courseScheduleId, status);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(401).json(err.message);
+    }
+});
+
+
+/**
+* Update CourseStatus of lectures to (1 = active) / (0 = canceled)
+* (Cancel a lecture 1 hour before its scheduled time)
+* @route       PUT /lessonStatus/:courseScheduleId
+* @param       status
+* @access      Private
+* @returns     0 (the courseScheduleId does not exist or the 60 minutes limitation passes)
+*              1 (the lecture has been canceled, and also all related booking canceled too)
+*/
+app.put('/cancelLesson/:courseScheduleId', async (req, res) => {
+    const status = (req.body.status || 0);
+    const courseScheduleId = req.params.courseScheduleId;
+    try {
+        const result = await teacherDao.updateLessonStatus(courseScheduleId, status);
+        if (result)
+            await teacherDao.cancelAllBooking(courseScheduleId);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
+    }
+});
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //calling by isAuthenticated() API on the front-end
 // retrieve the user after login
@@ -219,7 +254,7 @@ app.post('/bookLesson', async (req, res) => {
     try {
         const userID = req.user.user;
         const lectureID = req.body.lessonId;
-        let result = await bookingDao.bookLesson(userID, lectureID);
+        await bookingDao.bookLesson(userID, lectureID);
         const user = await userDao.getUserByID(userID);
         const lectureData = await bookingDao.getLectureDataById(lectureID);
         const email = user.username;
@@ -230,7 +265,7 @@ app.post('/bookLesson', async (req, res) => {
             start: moment(lectureData.TimeStart).format('HH:mm'),
             end: moment(lectureData.TimeEnd).format('HH:mm')
         }
-        result = await emailAPI.sendNotification(email, info);
+        emailAPI.sendNotification(email, info);
         res.status(200).end();
     } catch (err) {
         res.status(505).json({ error: 'Server error: ' + err });
@@ -240,5 +275,8 @@ app.post('/bookLesson', async (req, res) => {
 app.post('/logout', (req, res) => {
     res.clearCookie('token').end();
 });
+
+// set automatc email sending to professors
+dailyMailer.setDailyMail();
 
 module.exports = app;

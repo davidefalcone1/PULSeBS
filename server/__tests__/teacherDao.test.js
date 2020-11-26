@@ -8,30 +8,31 @@ const bookingData = require('../dao/BookingData');
 const db = require("../db");
 const BookingData = require("../dao/BookingData");
 
-async function insertBooking(){
-    // Insert booking
-    const sql = "INSERT INTO Booking(CourseScheduleID, StudentID, BookStatus, Attended) VALUES(2, '123456', 1, 0)";
-    await db.pRun(sql);
-}
-
 describe("getBookedStudents", ()=>{
+    let lecture, student;
     beforeAll(async ()=>{
         await testHelper.initDB();
-        await testHelper.insertUser();
-        await testHelper.insertCourseSchedule();
+        student = await testHelper.insertStudent();
+        const teacher = await testHelper.insertTeacher();
+        const course = await testHelper.insertCourse('Software engineering 2', teacher);
+        lecture = await testHelper.insertCourseSchedule(course);
+        await testHelper.enrollStudentToCourse(student, course);
     });
     afterAll(async ()=>{
         await testHelper.cleanDB();
     });
     test("No students booked", ()=>{
         expect.assertions(1);
-        return teacherDao.getBookedStudents([2])
+        return teacherDao.getBookedStudents([lecture])
             .then((bookedStudents)=>expect(bookedStudents).toHaveLength(0));
     });
     test("One student is booked", async()=>{
-        await insertBooking();
         expect.assertions(1);
-        return teacherDao.getBookedStudents([2])
-            .then((bookedStudents)=>expect(bookedStudents[0]).toEqual(new BookingData(2, 2, '123456', '1', '0')))
+        testHelper.insertBooking(student, lecture);
+        return teacherDao.getBookedStudents([lecture])
+            .then((bookedStudents)=>{
+                const IDs = bookedStudents.map(student=>student.studentId);
+                expect(IDs).toContain(student);
+            });
     });
 });
