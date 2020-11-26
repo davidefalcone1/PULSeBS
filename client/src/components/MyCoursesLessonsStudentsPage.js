@@ -32,7 +32,7 @@ class MyCoursesLessonsPageRender extends React.Component {
   }
 
   activateModal = (message)  => {
-    this.setState({showModal: false, modalMessage: message});
+    this.setState({showModal: true, modalMessage: message});
   }
 
   render() {
@@ -65,7 +65,8 @@ class MyCoursesLessonsPageRender extends React.Component {
                                             cancelLesson = {this.props.cancelLesson} changeLessonToRemote = {this.props.changeLessonToRemote}/>
                                         </Accordion.Toggle>
                                         <LessonsHeaderButtons id = {courseLesson.scheduleId} startingTime = {courseLesson.startingTime} endingTime = {courseLesson.endingTime}
-                                            cancelLesson = {this.props.cancelLesson} changeLessonToRemote = {this.props.changeLessonToRemote} activateModal = {this.activateModal}/>
+                                            cancelLesson = {this.props.cancelLesson} changeLessonToRemote = {this.props.changeLessonToRemote} 
+                                            isLessonRemote={courseLesson.isLessonRemote} isLessonCancelled={courseLesson.isLessonCancelled} activateModal = {this.activateModal}/>
                                       </div>
                                     </Card.Header>
                                     <Accordion.Collapse eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
@@ -149,6 +150,7 @@ function LessonsHeaderButtons(props) {
     <>
       <div id={"lesson-" + props.startingTime + "----" + props.endingTime}>
         {(moment().isBefore(moment(props.startingTime).subtract(30, 'm'))) && !props.isLessonRemote && !props.isLessonCancelled &&
+        (console.log(props.startingTime + "----" + props.endingTime + " HERE " + props.isLessonRemote)) &&
           <Button variant="warning" onClick={(event) => {
             event.preventDefault();
             if(moment().isBefore(moment(props.startingTime).subtract(30, 'm'))){

@@ -129,16 +129,14 @@ class App extends React.Component {
     }).catch((errorObj) => { console.log(errorObj); });
   }
 
-  cancelLesson = async (lessonId) => {
-    console.log("Cancelling lesson: " + lessonId);
+  cancelLesson = (lessonId) => {
     return API.cancelLesson(lessonId).then(() =>{
       API.getMyCoursesLessons().then((myCoursesLessons) => {
         this.setState({ lessons: myCoursesLessons });
       });
     })
   }
-  changeLessonToRemote = async (lessonId) => {
-    console.log("Changing to remote lesson: " + lessonId);
+  changeLessonToRemote = (lessonId) => {
     return API.makeLessonRemote(lessonId).then(() =>{
       API.getMyCoursesLessons().then((myCoursesLessons) => {
         this.setState({ lessons: myCoursesLessons });
