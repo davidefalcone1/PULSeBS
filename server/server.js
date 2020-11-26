@@ -11,9 +11,10 @@ const emailAPI = require('./emailAPI');
 const bookingDao = require('./dao/bookingDao');
 const dailyMailer = require('./dailyMailer');
 const teacherDao = require('./dao/teacherDao');
+const emailDao = require('./dao/emailDao');
 
 const jwtSecret = '123456789';
-const expireTime = 300; //seconds
+const expireTime = 900; //seconds
 
 const app = express();
 const port = 3001;
@@ -22,10 +23,6 @@ const port = 3001;
 app.use(morgan("tiny"));// Set-up logging
 app.use(express.json());// Process body content
 app.use(cookieParser());
-
-app.get('/', (req, res) => {
-    res.send('Hello SoftENG members!');
-});
 
 // LOGIN API
 app.post('/users/authenticate', async (req, res) => {
@@ -82,7 +79,26 @@ app.use(
 app.delete('/deleteBooking/:lessonID', (req, res) => {
     const lessonID = req.params.lessonID;
     bookingDao.deleteBooking(lessonID, req.user.user)
-        .then(() => res.status(204).end())
+        .then(bookingDao.checkWaitingList(lessonID).
+            then((result) => {
+                console.log(result);
+                if (result === 0) {
+                    res.status(204).json();
+                }
+                else {
+                    // a new student has been extracted from the waiting queue
+                    // so he needs to be notified
+                    emailDao.getLectureInfo(result.lectureID)
+                        .then((info) => {
+                            userDao.getUserByID(result.studentID)
+                                .then((userData) => {
+                                    info.notificationType = 4;
+                                    emailAPI.sendNotification(userData.username, info);
+                                    res.status(204).json();
+                                })
+                        });
+                }
+            }))
         .catch((err) => res.status(500).json({ error: 'Server error: ' + err }));
 });
 
@@ -192,6 +208,61 @@ app.post('/studentsData', async (req, res) => {
     }
 });
 
+
+/**
+* Update CourseType of lectures to (1 = presence) / (0 = distance)
+* (turn a presence lecture into a distance one)
+* @route       PUT /lessonType/:courseScheduleId
+* @param       status
+* @access      Private
+* @returns     0 (the courseScheduleId does not exist or the 30 minutes limitation passes)
+*              1 (the lecture has been changed to distance)
+*/
+app.put('/makeLessonRemote/:courseScheduleId', async (req, res) => {
+    const status = (req.body.status || 0);
+    const courseScheduleId = req.params.courseScheduleId;
+    try {
+        const result = await teacherDao.updateLessonType(courseScheduleId, status);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(401).json(err.message);
+    }
+});
+
+
+/**
+* Update CourseStatus of lectures to (1 = active) / (0 = canceled)
+* (Cancel a lecture 1 hour before its scheduled time)
+* @route       PUT /lessonStatus/:courseScheduleId
+* @param       status
+* @access      Private
+* @returns     0 (the courseScheduleId does not exist or the 60 minutes limitation passes)
+*              1 (the lecture has been canceled, and also all related booking canceled too)
+*/
+app.delete('/cancelLesson/:courseScheduleId', async (req, res) => {
+    const status = (req.body.status || 0);
+    const courseScheduleId = req.params.courseScheduleId;
+    try {
+        const result = await teacherDao.updateLessonStatus(courseScheduleId, status);
+        if (result === 1) {
+            await teacherDao.cancelAllBooking(courseScheduleId);
+
+            // handle email notification to all booked students
+            const emails = await emailDao.getStudentsToNotify(courseScheduleId);
+            const info = await emailDao.getLectureInfo(courseScheduleId);
+            info.notificationType = 3;
+            emails.forEach((email) => {
+                emailAPI.sendNotification(email.UserName, info);
+            });
+        }
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
+    }
+});
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //calling by isAuthenticated() API on the front-end
 // retrieve the user after login
@@ -213,23 +284,31 @@ app.get('/user', (req, res) => {
         );
 });
 
+// return true if lecture booked, false if student put into waiting list
 app.post('/bookLesson', async (req, res) => {
     try {
         const userID = req.user.user;
         const lectureID = req.body.lessonId;
-        let result = await bookingDao.bookLesson(userID, lectureID);
+        const booked = await bookingDao.bookLesson(userID, lectureID);
         const user = await userDao.getUserByID(userID);
         const lectureData = await bookingDao.getLectureDataById(lectureID);
         const email = user.username;
-        const info = {
-            notificationType: 1,
-            course: lectureData.CourseName,
-            date: moment(lectureData.TimeStart).format('MM/DD/YYYY'),
-            start: moment(lectureData.TimeStart).format('HH:mm'),
-            end: moment(lectureData.TimeEnd).format('HH:mm')
+
+        if (!booked) {
+            res.json(false);
         }
-        result = await emailAPI.sendNotification(email, info);
-        res.status(200).end();
+        else {
+            const info = {
+                notificationType: 1,
+                course: lectureData.CourseName,
+                date: moment(lectureData.TimeStart).format('MM/DD/YYYY'),
+                start: moment(lectureData.TimeStart).format('HH:mm'),
+                end: moment(lectureData.TimeEnd).format('HH:mm')
+            }
+            emailAPI.sendNotification(email, info);
+            res.json(true);
+        }
+
     } catch (err) {
         res.status(505).json({ error: 'Server error: ' + err });
     }

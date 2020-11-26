@@ -97,7 +97,7 @@ exports.sendNotification = (username, emailInfo) => {
     
           const emailFields = createMessage(emailInfo);
           if(!emailFields) {
-              return false;
+              reject('Info fields not correct') 
           }
           
           const mailOptions = {
@@ -113,7 +113,7 @@ exports.sendNotification = (username, emailInfo) => {
               reject(error);
             } else {
               console.log('Email sent: ' + info.response);
-              resolve(null);
+              resolve(true);
             }
           });
     });
