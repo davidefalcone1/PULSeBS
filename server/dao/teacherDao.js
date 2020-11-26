@@ -24,13 +24,13 @@ exports.getMyCoursesLessons = function (teacherID) {
             if (err) {
                 reject();
             }
-            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat))
-            .sort((lesson1, lesson2) => {
-                // sort in DESCEDING ORDER by starting time
-                const start1 = moment(lesson1.startingTime);
-                const start2 = moment(lesson2.startingTime);
-                return start1.isBefore(start2) ? 1 : -1;
-            });
+            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, row.CourseStatus, row.CourseType))
+                .sort((lesson1, lesson2) => {
+                    // sort in DESCEDING ORDER by starting time
+                    const start1 = moment(lesson1.startingTime);
+                    const start2 = moment(lesson2.startingTime);
+                    return start1.isBefore(start2) ? 1 : -1;
+                });
             resolve(lessons);
         });
     });
@@ -163,7 +163,7 @@ exports.cancelAllBooking = function (courseScheduleId) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class LessonsData {
-    constructor(scheduleId, courseId, startingTime, endingTime, occupiedSeats, availableSeats) {
+    constructor(scheduleId, courseId, startingTime, endingTime, occupiedSeats, availableSeats, courseStatus, courseType) {
         if (scheduleId)
             this.scheduleId = scheduleId;
         this.courseId = courseId;
@@ -171,6 +171,8 @@ class LessonsData {
         this.endingTime = moment(new Date(endingTime));
         this.occupiedSeats = occupiedSeats;
         this.availableSeats = availableSeats;
+        this.courseStatus = courseStatus;
+        this.courseType = courseType;
     }
 
     static fromJson(json) {
