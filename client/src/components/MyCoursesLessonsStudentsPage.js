@@ -150,7 +150,6 @@ function LessonsHeaderButtons(props) {
     <>
       <div id={"lesson-" + props.startingTime + "----" + props.endingTime}>
         {(moment().isBefore(moment(props.startingTime).subtract(30, 'm'))) && !props.isLessonRemote && !props.isLessonCancelled &&
-        (console.log(props.startingTime + "----" + props.endingTime + " HERE " + props.isLessonRemote)) &&
           <Button variant="warning" onClick={(event) => {
             event.preventDefault();
             if(moment().isBefore(moment(props.startingTime).subtract(30, 'm'))){
