@@ -163,7 +163,7 @@ exports.cancelAllBooking = function (courseScheduleId) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class LessonsData {
-    constructor(scheduleId, courseId, startingTime, endingTime, occupiedSeats, availableSeats, courseStatus, courseType) {
+    constructor(scheduleId, courseId, startingTime, endingTime, occupiedSeats, availableSeats, isLessonCancelled, isLessonRemote) {
         if (scheduleId)
             this.scheduleId = scheduleId;
         this.courseId = courseId;
@@ -171,8 +171,8 @@ class LessonsData {
         this.endingTime = moment(new Date(endingTime));
         this.occupiedSeats = occupiedSeats;
         this.availableSeats = availableSeats;
-        this.courseStatus = courseStatus;
-        this.courseType = courseType;
+        this.isLessonCancelled = Boolean(parseInt(isLessonCancelled));
+        this.isLessonRemote = Boolean(parseInt(isLessonRemote));
     }
 
     static fromJson(json) {

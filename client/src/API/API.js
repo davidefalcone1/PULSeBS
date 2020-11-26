@@ -73,7 +73,7 @@ function getMyBookedLessons() {
                     const list = lessonsJson.map((lesson) => {
                         return LessonsData.fromJson(lesson);
                     });
-                    resolve(list);                    
+                    resolve(list);
                 } else {
                     reject();
                 }
@@ -91,7 +91,7 @@ function getMyWaitingBookedLessons() {
                     const list = lessonsJson.map((lesson) => {
                         return LessonsData.fromJson(lesson);
                     });
-                    resolve(list);                    
+                    resolve(list);
                 } else {
                     reject();
                 }
@@ -188,12 +188,12 @@ function getBookedStudents(lessonsIds) { //so the course schedule id
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({lessonsIds}),
+            body: JSON.stringify({ lessonsIds }),
         })
             .then(async (response) => {
                 const bookedStudentsJson = await response.json();
                 if (response.ok) {
-                        const list = bookedStudentsJson.map((booking) => {
+                    const list = bookedStudentsJson.map((booking) => {
                         return BookingData.fromJson(booking);
                     });
                     resolve(list);
