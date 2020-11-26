@@ -171,8 +171,8 @@ class LessonsData {
         this.endingTime = moment(new Date(endingTime));
         this.occupiedSeats = occupiedSeats;
         this.availableSeats = availableSeats;
-        this.isLessonCancelled = Boolean(parseInt(isLessonCancelled));
-        this.isLessonRemote = Boolean(parseInt(isLessonRemote));
+        this.isLessonCancelled = !Boolean(parseInt(isLessonCancelled));
+        this.isLessonRemote = !Boolean(parseInt(isLessonRemote));
     }
 
     static fromJson(json) {

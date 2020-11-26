@@ -113,7 +113,7 @@ function LessonsHeaderButtons(props) {
   return (
     <>
       <div id={"lesson-" + props.startingTime + "----" + props.endingTime}>
-        {(moment().isBefore(moment(props.startingTime).subtract(30, 'm'))) && props.isLessonRemote &&
+        {(moment().isBefore(moment(props.startingTime).subtract(30, 'm'))) && !props.isLessonRemote && !props.isLessonCancelled &&
           <Button variant="warning" onClick={(event) => {
             event.preventDefault();
             props.changeLessonToRemote(props.id);
@@ -122,7 +122,7 @@ function LessonsHeaderButtons(props) {
           </Button>
         }
         <span>   </span>
-        {(moment().isBefore(moment(props.startingTime).subtract(1, 'h'))) && props.isLessonCancelled &&
+        {(moment().isBefore(moment(props.startingTime).subtract(1, 'h'))) && !props.isLessonCancelled &&
           <Button variant="danger" onClick={(event) => {
             event.preventDefault();
             props.cancelLesson(props.id);
