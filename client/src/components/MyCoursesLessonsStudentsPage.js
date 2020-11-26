@@ -5,6 +5,9 @@ import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button'
 import moment from 'moment'
+import { Redirect } from 'react-router-dom';
+import { AuthContext } from '../_services/AuthContext';
+import Modal from 'react-bootstrap/Modal';
 
 const myCoursesLessons = (props) => {
   return (
