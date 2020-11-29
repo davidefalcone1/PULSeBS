@@ -11,7 +11,8 @@ exports.getBookableLessons = function (studentID) {
             "FROM CourseSchedule CS, StudentCourse SC " +
             "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
             "AND CS.CourseType=1 AND CS.CourseScheduleID NOT IN (" +
-            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=? AND BookStatus = 1)";
+            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=? AND BookStatus = 1)" + 
+            "ORDER BY TimeStart ASC";
         db.all(sql, [studentID, studentID], function (err, rows) {
             if (err) {
                 reject();
@@ -19,13 +20,7 @@ exports.getBookableLessons = function (studentID) {
             const availableLessons = rows.filter(row => checkStart(row.TimeStart))
                 .map((row) => new LessonData(row.CourseScheduleID, row.CourseID,
                     row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, 
-                    row.CourseStatus, row.CourseType))
-                .sort((lesson1, lesson2) => {
-                    // sort in ASCEDING ORDER by starting time
-                    const start1 = moment(lesson1.startingTime);
-                    const start2 = moment(lesson2.startingTime);
-                    return start1.isBefore(start2) ? -1 : 1;
-                });
+                    row.CourseStatus, row.CourseType));
             resolve(availableLessons);
         });
     });
@@ -38,7 +33,8 @@ exports.getBookedLessons = function (studentID) {
             "FROM CourseSchedule CS, StudentCourse SC " +
             "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
             "AND CS.CourseType=1 AND CS.CourseScheduleID IN (" +
-            "SELECT CourseScheduleID FROM Booking WHERE StudentID=? AND BookStatus = 1)"
+            "SELECT CourseScheduleID FROM Booking WHERE StudentID=? AND BookStatus = 1)" + 
+            "ORDER BY TimeStart ASC";
         db.all(sql, [studentID, studentID], function (err, rows) {
             if (err) {
                 reject();
@@ -47,13 +43,30 @@ exports.getBookedLessons = function (studentID) {
                 .map((row) =>
                     new LessonData(row.CourseScheduleID, row.CourseID,
                         row.TimeStart, row.TimeEnd, row.OccupiedSeat, 
-                        row.MaxSeat, row.CourseStatus, row.CourseType))
-                .sort((lesson1, lesson2) => {
-                    // sort in ASCEDING ORDER by starting time
-                    const start1 = moment(lesson1.startingTime);
-                    const start2 = moment(lesson2.startingTime);
-                    return start1.isBefore(start2) ? -1 : 1;
-                });
+                        row.MaxSeat, row.CourseStatus, row.CourseType));
+            resolve(myLessons);
+        });
+    });
+}
+
+exports.getPendingWaitingBookings = function (studentID) {
+    return new Promise((resolve, reject) => {
+        const sql =
+            "SELECT CS.CourseScheduleID, CS.CourseId, Classroom, OccupiedSeat, MaxSeat, TimeStart, TimeEnd, CourseStatus, CourseType " +
+            "FROM CourseSchedule CS, StudentCourse SC " +
+            "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
+            "AND CS.CourseType=1 AND CS.CourseScheduleID IN (" +
+            "SELECT CourseScheduleID FROM Booking WHERE StudentID=? AND BookStatus = 3)" + 
+            "ORDER BY TimeStart ASC";
+        db.all(sql, [studentID, studentID], function (err, rows) {
+            if (err) {
+                reject();
+            }
+            const myLessons = rows.filter(row => checkStart(row.TimeStart))
+                .map((row) =>
+                    new LessonData(row.CourseScheduleID, row.CourseID,
+                        row.TimeStart, row.TimeEnd, row.OccupiedSeat, 
+                        row.MaxSeat, row.CourseStatus, row.CourseType));
             resolve(myLessons);
         });
     });

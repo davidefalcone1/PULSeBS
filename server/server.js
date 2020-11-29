@@ -133,6 +133,17 @@ app.get('/myBookedLessons', async (req, res) => {
     }
 });
 
+// API for retrieving pending waiting lessons booked by a student
+app.get('/myWaitingBookedLessons', async (req, res) => {
+    try {
+        const result = await bookingDao.getPendingWaitingBookings(req.user.user);
+        res.json(result);
+    }
+    catch (e) {
+        res.status(505).end();
+    }
+});
+
 
 
 
