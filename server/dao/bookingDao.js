@@ -7,7 +7,7 @@ const moment = require('moment');
 exports.getBookableLessons = function (studentID) {
     return new Promise((resolve, reject) => {
         const sql =
-            "SELECT CS.CourseScheduleID, CS.CourseId, Classroom, OccupiedSeat, MaxSeat, TimeStart, TimeEnd " +
+            "SELECT CS.CourseScheduleID, CS.CourseId, Classroom, OccupiedSeat, MaxSeat, TimeStart, TimeEnd, CourseStatus, CourseType " +
             "FROM CourseSchedule CS, StudentCourse SC " +
             "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
             "AND CS.CourseType=1 AND CS.CourseScheduleID NOT IN (" +
@@ -18,7 +18,8 @@ exports.getBookableLessons = function (studentID) {
             }
             const availableLessons = rows.filter(row => checkStart(row.TimeStart))
                 .map((row) => new LessonData(row.CourseScheduleID, row.CourseID,
-                    row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat))
+                    row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, 
+                    row.CourseStatus, row.CourseType))
                 .sort((lesson1, lesson2) => {
                     // sort in ASCEDING ORDER by starting time
                     const start1 = moment(lesson1.startingTime);
@@ -33,7 +34,7 @@ exports.getBookableLessons = function (studentID) {
 exports.getBookedLessons = function (studentID) {
     return new Promise((resolve, reject) => {
         const sql =
-            "SELECT CS.CourseScheduleID, CS.CourseId, Classroom, OccupiedSeat, MaxSeat, TimeStart, TimeEnd " +
+            "SELECT CS.CourseScheduleID, CS.CourseId, Classroom, OccupiedSeat, MaxSeat, TimeStart, TimeEnd, CourseStatus, CourseType " +
             "FROM CourseSchedule CS, StudentCourse SC " +
             "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
             "AND CS.CourseType=1 AND CS.CourseScheduleID IN (" +
@@ -45,7 +46,8 @@ exports.getBookedLessons = function (studentID) {
             const myLessons = rows.filter(row => checkStart(row.TimeStart))
                 .map((row) =>
                     new LessonData(row.CourseScheduleID, row.CourseID,
-                        row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat))
+                        row.TimeStart, row.TimeEnd, row.OccupiedSeat, 
+                        row.MaxSeat, row.CourseStatus, row.CourseType))
                 .sort((lesson1, lesson2) => {
                     // sort in ASCEDING ORDER by starting time
                     const start1 = moment(lesson1.startingTime);
