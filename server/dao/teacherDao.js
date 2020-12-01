@@ -1,9 +1,27 @@
 'use strict';
-
+const BookingData = require('./BookingData');
+const CourseData = require('./CourseData');
+const LessonsData = require('./LessonsData');
 const moment = require("moment");
 const db = require('../db');
 
+// this is a UserData type that will fulfill the front-end (it is different from the User class)
+class UserData {
+    constructor(id, personId, fullName, email) {
+        if (id)
+            this.id = id;
+        this.personId = personId;
+        this.fullName = fullName;
+        this.email = email;
+    }
 
+    static fromJson(json) {
+        const temp = Object.assign(new UserData(), json);
+        return temp;
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////
 exports.getTeacherCourses = function (teacherID) {
     return new Promise((resolve, reject) => {
         const sql = "SELECT * FROM Course WHERE TeacherID = ?";
@@ -24,7 +42,13 @@ exports.getMyCoursesLessons = function (teacherID) {
             if (err) {
                 reject();
             }
-            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat));
+            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, row.CourseStatus, row.CourseType))
+                .sort((lesson1, lesson2) => {
+                    // sort in DESCEDING ORDER by starting time
+                    const start1 = moment(lesson1.startingTime);
+                    const start2 = moment(lesson2.startingTime);
+                    return start1.isBefore(start2) ? 1 : -1;
+                });
             resolve(lessons);
         });
     });
@@ -136,80 +160,4 @@ exports.cancelAllBooking = function (courseScheduleId) {
             resolve();
         });
     });
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-class LessonsData {
-    constructor(scheduleId, courseId, startingTime, endingTime, occupiedSeats, availableSeats) {
-        if (scheduleId)
-            this.scheduleId = scheduleId;
-        this.courseId = courseId;
-        this.startingTime = moment(new Date(startingTime));
-        this.endingTime = moment(new Date(endingTime));
-        this.occupiedSeats = occupiedSeats;
-        this.availableSeats = availableSeats;
-    }
-
-    static fromJson(json) {
-        const temp = Object.assign(new LessonData(), json);
-        temp.startingTime = moment(new Date(temp.startingTime));
-        temp.endingTime = moment(new Date(temp.endingTime));
-        return temp;
-    }
-}
-
-class UserData {
-    constructor(id, personId, fullName, email) {
-        if (id)
-            this.id = id;
-        this.personId = personId;
-        this.fullName = fullName;
-        this.email = email;
-    }
-
-    static fromJson(json) {
-        const temp = Object.assign(new UserData(), json);
-        return temp;
-    }
-}
-
-class CourseData {
-    constructor(courseId, courseName, teacherId) {
-        if (courseId)
-            this.courseId = courseId;
-        this.courseName = courseName;
-        this.teacherId = teacherId;
-    }
-}
-
-class BookingData {
-    constructor(id, scheduleId, studentId, status, attended) {
-        if (id)
-            this.id = id;
-        this.scheduleId = scheduleId;
-        this.studentId = studentId;
-        this.status = status;
-        this.attended = attended;
-    }
-
-    static fromJson(json) {
-        const temp = Object.assign(new BookingData(), json);
-        return temp;
-    }
 }

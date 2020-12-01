@@ -24,7 +24,7 @@ describe("deleteBooking", ()=>{
     });
     test("booking exists", ()=>{                                                                                                                            
         expect.assertions(1);
-        expect(bookingDao.deleteBooking(booking, student)).resolves.toEqual('Success');
+        expect(bookingDao.deleteBooking(booking, student)).resolves.toEqual("Success");
     });
     test("booking does not exist", async()=>{
         expect.assertions(1);
@@ -47,7 +47,7 @@ describe("bookLesson", ()=>{
     });
     test("the lesson exists and can be booked", ()=>{
         expect.assertions(1);
-        expect(bookingDao.bookLesson('123456', lecture)).resolves.toEqual('Success');
+        expect(bookingDao.bookLesson('123456', lecture)).resolves.toEqual(true);
     });
     test("the lesson does not exist and can't be booked", ()=>{
         expect.assertions(1);

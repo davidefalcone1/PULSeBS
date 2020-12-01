@@ -53,14 +53,14 @@ class App extends React.Component {
           console.log("User is teacher");
           API.getTeacherCourses().then((courseList) => {
             this.setState({ courses: courseList });
-    
+
             API.getMyCoursesLessons().then((myCoursesLessons) => {
               this.setState({ lessons: myCoursesLessons });
-      
+
               var lessonsIds = myCoursesLessons.map((row) => { return row.scheduleId });
               API.getBookedStudents(lessonsIds).then((bookingData) => {
                 this.setState({ studentsBookings: bookingData });
-      
+
                 var studentsIds = bookingData.map((row) => { return row.studentId });
                 API.getStudentsData(studentsIds).then((studentsData) => {
                   this.setState({ studentsInfos: studentsData, configurationCompleted: true });
@@ -76,7 +76,7 @@ class App extends React.Component {
 
             API.getMyBookableLessons().then((bookableLessons) => {
               this.setState({ lessons: bookableLessons });
-    
+
               API.getMyBookedLessons().then((bookedLessons) => {
                 this.setState({ myBookedLessons: bookedLessons, configurationCompleted: true });
               }).catch((errorObj) => { console.log(errorObj); });
@@ -106,13 +106,13 @@ class App extends React.Component {
   }
 
   bookLesson = async (lessonId) => {
-    return API.bookLesson(lessonId).then(() => {//TODO bookLesson will return if it was an actual booking or the student is in the waiting queue
+    return API.bookLesson(lessonId).then((response) => {//TODO bookLesson will return if it was an actual booking or the student is in the waiting queue
       console.log("Lesson booked.");
-      
+
       this.updateBookableLessons();
       this.updateMyBookedLessons();
 
-      return true; //TODO true if actual booking, false if waiting queue
+      return response; //TODO true if actual booking, false if waiting queue
     }).catch((errorObj) => { console.log(errorObj); });
   }
   deleteLesson = (lessonId) => {
@@ -130,16 +130,14 @@ class App extends React.Component {
   }
 
   cancelLesson = (lessonId) => {
-    console.log("Cancelling lesson: " + lessonId);
-    API.cancelLesson(lessonId).then(() =>{
+    return API.cancelLesson(lessonId).then(() =>{
       API.getMyCoursesLessons().then((myCoursesLessons) => {
         this.setState({ lessons: myCoursesLessons });
       });
     })
   }
   changeLessonToRemote = (lessonId) => {
-    console.log("Changing to remote lesson: " + lessonId);
-    API.makeLessonRemote(lessonId).then(() =>{
+    return API.makeLessonRemote(lessonId).then(() =>{
       API.getMyCoursesLessons().then((myCoursesLessons) => {
         this.setState({ lessons: myCoursesLessons });
       });
@@ -162,18 +160,18 @@ class App extends React.Component {
           <Navbar />
           <Switch>
             <Route path='/lessonslist'>
-              {!this.state.user ? <Redirect to='/login'/> : <LessonsList lessonsList={this.state.lessons}
-                selectLessonFunction={this.bookLesson} courses={this.state.courses}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <LessonsList lessonsList={this.state.lessons}
+                selectLessonFunction={this.bookLesson} courses={this.state.courses} />}
             </Route>
             <Route path='/myBookedLessonslist'>
-               {!this.state.user ? <Redirect to='/login'/> : <MyLessonsList lessonsList={this.state.myBookedLessons}
-                waitingBookings={this.state.myWaitingBookedLessons} selectLessonFunction={this.deleteLesson} courses={this.state.courses}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <MyLessonsList lessonsList={this.state.myBookedLessons}
+                waitingBookings={this.state.myWaitingBookedLessons} selectLessonFunction={this.deleteLesson} courses={this.state.courses} />}
             </Route>
             <Route path='/myCoursesLessonslist'>
-              {!this.state.user ? <Redirect to='/login'/> : <MyCoursesLessonsStudents teacherCourses={this.state.courses}
+              {!this.state.user ? <Redirect to='/login' /> : <MyCoursesLessonsStudents teacherCourses={this.state.courses}
                 myTeachedCoursesLessons={this.state.lessons} studentsBookedToMyLessons={this.state.studentsBookings}
                 myBookedStudentsInfos={this.state.studentsInfos} cancelLesson={this.cancelLesson}
-                changeLessonToRemote={this.changeLessonToRemote}/>}
+                changeLessonToRemote={this.changeLessonToRemote} />}
             </Route>
             <Route path="/login">
               <LoginForm />

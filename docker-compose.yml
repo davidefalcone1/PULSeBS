@@ -1,0 +1,26 @@
+version: "3"
+services:
+  backend:
+    image: alessiodeioanni/pulsebs_group2:backend
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./server:/project/PULSeBS
+  frontend:
+    image: alessiodeioanni/pulsebs_group2:frontend
+    build: 
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/project/PULSeBS
+    stdin_open: true
+    tty: true
+    links: 
+      - backend
+
+    

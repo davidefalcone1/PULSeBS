@@ -1,20 +1,22 @@
 import moment from 'moment';
 
-class LessonData{
-    constructor(scheduleId, courseId, startingTime, endingTime, occupiedSeats, availableSeats) {
-        if (scheduleId) 
+class LessonData {
+    constructor(scheduleId, courseId, startDate, endDate, occupiedSeats, availableSeats, isLessonCancelled, isLessonRemote) {
+        if (scheduleId)
             this.scheduleId = scheduleId;
         this.courseId = courseId;
-        this.startingTime = moment(new Date(startingTime));
-        this.endingTime = moment(new Date(endingTime));
+        this.startDate = moment(new Date(startDate));
+        this.endDate = moment(new Date(endDate));
         this.occupiedSeats = occupiedSeats;
         this.availableSeats = availableSeats;
-      }
+        this.isLessonCancelled = isLessonCancelled;
+        this.isLessonRemote = isLessonRemote;
+    }
 
-    static fromJson(json){
-        const temp =  Object.assign(new LessonData(), json);
-        temp.startingTime = moment(new Date(temp.startingTime));
-        temp.endingTime = moment(new Date(temp.endingTime));
+    static fromJson(json) {
+        const temp = Object.assign(new LessonData(), json);
+        temp.startDate = moment(new Date(temp.startDate));
+        temp.endDate = moment(new Date(temp.endDate));
         return temp;
     }
 }
