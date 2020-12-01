@@ -61,10 +61,10 @@ class MyCoursesLessonsPageRender extends React.Component {
                                     <Card.Header>
                                       <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
                                         <Accordion.Toggle as={Button} variant="link" eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
-                                          <LessonHeader id = {courseLesson.scheduleId} startingTime = {courseLesson.startingTime} endingTime = {courseLesson.endingTime}
+                                          <LessonHeader id = {courseLesson.scheduleId} startDate = {courseLesson.startDate} endDate = {courseLesson.endDate}
                                             cancelLesson = {this.props.cancelLesson} changeLessonToRemote = {this.props.changeLessonToRemote}/>
                                         </Accordion.Toggle>
-                                        <LessonsHeaderButtons id = {courseLesson.scheduleId} startingTime = {courseLesson.startingTime} endingTime = {courseLesson.endingTime}
+                                        <LessonsHeaderButtons id = {courseLesson.scheduleId} startDate = {courseLesson.startDate} endDate = {courseLesson.endDate}
                                             cancelLesson = {this.props.cancelLesson} changeLessonToRemote = {this.props.changeLessonToRemote} 
                                             isLessonRemote={courseLesson.isLessonRemote} isLessonCancelled={courseLesson.isLessonCancelled} activateModal = {this.activateModal}/>
                                       </div>
@@ -139,8 +139,8 @@ function CourseHeader(props) {
 function LessonHeader(props) {
   return (
     <>
-      <div id={"lesson-" + props.startingTime + "----" + props.endingTime}>
-        <h6>Lezione del {props.startingTime.format("ddd DD-MM-YYYY HH:mm").toString()} -- {props.endingTime.format("ddd DD-MM-YYYY HH:mm").toString()}</h6>
+      <div id={"lesson-" + props.startDate + "----" + props.endDate}>
+        <h6>Lezione del {props.startDate.format("ddd DD-MM-YYYY HH:mm").toString()} -- {props.endDate.format("ddd DD-MM-YYYY HH:mm").toString()}</h6>
       </div>
     </>
   );
@@ -148,11 +148,11 @@ function LessonHeader(props) {
 function LessonsHeaderButtons(props) {
   return (
     <>
-      <div id={"lesson-" + props.startingTime + "----" + props.endingTime}>
-        {(moment().isBefore(moment(props.startingTime).subtract(30, 'm'))) && !props.isLessonRemote && !props.isLessonCancelled &&
+      <div id={"lesson-" + props.startDate + "----" + props.endDate}>
+        {(moment().isBefore(moment(props.startDate).subtract(30, 'm'))) && !props.isLessonRemote && !props.isLessonCancelled &&
           <Button variant="warning" onClick={(event) => {
             event.preventDefault();
-            if(moment().isBefore(moment(props.startingTime).subtract(30, 'm'))){
+            if(moment().isBefore(moment(props.startDate).subtract(30, 'm'))){
               props.changeLessonToRemote(props.id).then(() =>{
                 props.activateModal("Operation completed successfully. Your lesson is now remote!");
               })
@@ -168,10 +168,10 @@ function LessonsHeaderButtons(props) {
           </Button>
         }
         <span>   </span>
-        {(moment().isBefore(moment(props.startingTime).subtract(1, 'h'))) && !props.isLessonCancelled &&
+        {(moment().isBefore(moment(props.startDate).subtract(1, 'h'))) && !props.isLessonCancelled &&
           <Button variant="danger" onClick={(event) => {
             event.preventDefault();
-            if(moment().isBefore(moment(props.startingTime).subtract(1, 'h'))){
+            if(moment().isBefore(moment(props.startDate).subtract(1, 'h'))){
               props.cancelLesson(props.id).then(() =>{
                 props.activateModal("Operation completed successfully. Your lesson is now cancelled!");
               })
