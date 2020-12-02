@@ -107,32 +107,32 @@ exports.bookLesson = function (studentID, lessonID) {
                 sql = 'SELECT OccupiedSeat, MaxSeat ' +
                     'FROM CourseSchedule ' +
                     'WHERE CourseScheduleID = ?';
-                db.get(sql, [lessonID], (err, row) => {
-                    if (err) {
-                        reject(err);
+                db.get(sql, [lessonID], (error, tuple) => {
+                    if (error) {
+                        reject(error);
                         return;
                     }
                     else {
 
-                        if (row === undefined) {
+                        if (tuple === undefined) {
                             reject("Some error occurred, server request failed!");
                             return;
                         }
 
                         //flag to understand if the student has to wait
-                        const waiting = row.OccupiedSeat === row.MaxSeat;
+                        const waiting = tuple.OccupiedSeat === tuple.MaxSeat;
 
                         // 2 CHECK IF THERE ARE PREVIOUSLY CANCELED BOOKING (STATUS = 2)
                         sql = 'SELECT BookID ' +
                             'FROM Booking ' +
                             'WHERE CourseScheduleID = ? AND StudentID = ? AND BookStatus = 2';
-                        db.get(sql, [lessonID, studentID], (err, row) => {
-                            if (err) {
-                                reject(err);
+                        db.get(sql, [lessonID, studentID], (error_code, row_value) => {
+                            if (error_code) {
+                                reject(error_code);
                                 return;
                             }
                             else {
-                                const previousBookingID = row ? row.BookID : undefined; //used also to understand if there is an existing deleted booking
+                                const previousBookingID = row_value ? row_value.BookID : undefined; //used also to understand if there is an existing deleted booking
                                 const status = waiting ? 3 : 1; //status = 3 if waiting, 1 otherwise
                                 const now = moment().format('YYYY:MM:DDTHH:mm:ss');
 
@@ -141,9 +141,9 @@ exports.bookLesson = function (studentID, lessonID) {
                                     sql = 'UPDATE Booking ' +
                                         'SET BookStatus = ?, Timestamp = ? ' +
                                         'WHERE BookID = ?';
-                                    db.run(sql, [status, now, previousBookingID], (err, row) => {
-                                        if (err) {
-                                            reject(err);
+                                    db.run(sql, [status, now, previousBookingID], (err_code, tuple_value) => {
+                                        if (err_code) {
+                                            reject(err_code);
                                             return;
                                         }
                                     });
@@ -153,9 +153,9 @@ exports.bookLesson = function (studentID, lessonID) {
 
                                     sql = 'INSERT INTO Booking (CourseScheduleID, StudentID, BookStatus, attended, Timestamp) ' +
                                         'VALUES (?, ?, ?, 0, ?) ';
-                                    db.run(sql, [lessonID, studentID, status, now], (err, row) => {
-                                        if (err) {
-                                            reject(err);
+                                    db.run(sql, [lessonID, studentID, status, now], (err_code, tuple_value) => {
+                                        if (err_code) {
+                                            reject(err_code);
                                             return;
                                         }
                                     });
@@ -167,9 +167,9 @@ exports.bookLesson = function (studentID, lessonID) {
                                         'SET OccupiedSeat = OccupiedSeat + 1 ' +
                                         'WHERE CourseScheduleID = ?';
 
-                                    db.run(sql, [lessonID], (err) => {
-                                        if (err) {
-                                            reject(err);
+                                    db.run(sql, [lessonID], (err_code) => {
+                                        if (err_code) {
+                                            reject(err_code);
                                             return;
                                         }
                                         else {
@@ -217,9 +217,9 @@ exports.deleteBooking = (lessonID, studentID) => {
                 sql = `UPDATE CourseSchedule 
                         SET OccupiedSeat = OccupiedSeat - 1
                         WHERE CourseScheduleID = ?`;
-                db.run(sql, [lessonID], (err) => {
-                    if (err) {
-                        reject(err);
+                db.run(sql, [lessonID], (error) => {
+                    if (error) {
+                        reject(error);
                     }
                     else {
                         resolve('Success');
@@ -251,9 +251,9 @@ exports.checkWaitingList = function (lessonID) {
                 UPDATE Booking
                 SET BookStatus = 1
                 WHERE BookID = ?`;
-                db.run(sql, [row.BookID], function (err) {
-                    if (err) {
-                        reject(err);
+                db.run(sql, [row.BookID], function (error) {
+                    if (error) {
+                        reject(error);
                         return;
                     }
                     //then increase the occupied seat
@@ -261,8 +261,8 @@ exports.checkWaitingList = function (lessonID) {
                     UPDATE CourseSchedule 
                     SET OccupiedSeat = OccupiedSeat + 1
                     WHERE CourseScheduleID = ?`;
-                    db.run(sql, [lessonID], (err) => {
-                        if (err) { reject(err); } else { resolve({ studentID: row.StudentID, lectureID: row.CourseScheduleID }); }
+                    db.run(sql, [lessonID], (error_code) => {
+                        if (error_code) { reject(error_code); } else { resolve({ studentID: row.StudentID, lectureID: row.CourseScheduleID }); }
                     });
                 });
             } else {

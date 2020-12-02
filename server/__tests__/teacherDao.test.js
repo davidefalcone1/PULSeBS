@@ -31,7 +31,7 @@ describe("getBookedStudents", ()=>{
         testHelper.insertBooking(student, lecture);
         return teacherDao.getBookedStudents([lecture])
             .then((bookedStudents)=>{
-                const IDs = bookedStudents.map(student=>student.studentId);
+                const IDs = bookedStudents.map(s=>s.studentId);
                 expect(IDs).toContain(student);
             });
     });
