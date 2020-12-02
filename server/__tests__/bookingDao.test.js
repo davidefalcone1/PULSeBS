@@ -8,9 +8,9 @@ const bookingDao = require('../dao/bookingDao');
 
 const db = require("../db");
 
-describe("deleteBooking", ()=>{
+describe("deleteBooking", () => {
     let booking, student;
-    beforeEach(async ()=>{
+    beforeEach(async () => {
         await testHelper.initDB();
         student = await testHelper.insertStudent();
         const teacher = await testHelper.insertTeacher();
@@ -19,22 +19,22 @@ describe("deleteBooking", ()=>{
         await testHelper.enrollStudentToCourse(student, course);
         booking = await testHelper.insertBooking(student, lecture);
     });
-    afterEach(async ()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test("booking exists", ()=>{                                                                                                                            
+    test("booking exists", () => {
         expect.assertions(1);
         expect(bookingDao.deleteBooking(booking, student)).resolves.toEqual("Success");
     });
-    test("booking does not exist", async()=>{
+    test("booking does not exist", async () => {
         expect.assertions(1);
         expect(bookingDao.deleteBooking(345, student)).rejects.toEqual('NO BOOKING');
     });
 });
 
-describe("bookLesson", ()=>{
+describe("bookLesson", () => {
     let lecture;
-    beforeEach(async ()=>{
+    beforeEach(async () => {
         await testHelper.initDB();
         const user = await testHelper.insertStudent();
         const teacher = await testHelper.insertTeacher();
@@ -42,15 +42,15 @@ describe("bookLesson", ()=>{
         lecture = await testHelper.insertCourseSchedule(course);
         await testHelper.enrollStudentToCourse(user, course);
     });
-    afterEach(async ()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test("the lesson exists and can be booked", ()=>{
+    test("the lesson exists and can be booked", async () => {
         expect.assertions(1);
-        expect(bookingDao.bookLesson('123456', lecture)).resolves.toEqual(true);
+        await expect(bookingDao.bookLesson('123456', lecture)).resolves.toEqual(true);
     });
-    test("the lesson does not exist and can't be booked", ()=>{
+    test("the lesson does not exist and can't be booked", async () => {
         expect.assertions(1);
-        expect(bookingDao.bookLesson('123456', 134)).rejects.toThrow();
+        await expect(bookingDao.bookLesson('123456', 134)).rejects.toEqual('Some error occurred, server request failed!');
     });
 });

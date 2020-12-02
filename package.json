@@ -12,10 +12,12 @@
   "jest": {
     "testResultsProcessor": "jest-sonar-reporter",
     "testPathIgnorePatterns": [
-      "./server/__tests__/testHelper.js"
+      "./server/__tests__/testHelper.js",
+      "./client/"
     ],
     "coveragePathIgnorePatterns": [
-      "./server/__tests__/testHelper.js"
+      "./server/__tests__/testHelper.js",
+      "./client/"
     ]
   }
 }
