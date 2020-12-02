@@ -42,8 +42,8 @@ describe("/users/authenticate", () => {
     });
     test("invalid password", done => {
         request(app).post(url).send({
-            username: "davidcone@studenti.polito.it",
-            password: "adminadmin"
+            username: "davide.falcone@studenti.polito.it",
+            password: "adminain"
         }).expect(401, done);
     });
     test("login successful", done => {
