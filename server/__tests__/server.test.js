@@ -182,7 +182,7 @@ describe('/studentCourses', () => {
         expect.assertions(1);
         await request(app).get(url).set('Cookie', userCookie).then(function (res) {
             const coursesIDs = res.body.map(_course => _course.courseId);
-            expect(coursesIDs).not.toContain(_course);
+            expect(coursesIDs).not.toContain(course);
         });
     });
     test('enrolled', async () => {
@@ -190,7 +190,7 @@ describe('/studentCourses', () => {
         await testHelper.enrollStudentToCourse(student, course);
         await request(app).get(url).set('Cookie', userCookie).then(function (res) {
             const coursesIDs = res.body.map(_course => _course.courseId);
-            expect(coursesIDs).toContain(_course);
+            expect(coursesIDs).toContain(course);
         });
     })
 });
@@ -217,7 +217,7 @@ describe('/myBookableLessons', () => {
         expect.assertions(1);
         await request(app).get(url).set('Cookie', userCookie).then(function (res) {
             const lectureIDs = res.body.map(_lecture => _lecture.lectureId);
-            expect(lectureIDs).not.toContain(_lecture);
+            expect(lectureIDs).not.toContain(lecture);
         });
     });
     test('bookable', async () => {
@@ -225,7 +225,7 @@ describe('/myBookableLessons', () => {
         await testHelper.enrollStudentToCourse(student, course);
         await request(app).get(url).set('Cookie', userCookie).then(function (res) {
             const lectureIDs = res.body.map(_lecture => _lecture.scheduleId);
-            expect(lectureIDs).toContain(_lecture);
+            expect(lectureIDs).toContain(lecture);
         });
     });
 });
@@ -293,7 +293,7 @@ describe('/teacherCourses', () => {
         course = await testHelper.insertCourse('Software engineering 2', teacher);
         await request(app).get(url).set('Cookie', userCookie).then(function (res) {
             const courseIDs = res.body.map(_course => _course.courseId);
-            expect(courseIDs).toContain(_course);
+            expect(courseIDs).toContain(course);
         });
     });
 });
@@ -325,7 +325,7 @@ describe('/myCoursesLessons', () => {
         lecture = await testHelper.insertCourseSchedule(course);
         await request(app).get(url).set('Cookie', userCookie).then(function (res) {
             const lectureIDs = res.body.map(_lecture => _lecture.scheduleId);
-            expect(lectureIDs).toContain(_lecture);
+            expect(lectureIDs).toContain(lecture);
         });
     });
 });
@@ -359,7 +359,7 @@ describe('/bookedStudents', () => {
         const booking = await testHelper.insertBooking(student, lecture);
         await request(app).post(url).send({ lessonsIds: [lecture] }).set('Cookie', userCookie).then(function (res) {
             const bookingIDs = res.body.map(_booking => _booking.id);
-            expect(bookingIDs).toContain(_booking);
+            expect(bookingIDs).toContain(booking);
         });
     });
 });
@@ -390,7 +390,7 @@ describe('/studentsData', () => {
         expect.assertions(1);
         await request(app).post(url).send({ studentsIds: [student] }).set('Cookie', userCookie).then(function (res) {
             const studentsIds = res.body.map(_student => _student.personId);
-            expect(studentsIds).toContain(_student);
+            expect(studentsIds).toContain(student);
         });
     });
 });
