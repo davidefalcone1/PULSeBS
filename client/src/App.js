@@ -80,6 +80,10 @@ class App extends React.Component {
               API.getMyBookedLessons().then((bookedLessons) => {
                 this.setState({ myBookedLessons: bookedLessons, configurationCompleted: true });
               }).catch((errorObj) => { console.log(errorObj); });
+
+              API.getMyWaitingBookedLessons().then((myWaitingBookedLessons) => {
+                this.setState({ waitingBookings: myWaitingBookedLessons });
+              }).catch((errorObj) => { console.log(errorObj); });
             }).catch((errorObj) => { console.log(errorObj); });
           }).catch((errorObj) => { console.log(errorObj); });
         }
@@ -100,9 +104,9 @@ class App extends React.Component {
       this.setState({ myBookedLessons: myLessons });
     }).catch((errorObj) => { console.log(errorObj); });
 
-    // API.getMyWaitingBookedLessons().then((myWaitingBookedLessons) => {
-    //   this.setState({ waitingBookings: myWaitingBookedLessons });
-    // }).catch((errorObj) => { console.log(errorObj); });
+    API.getMyWaitingBookedLessons().then((myWaitingBookedLessons) => {
+      this.setState({ waitingBookings: myWaitingBookedLessons });
+    }).catch((errorObj) => { console.log(errorObj); });
   }
 
   bookLesson = async (lessonId) => {
