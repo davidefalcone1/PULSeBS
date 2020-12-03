@@ -82,7 +82,7 @@ class App extends React.Component {
               }).catch((errorObj) => { console.log(errorObj); });
 
               API.getMyWaitingBookedLessons().then((myWaitingBookedLessons) => {
-                this.setState({ waitingBookings: myWaitingBookedLessons });
+                this.setState({ myWaitingBookedLessons: myWaitingBookedLessons });
               }).catch((errorObj) => { console.log(errorObj); });
             }).catch((errorObj) => { console.log(errorObj); });
           }).catch((errorObj) => { console.log(errorObj); });
