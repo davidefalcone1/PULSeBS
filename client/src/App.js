@@ -9,6 +9,7 @@ import ConfigureUsers from './components/ConfigureUsersPage';
 import ConfigureLessons from './components/MyBookableLessonsPage';
 import ConfigureCourses from './components/ConfigureCoursesPage';
 import ConfigureClasses from './components/ConfigureClassesPage';
+import MonitorUsage from './components/MonitorUsagePage';
 import LoginForm from './components/LoginForm'
 import { AuthContext } from './_services/AuthContext';
 
@@ -205,7 +206,7 @@ class App extends React.Component {
                 changeLessonToRemote={this.changeLessonToRemote} setStudentAsPresent={this.setStudentAsPresent}/>}
             </Route>
             <Route path='/monitorUsage'>
-              {!this.state.user ? <Redirect to='/login' /> : <></>}
+              {!this.state.user ? <Redirect to='/login' /> : <MonitorUsage/>}
             </Route>
             <Route path='/configureStudentsList'>
               {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"student"} usersList={}
