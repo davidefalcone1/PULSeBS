@@ -130,7 +130,7 @@ class LessonListPageRender extends React.Component {
                 <Col>
                   <h5>Filter your lessons!</h5>
                 </Col>
-                {/* <Col className="text-right" style={{marginRight: "15px"}}>
+                <Col className="text-right" style={{marginRight: "15px"}}>
                   <img width="30" height="30" className="img-button" src='./images/list_icon.png' alt="" onClick={(e) => {
                     e.preventDefault();
                     this.setViewType("list");
@@ -140,7 +140,7 @@ class LessonListPageRender extends React.Component {
                     e.preventDefault();
                     this.setViewType("calendar");
                   }}/>
-                </Col> */}
+                </Col>
               </Row>
               <Form method="POST" action="" id="lessonFilterForm" onSubmit={(ev) => {
                         ev.preventDefault();

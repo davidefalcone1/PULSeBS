@@ -3,8 +3,9 @@ import MyCourseLessonsStudentItem from './MyCoursesLessonsStudentItem';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button'
-import moment from 'moment'
+import Button from 'react-bootstrap/Button';
+import Badge from 'react-bootstrap/Badge';
+import moment from 'moment';
 import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../_services/AuthContext';
 import Modal from 'react-bootstrap/Modal';
@@ -62,9 +63,11 @@ class MyCoursesLessonsPageRender extends React.Component {
                                       <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
                                         <Accordion.Toggle as={Button} variant="link" eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
                                           <LessonHeader id = {courseLesson.scheduleId} startDate = {courseLesson.startDate} endDate = {courseLesson.endDate}
-                                            cancelLesson = {this.props.cancelLesson} changeLessonToRemote = {this.props.changeLessonToRemote}/>
+                                            isLessonRemote={courseLesson.isLessonRemote} isLessonCancelled={courseLesson.isLessonCancelled}/>
                                         </Accordion.Toggle>
-                                        <LessonsHeaderButtons id = {courseLesson.scheduleId} startDate = {courseLesson.startDate} endDate = {courseLesson.endDate}
+                                        <LessonHeaderStatistics id = {courseLesson.scheduleId + "statistics"} normalBookings = {courseLesson.normalBookings}
+                                          cancelledBookings = {courseLesson.cancelledBookings} waitingBookings = {courseLesson.waitingBookings}/>
+                                        <LessonsHeaderButtons id = {courseLesson.scheduleId + "buttons"} startDate = {courseLesson.startDate} endDate = {courseLesson.endDate}
                                             cancelLesson = {this.props.cancelLesson} changeLessonToRemote = {this.props.changeLessonToRemote} 
                                             isLessonRemote={courseLesson.isLessonRemote} isLessonCancelled={courseLesson.isLessonCancelled} activateModal = {this.activateModal}/>
                                       </div>
@@ -140,7 +143,25 @@ function LessonHeader(props) {
   return (
     <>
       <div id={"lesson-" + props.startDate + "----" + props.endDate}>
-        <h6>Lezione del {props.startDate.format("ddd DD-MM-YYYY HH:mm").toString()} -- {props.endDate.format("ddd DD-MM-YYYY HH:mm").toString()}</h6>
+        <h6>
+          Lezione del {props.startDate.format("ddd DD-MM-YYYY HH:mm").toString()} -- {props.endDate.format("ddd DD-MM-YYYY HH:mm").toString()}
+          {' '}
+          {props.isLessonRemote && !props.isLessonCancelled && <Badge pill variant="warning">Remote</Badge>}
+          {props.isLessonCancelled && <Badge pill variant="secondary">Cancelled</Badge>}
+          {' '}
+        </h6>
+      </div>
+    </>
+  );
+}
+function LessonHeaderStatistics(props){
+  return (
+    <>
+      <div id={props.id} className="h7">
+          {props.normalBookings + props.cancelledBookings + props.waitingBookings} total bookings, 
+          {props.normalBookings} actual bookings, 
+          {props.cancelledBookings} cancelled bookings, 
+          {props.waitingBookings} waiting bookings
       </div>
     </>
   );
@@ -148,7 +169,7 @@ function LessonHeader(props) {
 function LessonsHeaderButtons(props) {
   return (
     <>
-      <div id={"lesson-" + props.startDate + "----" + props.endDate}>
+      <div id={props.id}>
         {(moment().isBefore(moment(props.startDate).subtract(30, 'm'))) && !props.isLessonRemote && !props.isLessonCancelled &&
           <Button variant="warning" onClick={(event) => {
             event.preventDefault();
