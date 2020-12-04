@@ -11,7 +11,7 @@ const configureUserPage = (props) => {
           <ListGroup as="ul" variant="flush">
             <ListHeader />
               {props.usersList.map((user) => 
-                <ConfigureUsersItem key = {user.personId} user = {user} editUser={props.editUser}/>)
+                <ConfigureUsersItem key = {user.personId} user = {user}/>)
               }
           </ListGroup>}
           {!context.user && <Redirect to="/login"/>}
@@ -28,14 +28,11 @@ function ListHeader() {
           <div className="col-sm-3">
             <h4>User Id</h4>
           </div>
-          <div className="col-sm-3">
+          <div className="col-sm-4">
             <h4>Full Name</h4>
           </div>
-          <div className="col-sm-4">
+          <div className="col-sm-5">
             <h4>Email (Username)</h4>
-          </div>
-          <div className="col-sm-2">
-            <h4>{' '}</h4>
           </div>
         </div>
     </ListGroup.Item>

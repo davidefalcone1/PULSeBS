@@ -10,7 +10,6 @@ const configureUserItem = (props) => {
             <IdField id = {props.user.personId}/>
             <NameField id = {props.user.personId} name = {props.user.fullName}/>
             <EmailField id = {props.user.personId} email = {props.user.email}/>
-            <ButtonField id = {props.user.personId} editUser = {props.editUser}/>
         </div>
     </ListGroup.Item>
   );
@@ -28,7 +27,7 @@ function IdField(props){
 
 function NameField(props){
     return(
-        <div className="col-sm-3">
+        <div className="col-sm-4">
             <h6 id={"nameOfuser_" + props.id}>
                 {props.name}
             </h6>
@@ -38,24 +37,10 @@ function NameField(props){
 
 function EmailField(props){
     return(
-        <div className="col-sm-4">
+        <div className="col-sm-5">
             <h6 id={"emailOfuser_" + props.id}>
                 {props.email}
             </h6>
-        </div>
-    );
-}
-
-
-function ButtonField(props){
-    return(
-        <div className="col-sm-2">
-            <Button variant="primary" onClick={(event) => {
-                event.preventDefault();
-                props.editUser(); //TODO SEND PARAMETERS
-            }} id={"buttonFieldOfuser" + props.id}>
-                Edit
-            </Button>
         </div>
     );
 }

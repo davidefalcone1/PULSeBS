@@ -10,7 +10,6 @@ const configureCourseItem = (props) => {
             <NameField id = {props.course.courseId} name = {props.course.courseName}/>
             <TeacherField id = {props.course.courseId} teacherId = {props.course.teacherId}
                 teachersList = {props.teachers}/>
-            <ButtonField id = {props.course.courseId} editCourse = {props.editCourse}/>
         </div>
     </ListGroup.Item>
   );
@@ -18,7 +17,7 @@ const configureCourseItem = (props) => {
 
 function NameField(props){
     return(
-        <div className="col-sm-5">
+        <div className="col-sm-6">
             <h6 id={"nameOfcourse_" + props.id}>
                 {props.name}
             </h6>
@@ -28,26 +27,13 @@ function NameField(props){
 
 function TeacherField(props){
     return(
-        <div className="col-sm-5">
+        <div className="col-sm-6">
             {props.teachersList.map((t) => //per ogni lezione del mio corso
                 (t.personId === props.teacherId) &&
                     <h6 id={"teacherOfcourse_" + t.personId + "-" + props.id}>
                         {t.fullName}
                     </h6>
             )}
-        </div>
-    );
-}
-
-function ButtonField(props){
-    return(
-        <div className="col-sm-2">
-            <Button variant="primary" onClick={(event) => {
-                event.preventDefault();
-                props.editCourse(); //TODO SEND PARAMETERS
-            }} id={"buttonFieldOfcourse" + props.id}>
-                Edit
-            </Button>
         </div>
     );
 }
