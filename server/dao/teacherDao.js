@@ -42,7 +42,7 @@ exports.getMyCoursesLessons = function (teacherID) {
             if (err) {
                 reject();
             }
-            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, row.CourseStatus, row.CourseType))
+            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, row.CourseStatus, row.CourseType, row.Classroom))
                 .sort((lesson1, lesson2) => {
                     // sort in DESCEDING ORDER by starting time
                     const start1 = moment(lesson1.startingTime);

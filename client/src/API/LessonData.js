@@ -2,7 +2,7 @@ import moment from 'moment';
 
 class LessonData {
     constructor(scheduleId, courseId, startDate, endDate, occupiedSeats, availableSeats,
-        isLessonCancelled, isLessonRemote
+        isLessonCancelled, isLessonRemote, classroom
         /*, normalBookings, cancelledBookings, waitingBookings */) {
         if (scheduleId)
             this.scheduleId = scheduleId;
@@ -13,6 +13,7 @@ class LessonData {
         this.availableSeats = availableSeats;
         this.isLessonCancelled = isLessonCancelled;
         this.isLessonRemote = isLessonRemote;
+        this.classroom = classroom
 
         //TODO use the correct variables
         this.normalBookings = 0;
