@@ -43,13 +43,8 @@ class App extends React.Component {
       .then((user) => {
         console.log("Login completed " + user);
         this.setState({ user, loginError: false });
-        if (user.accessLevel === 1) {
-          this.setState({ isTeacher: false, isStudent: true });
-        }
         if (user.accessLevel === 2) {
           this.setState({ isTeacher: true, isStudent: false });
-        }
-        if (this.state.isTeacher) {
           console.log("User is teacher");
           API.getTeacherCourses().then((courseList) => {
             this.setState({ courses: courseList });
@@ -69,7 +64,8 @@ class App extends React.Component {
             }).catch((errorObj) => { console.log(errorObj); });
           }).catch((errorObj) => { console.log(errorObj); });
         }
-        if (this.state.isStudent) {
+        if (user.accessLevel === 1) {
+          this.setState({ isTeacher: false, isStudent: true });
           console.log("User is student");
           API.getStudentCourses().then((courseList) => {
             this.setState({ courses: courseList });
@@ -147,6 +143,18 @@ class App extends React.Component {
       });
     })
   }
+  setStudentAsPresent = (scheduleId, studentId) => {
+    API.setStudentAsPresent(scheduleId, studentId).then(() => {
+      var lessonsIds = this.state.lessons.map((row) => { return row.scheduleId });
+      API.getBookedStudents(lessonsIds).then((bookingData) => {
+        this.setState({ studentsBookings: bookingData });  
+        var studentsIds = bookingData.map((row) => { return row.studentId });
+        API.getStudentsData(studentsIds).then((studentsData) => {
+          this.setState({ studentsInfos: studentsData, configurationCompleted: true });
+        }).catch((errorObj) => { console.log(errorObj); });
+      }).catch((errorObj) => { console.log(errorObj); });
+    }).catch((errorObj) => { console.log(errorObj); });    
+  }
 
   render() {
     const value = {
@@ -175,7 +183,7 @@ class App extends React.Component {
               {!this.state.user ? <Redirect to='/login' /> : <MyCoursesLessonsStudents teacherCourses={this.state.courses}
                 myTeachedCoursesLessons={this.state.lessons} studentsBookedToMyLessons={this.state.studentsBookings}
                 myBookedStudentsInfos={this.state.studentsInfos} cancelLesson={this.cancelLesson}
-                changeLessonToRemote={this.changeLessonToRemote} />}
+                changeLessonToRemote={this.changeLessonToRemote} setStudentAsPresent={this.setStudentAsPresent}/>}
             </Route>
             <Route path="/login">
               <LoginForm />

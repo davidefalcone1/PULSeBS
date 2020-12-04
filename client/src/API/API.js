@@ -262,6 +262,27 @@ async function cancelLesson(lessonId) {
         }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
+async function setStudentAsPresent(lessonId, studentId){
+    return new Promise((resolve, reject) => {
+        fetch("/setStudentAsPresent/", {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lessonId, studentId })
+        }).then((response) => {
+            if (response.ok) {
+                resolve(null);
+            }
+            else {
+                response.json()
+                    .then((obj) => { reject(obj); })
+                    .catch((err) => {
+                        reject(
+                            { errors: [{ param: "Application", msg: "Cannot parse server response" }] })
+                    });
+            }
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
+}
 
 async function login(username, password) {
     const requestOptions = {
@@ -311,6 +332,6 @@ async function logout() {
 const API = {
     login, logout, getStudentCourses, getMyBookableLessons, getMyBookedLessons, getMyWaitingBookedLessons,
     getMyCoursesLessons, bookLesson, deleteBooking, getTeacherCourses, getBookedStudents,
-    getStudentsData, makeLessonRemote, cancelLesson, isAuthenticated
+    getStudentsData, makeLessonRemote, cancelLesson, isAuthenticated, setStudentAsPresent
 };
 export default API;

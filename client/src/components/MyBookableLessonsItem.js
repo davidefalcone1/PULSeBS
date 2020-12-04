@@ -2,7 +2,7 @@ import React from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 
-const lessonListItem = (props) => {
+const myBookableLessonsItem = (props) => {
   return (
     <ListGroup.Item id = {"lesson-" + props.lesson.id}>
         <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
@@ -65,4 +65,4 @@ function SelectField(props){
     );
 }
 
-export default lessonListItem;
+export default myBookableLessonsItem;

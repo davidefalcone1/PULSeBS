@@ -17,7 +17,7 @@ import moment from 'moment';
 import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../_services/AuthContext';
 
-const lessonsList = (props) => {
+const myBookableLessonsPage = (props) => {
   return(
     <LessonListPageRender coursesList={props.courses}
         lessonsList={props.lessonsList}
@@ -288,4 +288,4 @@ function NoItemsImage(props){
     );
 }
 
-export default lessonsList;
+export default myBookableLessonsPage;
