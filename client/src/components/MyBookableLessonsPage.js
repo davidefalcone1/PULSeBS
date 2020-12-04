@@ -1,5 +1,5 @@
 import React from 'react';
-import LessonListItem from './LessonListItem';
+import LessonListItem from './MyBookableLessonsItem';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button'

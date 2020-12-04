@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from './components/Navbar';
 import API from './API/API';
-import LessonsList from './components/LessonsListPage';
+import LessonsList from './components/MyBookableLessonsPage';
 import MyLessonsList from './components/MyBookedLessonsPage';
 import MyCoursesLessonsStudents from './components/MyCoursesLessonsStudentsPage';
 import { Switch, Route, Redirect, withRouter } from 'react-router-dom';

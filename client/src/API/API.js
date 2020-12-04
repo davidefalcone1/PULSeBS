@@ -1,4 +1,4 @@
-import LessonsData from './LessonsData';
+import LessonsData from './LessonData';
 import CourseData from './CourseData';
 import UserData from './UserData';
 import BookingData from './BookingData';
