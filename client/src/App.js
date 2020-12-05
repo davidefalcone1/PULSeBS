@@ -203,11 +203,57 @@ class App extends React.Component {
       }
     }).catch((errorObj) => { console.log(errorObj); }); 
   }
-  createNewLesson = () => {
-
+  createNewLesson = (courseId, errorLessonStatus, lessonType, startDate, endDate, classroom) => {
+    API.createNewLesson(courseId, errorLessonStatus, lessonType, startDate, endDate, classroom)
+    .then(() => {
+      API.getAllLessons().then((lessonsList) => {
+        this.setState({lessons: lessonsList});
+      }).catch((errorObj) => { console.log(errorObj); });  
+    }).catch((errorObj) => { console.log(errorObj); });
   }
-  editLesson = () => {
-
+  editLesson = (scheduleId, courseId, errorLessonStatus, lessonType, startDate, endDate, classroom) => {
+    API.editLesson(scheduleId, courseId, errorLessonStatus, lessonType, startDate, endDate, classroom)
+    .then(() => {
+      API.getAllLessons().then((lessonsList) => {
+        this.setState({lessons: LessonsList});
+      }).catch((errorObj) => { console.log(errorObj); });  
+    })
+  }
+  uploadFileClassrooms= (file) => {
+    API.uploadFileClassrooms(file).then(() => {
+      API.getAllCourses().then((coursesList) => {
+        this.setState({courses: coursesList});
+      }).catch((errorObj) => { console.log(errorObj); });
+    }).catch((errorObj) => { console.log(errorObj); });  
+  }
+  uploadFileCourses = (file) => {
+    API.createNewCourse(file).then(() => {
+      API.getAllCourses().then((coursesList) => {
+        this.setState({courses: coursesList});
+      }).catch((errorObj) => { console.log(errorObj); });
+    }).catch((errorObj) => { console.log(errorObj); });  
+  }
+  uploadFileLessons = (file) => {
+    API.createNewLesson(file)
+    .then(() => {
+      API.getAllLessons().then((lessonsList) => {
+        this.setState({lessons: lessonsList});
+      }).catch((errorObj) => { console.log(errorObj); });  
+    }).catch((errorObj) => { console.log(errorObj); });   
+  }
+  uploadFileStudents = (file) => {
+    API.uploadFileStudents(file).then(() => {
+      API.getAllStudents().then((studentsList) => {
+        this.setState({studentsInfos: studentsList});
+      }).catch((errorObj) => { console.log(errorObj); });
+    }).catch((errorObj) => { console.log(errorObj); });
+  }
+  uploadFileTeachers = (file) => {
+    API.uploadFileTeachers(file).then(() => {
+      API.getAllTeachers().then((teachersList) => {
+        this.setState({teachersInfos: teachersList});
+      }).catch((errorObj) => { console.log(errorObj); });
+    }).catch((errorObj) => { console.log(errorObj); });
   }
   updateSupportOfficerData = () => {
     API.getAllClassrooms().then((classesList) => {
@@ -248,6 +294,7 @@ class App extends React.Component {
         <>
           <Navbar />
           <Switch>
+            {/* STUDENT */}
             <Route path='/myBookableLessonsList'>
               {!this.state.user ? <Redirect to='/login' /> : <LessonsList lessonsList={this.state.lessons}
                 selectLessonFunction={this.bookLesson} courses={this.state.courses} />}
@@ -256,33 +303,41 @@ class App extends React.Component {
               {!this.state.user ? <Redirect to='/login' /> : <MyLessonsList lessonsList={this.state.myBookedLessons}
                 waitingBookings={this.state.myWaitingBookedLessons} selectLessonFunction={this.deleteLesson} courses={this.state.courses} />}
             </Route>
+            
+            {/* TEACHER */}
             <Route path='/myCoursesLessonslist'>
               {!this.state.user ? <Redirect to='/login' /> : <MyCoursesLessonsStudents teacherCourses={this.state.courses}
                 myTeachedCoursesLessons={this.state.lessons} studentsBookedToMyLessons={this.state.studentsBookings}
                 myBookedStudentsInfos={this.state.studentsInfos} cancelLesson={this.cancelLesson}
                 changeLessonToRemote={this.changeLessonToRemote} setStudentAsPresent={this.setStudentAsPresent}/>}
             </Route>
+            
+            {/* BOOKING MANAGER */}
             <Route path='/monitorUsage'>
               {!this.state.user ? <Redirect to='/login' /> : <MonitorUsage/>}
             </Route>
+
+            {/* SUPPORT OFFICER */}
             <Route path='/configureStudentsList'>
               {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"student"} usersList={this.state.usersList}
-                createNewUser={this.createNewUser}/>}
+                createNewUser={this.createNewUser} uploadFileUser={this.uploadFileStudents}/>}
             </Route>
             <Route path='/configureCoursesList'>
               {!this.state.user ? <Redirect to='/login' /> : <ConfigureCourses coursesList={this.state.courses} teachersList={this.state.usersList}
-                createNewCourse={this.createNewCourse}/>}
+                createNewCourse={this.createNewCourse} uploadFileCourses={this.uploadFileCourses}/>}
             </Route>
             <Route path='/configureTeachersList'>
               {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"teacher"}  usersList={this.state.usersList}
-                createNewUser={this.createNewUser}/>}
+                createNewUser={this.createNewUser} uploadFileUser={this.uploadFileTeachers}/>}
             </Route>
             <Route path='/configureLessonsList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureLessons lessonsList={this.state.lessons} coursesList={this.state.courses}
-                classesList={this.state.classes} createNewLesson={this.createNewLesson} editLesson={this.editLesson}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureLessons lessonsList={this.state.lessons}
+                coursesList={this.state.courses} classesList={this.state.classes} createNewLesson={this.createNewLesson}
+                editLesson={this.editLesson} uploadFileLessons={this.uploadFileLessons}/>}
             </Route>
             <Route path='/configureClassesList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureClasses classesList={this.state.classes} createNewClass={this.createNewClass}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureClasses classesList={this.state.classes}
+                createNewClass={this.createNewClass} uploadFileClassrooms={this.uploadFileClassrooms}/>}
             </Route>
             <Route path="/login">
               <LoginForm />

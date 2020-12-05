@@ -6,12 +6,14 @@ import Row from 'react-bootstrap/Row';
 import Modal from 'react-bootstrap/Modal';
 import Alert from 'react-bootstrap/Alert';
 import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
 import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../_services/AuthContext';
 
 const configureUserPage = (props) => {
   return(
-    <ConfigureUser usersList={props.usersList} createNewUser={props.createNewUser} type={props.type}/>
+    <ConfigureUser usersList={props.usersList} createNewUser={props.createNewUser} type={props.type}
+      uploadFileUser={props.uploadFileUser}/>
   );
 }
 
@@ -20,6 +22,7 @@ class ConfigureUser extends React.Component {
     super(props);
     this.props = props;
     this.state = {
+      file: undefined, isUploading: false, errorFile: false,
       isCreating: false, userId: '', fullName:'', email: '', password: '',
       errorId: false, errorName: false, errorEmail: false, errorPW: false
     }
@@ -27,6 +30,9 @@ class ConfigureUser extends React.Component {
 
   activateModal = () => {
     this.setState({isCreating: true});
+  }
+  activateUploadFileModal = () => {
+    this.setState({isUploading: true})
   }
 
   updateField = (name, value) => {
@@ -42,6 +48,9 @@ class ConfigureUser extends React.Component {
       }
       if(this.state.password !== ''){
         this.setState({errorPW: false});
+      }
+      if(this.state.file !== undefined){
+        this.setState({errorFile: false});
       }
     });
   }
@@ -66,9 +75,19 @@ class ConfigureUser extends React.Component {
         this.props.createNewUser(this.state.userId, this.state.fullName, this.state.email,
           this.state.password, this.props.type)
     }
-}
+  }
+  handleSubmitFile = () => {
+    if (!this.formFile.checkValidity()) {
+      this.formFile.reportValidity();
+    }
+    else if(this.state.file.type !== 'text/csv'){ 
+      this.setState({errorFile: true});
+    }
+    else {
+        this.props.uploadFileClassrooms(this.state.file)
+    }
+  }
 
-  
   render(){
     return(
       <AuthContext.Consumer>
@@ -77,12 +96,22 @@ class ConfigureUser extends React.Component {
             {context.user && this.props.usersList && 
               <>
                 <Row className="justify-content-between">
-                  <Button variant="primary" onClick={(event) => {
-                        event.preventDefault();
-                        this.activateModal();
-                    }} id={"activateModalOfUsers"}>
-                        Add New
-                  </Button>
+                  <Col>
+                    <Button variant="primary" onClick={(event) => {
+                          event.preventDefault();
+                          this.activateModal();
+                      }} id={"activateModalOfUsers"}>
+                          Add New
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button variant="primary" onClick={(event) => {
+                          event.preventDefault();
+                          this.activateUploadFileModal();
+                      }} id={"uploadFileOfUsers"}>
+                          Upload File
+                    </Button>
+                  </Col>
                 </Row>
                 <ListGroup as="ul" variant="flush">
                   <ListHeader />
@@ -166,6 +195,39 @@ class ConfigureUser extends React.Component {
                             Invalid password.
                           </Alert>
                         </>}
+                  </Modal.Footer>
+                </Modal>
+
+                <Modal show={this.state.isUploading} animation={false} scrollable={true}>
+                  <Modal.Header>
+                    <Modal.Title>Upload file</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <Form method="POST" action="" id="newUserFormFile" onSubmit={(ev) => {
+                      ev.preventDefault();
+                      this.handleSubmitFile();
+                    }} ref={(form) => this.formFile = form}>                          
+                      <Form.Group>
+                        <Form.Label className="control-label">Insert file</Form.Label>
+                        <Form.Control type="file" name="file" size = "lg"
+                          value = {this.state.file} required autoFocus
+                          onChange={(ev) => this.updateField(ev.target.name, ev.target.files[0])}/>
+                      </Form.Group>
+                    </Form>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="secondary" type="button" 
+                      onClick={(event) => {
+                        event.preventDefault();
+                        this.setState({isUploading: false});
+                      }}>Close</Button>
+                    {this.state.errorFile &&
+                      <>
+                        <br/>
+                        <Alert key="fileError" variant="danger">
+                          Invalid file.
+                        </Alert>
+                      </>}
                   </Modal.Footer>
                 </Modal>
               </>

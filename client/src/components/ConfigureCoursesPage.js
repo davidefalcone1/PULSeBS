@@ -6,13 +6,14 @@ import Row from 'react-bootstrap/Row';
 import Modal from 'react-bootstrap/Modal';
 import Alert from 'react-bootstrap/Alert';
 import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
 import { AuthContext } from '../_services/AuthContext';
 import { Redirect } from 'react-router-dom';
 
 const configureCoursePage = (props) => {
   return(
     <ConfigureCourses coursesList={props.coursesList} createNewCourse={props.createNewCourse}
-      teachersList={props.teachersList}/>
+      teachersList={props.teachersList} uploadFileCourses={props.uploadFileCourses}/>
   );
 }
 
@@ -21,12 +22,17 @@ class ConfigureCourses extends React.Component {
     super(props);
     this.props = props;
     this.state = {
-      isCreating: false, courseName: '', teacherId: 'Select teacher', errorName: false, errorTeacher: false
+      file: undefined, isUploading: false, errorFile: false,
+      isCreating: false, courseName: '', teacherId: 'Select teacher', 
+      errorName: false, errorTeacher: false
     }
   }
 
   activateModal = () => {
     this.setState({isCreating: true});
+  }
+  activateUploadFileModal = () => {
+    this.setState({isUploading: true})
   }
 
   updateField = (name, value) => {
@@ -36,6 +42,9 @@ class ConfigureCourses extends React.Component {
       }
       if(this.state.teacherId !== 'Select teacher'){
           this.setState({errorTeacher: false});
+      }
+      if(this.state.file !== undefined){
+        this.setState({errorFile: false});
       }
     });
   }
@@ -54,6 +63,17 @@ class ConfigureCourses extends React.Component {
         this.props.createNewCourse(this.state.courseName, this.state.teacherId)
     }
   }
+  handleSubmitFile = () => {
+    if (!this.formFile.checkValidity()) {
+      this.formFile.reportValidity();
+    }
+    else if(this.state.file.type !== 'text/csv'){ 
+      this.setState({errorFile: true});
+    }
+    else {
+        this.props.uploadFileClassrooms(this.state.file)
+    }
+  }
 
   render(){
     return(
@@ -63,12 +83,22 @@ class ConfigureCourses extends React.Component {
             {context.user && this.props.coursesList && 
               <>
                 <Row className="justify-content-between">
-                  <Button variant="primary" onClick={(event) => {
-                        event.preventDefault();
-                        this.activateModal();
-                    }} id={"activateModalOfCourses"}>
-                        Add New
-                  </Button>
+                  <Col>
+                    <Button variant="primary" onClick={(event) => {
+                          event.preventDefault();
+                          this.activateModal();
+                      }} id={"activateModalOfCourses"}>
+                          Add New
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button variant="primary" onClick={(event) => {
+                          event.preventDefault();
+                          this.activateUploadFileModal();
+                      }} id={"uploadFileOfCourses"}>
+                          Upload File
+                    </Button>
+                  </Col>
                 </Row>
                 <ListGroup as="ul" variant="flush">
                   <ListHeader />
@@ -133,6 +163,39 @@ class ConfigureCourses extends React.Component {
                         </>}
                   </Modal.Footer>
                 </Modal>
+                
+                <Modal show={this.state.isUploading} animation={false} scrollable={true}>
+                  <Modal.Header>
+                    <Modal.Title>Upload file</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <Form method="POST" action="" id="newCourseFormFile" onSubmit={(ev) => {
+                      ev.preventDefault();
+                      this.handleSubmitFile();
+                    }} ref={(form) => this.formFile = form}>                          
+                      <Form.Group>
+                        <Form.Label className="control-label">Insert file</Form.Label>
+                        <Form.Control type="file" name="file" size = "lg"
+                          value = {this.state.file} required autoFocus
+                          onChange={(ev) => this.updateField(ev.target.name, ev.target.files[0])}/>
+                      </Form.Group>
+                    </Form>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="secondary" type="button" 
+                      onClick={(event) => {
+                        event.preventDefault();
+                        this.setState({isUploading: false});
+                      }}>Close</Button>
+                    {this.state.errorFile &&
+                      <>
+                        <br/>
+                        <Alert key="fileError" variant="danger">
+                          Invalid file.
+                        </Alert>
+                      </>}
+                  </Modal.Footer>
+                </Modal>
               </>
             }
             {!context.user && <Redirect to="/login"/>}
@@ -142,7 +205,6 @@ class ConfigureCourses extends React.Component {
     );
   };  
 }
-
 
 function ListHeader() {
   return(

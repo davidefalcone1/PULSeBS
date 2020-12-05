@@ -285,9 +285,10 @@ async function setStudentAsPresent(lessonId, studentId){
     });
 }
 
+//support manager
 async function createNewClassroom(classRoomName, maxSeats){
     return new Promise((resolve, reject) => {
-        fetch("/createNewClassroom/", {
+        fetch("/createNewClassroom", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ classRoomName, maxSeats })
@@ -308,7 +309,7 @@ async function createNewClassroom(classRoomName, maxSeats){
 }
 async function createNewCourse(courseName, teacherId){
     return new Promise((resolve, reject) => {
-        fetch("/createNewCourse/", {
+        fetch("/createNewCourse", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ courseName, teacherId })
@@ -329,7 +330,7 @@ async function createNewCourse(courseName, teacherId){
 }
 async function createNewUser(userId, fullName, email, password, type){
     return new Promise((resolve, reject) => {
-        fetch("/createNewUser/", {
+        fetch("/createNewUser", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, fullName, email, password, type })
@@ -348,12 +349,12 @@ async function createNewUser(userId, fullName, email, password, type){
         }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
-async function editLesson(/* TODO SET PARAMETER */){
+async function editLesson(scheduleId, courseId, errorLessonStatus, lessonType, startDate, endDate, classroom){
     return new Promise((resolve, reject) => {
-        fetch("/editLesson/", {
+        fetch("/editLesson", {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ /* TODO SET PARAMETER */ })
+            body: JSON.stringify({ scheduleId, courseId, errorLessonStatus, lessonType, startDate, endDate, classroom })
         }).then((response) => {
             if (response.ok) {
                 resolve(null);
@@ -369,12 +370,12 @@ async function editLesson(/* TODO SET PARAMETER */){
         }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
-async function createNewLesson(/* TODO SET PARAMETER */){
+async function createNewLesson(courseId, errorLessonStatus, lessonType, startDate, endDate, classroom){
     return new Promise((resolve, reject) => {
-        fetch("/createNewLesson/", {
+        fetch("/createNewLesson", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ /* TODO SET PARAMETER */ })
+            body: JSON.stringify({ courseId, errorLessonStatus, lessonType, startDate, endDate, classroom })
         }).then((response) => {
             if (response.ok) {
                 resolve(null);
@@ -480,6 +481,112 @@ function getAllLessons(){
             }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
+async function uploadFileClassrooms(file){
+    return new Promise((resolve, reject) => {
+        fetch("/uploadFileClassroom", {
+            method: 'POST',
+            headers: { 'Content-Type': 'multipart/form-data' },
+            body: JSON.stringify({ file })
+        }).then((response) => {
+            if (response.ok) {
+                resolve(null);
+            }
+            else {
+                response.json()
+                    .then((obj) => { reject(obj); })
+                    .catch((err) => {
+                        reject(
+                            { errors: [{ param: "Application", msg: "Cannot parse server response" }] })
+                    });
+            }
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
+}
+async function uploadFileCourses(file){
+    return new Promise((resolve, reject) => {
+        fetch("/uploadFileCourses", {
+            method: 'POST',
+            headers: { 'Content-Type': 'multipart/form-data' },
+            body: JSON.stringify({ file })
+        }).then((response) => {
+            if (response.ok) {
+                resolve(null);
+            }
+            else {
+                response.json()
+                    .then((obj) => { reject(obj); })
+                    .catch((err) => {
+                        reject(
+                            { errors: [{ param: "Application", msg: "Cannot parse server response" }] })
+                    });
+            }
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
+}
+async function uploadFileLessons(file){
+    return new Promise((resolve, reject) => {
+        fetch("/uploadFileLessons", {
+            method: 'POST',
+            headers: { 'Content-Type': 'multipart/form-data' },
+            body: JSON.stringify({ file })
+        }).then((response) => {
+            if (response.ok) {
+                resolve(null);
+            }
+            else {
+                response.json()
+                    .then((obj) => { reject(obj); })
+                    .catch((err) => {
+                        reject(
+                            { errors: [{ param: "Application", msg: "Cannot parse server response" }] })
+                    });
+            }
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
+}
+async function uploadFileStudents(file){
+    return new Promise((resolve, reject) => {
+        fetch("/uploadFileStudents", {
+            method: 'POST',
+            headers: { 'Content-Type': 'multipart/form-data' },
+            body: JSON.stringify({ file })
+        }).then((response) => {
+            if (response.ok) {
+                resolve(null);
+            }
+            else {
+                response.json()
+                    .then((obj) => { reject(obj); })
+                    .catch((err) => {
+                        reject(
+                            { errors: [{ param: "Application", msg: "Cannot parse server response" }] })
+                    });
+            }
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
+}
+async function uploadFileTeachers(file){
+    return new Promise((resolve, reject) => {
+        fetch("/uploadFileTeachers", {
+            method: 'POST',
+            headers: { 'Content-Type': 'multipart/form-data' },
+            body: JSON.stringify({ file })
+        }).then((response) => {
+            if (response.ok) {
+                resolve(null);
+            }
+            else {
+                response.json()
+                    .then((obj) => { reject(obj); })
+                    .catch((err) => {
+                        reject(
+                            { errors: [{ param: "Application", msg: "Cannot parse server response" }] })
+                    });
+            }
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
+}
+
 
 async function login(username, password) {
     const requestOptions = {
@@ -531,6 +638,7 @@ const API = {
     getMyCoursesLessons, bookLesson, deleteBooking, getTeacherCourses, getBookedStudents,
     getStudentsData, makeLessonRemote, cancelLesson, isAuthenticated, setStudentAsPresent,
     createNewClassroom, createNewCourse, createNewUser, createNewLesson, editLesson,
-    getAllClassrooms, getAllCourses, getAllStudents, getAllTeachers, getAllLessons
+    getAllClassrooms, getAllCourses, getAllStudents, getAllTeachers, getAllLessons,
+    uploadFileClassrooms, uploadFileCourses, uploadFileLessons, uploadFileStudents, uploadFileTeachers
 };
 export default API;

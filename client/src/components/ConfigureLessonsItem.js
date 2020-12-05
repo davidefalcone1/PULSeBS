@@ -10,10 +10,10 @@ const configureLessonItem = (props) => {
             <CourseNameField id = {props.lesson.scheduleId} courseId = {props.lesson.courseId}
                 courses = {props.courses}/>
             <StartDateField id = {props.lesson.scheduleId} startDate = {props.lesson.startDate}/>
-            <EndDateField id = {props.course.scheduleId} endDate = {props.lesson.endDate}/>
-            <SeatsField id = {props.course.scheduleId} seats = {props.availableSeats}/>
-            <ClassroomField id = {props.course.scheduleId} classroom = {props.classroom}/>
-            <ButtonField id = {props.course.scheduleId} editCourse = {props.editCourse}/>
+            <EndDateField id = {props.lesson.scheduleId} endDate = {props.lesson.endDate}/>
+            <SeatsField id = {props.lesson.scheduleId} seats = {props.availableSeats}/>
+            <ClassroomField id = {props.lesson.scheduleId} classroom = {props.classroom}/>
+            <ButtonField id = {props.lesson.scheduleId} lesson = {props.lesson} editCourse = {props.editCourse}/>
         </div>
     </ListGroup.Item>
   );
@@ -77,7 +77,7 @@ function ButtonField(props){
         <div className="col-sm-2">
             <Button variant="primary" onClick={(event) => {
                 event.preventDefault();
-                props.editLesson(); //TODO SEND PARAMETERS
+                props.editLesson(props.lesson);
             }} id={"buttonFieldOflesson" + props.id}>
                 Edit
             </Button>
