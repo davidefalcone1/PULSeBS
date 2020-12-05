@@ -116,7 +116,7 @@ class ConfigureLessons extends React.Component {
       this.setState({errorFile: true});
     }
     else {
-        this.props.uploadFileClassrooms(this.state.file)
+        this.props.uploadFileLessons(this.state.file)
     }
   }
 

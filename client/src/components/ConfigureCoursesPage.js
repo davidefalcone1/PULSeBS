@@ -71,7 +71,7 @@ class ConfigureCourses extends React.Component {
       this.setState({errorFile: true});
     }
     else {
-        this.props.uploadFileClassrooms(this.state.file)
+        this.props.uploadFileCourses(this.state.file)
     }
   }
 
