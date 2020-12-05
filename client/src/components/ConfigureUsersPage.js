@@ -1,6 +1,8 @@
 import React from 'react';
 import ConfigureUsersItem from './ConfigureUsersItem';
 import ListGroup from 'react-bootstrap/ListGroup';
+import {AuthContext} from '../_services/AuthContext';
+import {Redirect} from 'react-router-dom';
 
 const configureUserPage = (props) => {
   return(

@@ -12,6 +12,9 @@ import ConfigureClasses from './components/ConfigureClassesPage';
 import MonitorUsage from './components/MonitorUsagePage';
 import LoginForm from './components/LoginForm'
 import { AuthContext } from './_services/AuthContext';
+import CourseData from './API/CourseData';
+import LessonData from './API/LessonData';
+
 
 class App extends React.Component {
 
@@ -92,9 +95,19 @@ class App extends React.Component {
           }).catch((errorObj) => { console.log(errorObj); });
         }
         if (user.accessLevel === 3) { //booking manager
+          const lessons = [
+            new LessonData(0, 1, '2020-09-25T15:00', '2020-09-25T17:00', 40, 60, false, true, null),
+            new LessonData(1, 1, '2020-09-26T17:00', '2020-09-26T19:00', 40, 40, false, true, null),
+            new LessonData(2, 2, '2020-09-27T15:00', '2020-09-27T17:00', 20, 40, false, false, null),
+            new LessonData(3, 2, '2020-09-30T15:00', '2020-09-30T17:00', 40, 60, false, false, null),
+            new LessonData(4, 2, '2020-10-25T15:00', '2020-10-25T17:00', 40, 60, false, true, null)
+          ];
+          const courses = [
+            new CourseData(1, 'Mobile application development', 's12345'),           
+            new CourseData(2, 'Software engineering 2', 's54321')           
+          ];
           this.setState({ isTeacher: false, isStudent: false,
-            isBookingManager: true, isSupportOfficer: false});
-
+            isBookingManager: true, isSupportOfficer: false, courses: courses, lessons: lessons});
         }
         if (user.accessLevel === 4) { //support officer
           this.setState({ isTeacher: false, isStudent: false,
@@ -206,27 +219,27 @@ class App extends React.Component {
                 changeLessonToRemote={this.changeLessonToRemote} setStudentAsPresent={this.setStudentAsPresent}/>}
             </Route>
             <Route path='/monitorUsage'>
-              {!this.state.user ? <Redirect to='/login' /> : <MonitorUsage/>}
+              {!this.state.user ? <Redirect to='/login' /> : <MonitorUsage lessons={this.state.lessons} courses={this.state.courses}/>}
             </Route>
             <Route path='/configureStudentsList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"student"} usersList={}
-                createNewUser={} editUser={}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"student"} usersList={""}
+                createNewUser={""} editUser={""}/>}
             </Route>
             <Route path='/configureCoursesList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureCourses coursesList={} teachersList={}
-                createNewCourse={} editCourse={}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureCourses coursesList={""} teachersList={""}
+                createNewCourse={""} editCourse={""}/>}
             </Route>
             <Route path='/configureTeachersList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"teacher"}  usersList={}
-                createNewUser={} editUser={}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"teacher"}  usersList={""}
+                createNewUser={""} editUser={""}/>}
             </Route>
             <Route path='/configureLessonsList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureLessons lessonsList={} coursesList={}
-                classesList={} createNewLesson={} editLesson={}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureLessons lessonsList={""} coursesList={""}
+                classesList={""} createNewLesson={""} editLesson={""}/>}
             </Route>
             <Route path='/configureClassesList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureClasses classesList={}
-                createNewClass={} editClass={}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureClasses classesList={""}
+                createNewClass={""} editClass={""}/>}
             </Route>
             <Route path="/login">
               <LoginForm />

@@ -15,6 +15,8 @@ class CourseData{
         this.normalBookingsAvgMonth = 0;
         this.cancelledBookingsAvgMonth = 0;
         this.waitingBookingsAvgMonth = 0;
+        this.attendanceCountAvgWeek = 0;
+        this.attendanceCountAvgMonth = 0;
     }
 
     static fromJson(json){

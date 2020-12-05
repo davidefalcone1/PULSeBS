@@ -19,6 +19,7 @@ class LessonData {
         this.normalBookings = 0;
         this.cancelledBookings = 0;
         this.waitingBookings = 0;
+        this.attendanceCount = 0;
     }
 
     static fromJson(json) {
