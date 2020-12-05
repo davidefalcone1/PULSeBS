@@ -1,24 +1,181 @@
 import React from 'react';
 import ConfigureUsersItem from './ConfigureUsersItem';
 import ListGroup from 'react-bootstrap/ListGroup';
+import Button from 'react-bootstrap/esm/Button';
+import Row from 'react-bootstrap/Row';
+import Modal from 'react-bootstrap/Modal';
+import Alert from 'react-bootstrap/Alert';
+import Form from 'react-bootstrap/Form';
+import { Redirect } from 'react-router-dom';
+import { AuthContext } from '../_services/AuthContext';
 
 const configureUserPage = (props) => {
   return(
-    <AuthContext.Consumer>
-      {(context) => (
-        <>        
-          {context.user && props.usersList && 
-          <ListGroup as="ul" variant="flush">
-            <ListHeader />
-              {props.usersList.map((user) => 
-                <ConfigureUsersItem key = {user.personId} user = {user}/>)
-              }
-          </ListGroup>}
-          {!context.user && <Redirect to="/login"/>}
-        </>
-      )}
-    </AuthContext.Consumer>
+    <ConfigureUser usersList={props.usersList} createNewUser={props.createNewUser} type={props.type}/>
   );
+}
+
+class ConfigureUser extends React.Component {
+  constructor(props) {
+    super(props);
+    this.props = props;
+    this.state = {
+      isCreating: false, userId: '', fullName:'', email: '', password: '',
+      errorId: false, errorName: false, errorEmail: false, errorPW: false
+    }
+  }
+
+  activateModal = () => {
+    this.setState({isCreating: true});
+  }
+
+  updateField = (name, value) => {
+    this.setState({[name]: value}, () => {
+      if(this.state.userId !== ''){
+        this.setState({errorId: false});
+      }
+      if(this.state.fullName !== ''){
+        this.setState({errorName: false});
+      }
+      if(this.state.email !== ''){
+        this.setState({errorEmail: false});
+      }
+      if(this.state.password !== ''){
+        this.setState({errorPW: false});
+      }
+    });
+  }
+
+  handleSubmit = () => {
+    if (!this.form.checkValidity()) {
+        this.form.reportValidity();
+    }
+    if(this.state.userId !== ''){
+      this.setState({errorId: false});
+    }
+    if(this.state.fullName !== ''){
+      this.setState({errorName: false});
+    }
+    if(this.state.email !== ''){
+      this.setState({errorEmail: false});
+    }
+    if(this.state.password !== ''){
+      this.setState({errorPW: false});
+    }
+    else {
+        this.props.createNewUser(this.state.userId, this.state.fullName, this.state.email,
+          this.state.password, this.props.type)
+    }
+}
+
+  
+  render(){
+    return(
+      <AuthContext.Consumer>
+        {(context) => (
+          <>        
+            {context.user && this.props.usersList && 
+              <>
+                <Row className="justify-content-between">
+                  <Button variant="primary" onClick={(event) => {
+                        event.preventDefault();
+                        this.activateModal();
+                    }} id={"activateModalOfUsers"}>
+                        Add New
+                  </Button>
+                </Row>
+                <ListGroup as="ul" variant="flush">
+                  <ListHeader />
+                    {this.props.usersList.map((user) => 
+                      <ConfigureUsersItem key = {user.personId} user = {user}/>)
+                    }
+                </ListGroup>
+
+                <Modal show={this.state.isCreating} animation={false} scrollable={true}>
+                  <Modal.Header>
+                    <Modal.Title>Create new {this.props.type}</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <Form method="POST" action="" id="newUserForm" onSubmit={(ev) => {
+                      ev.preventDefault();
+                      this.handleSubmit();
+                    }} ref={(form) => this.form = form}>
+                          
+                      <Form.Group>
+                        <Form.Label className="control-label">User Id</Form.Label>
+                        <Form.Control type="text" name="userId" size = "lg"
+                          value = {this.state.userId} required autoFocus
+                          onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label className="control-label">User Full Name</Form.Label>
+                        <Form.Control type="text" name="fullName" size = "lg"
+                          value = {this.state.fullName} required
+                          onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label className="control-label">User Email</Form.Label>
+                        <Form.Control type="text" name="email" size = "lg"
+                          value = {this.state.email} required
+                          onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label className="control-label">User Id</Form.Label>
+                        <Form.Control type="text" name="password" size = "lg"
+                          value = {this.state.password} required
+                          onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
+                      </Form.Group>
+                      <Form.Group>
+                        <div>
+                          <button type="submit" className="btn btn-primary">Create</button>
+                        </div>
+                      </Form.Group>
+                    </Form>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="secondary" type="button" 
+                      onClick={(event) => {
+                        event.preventDefault();
+                        this.setState({isCreating: false});
+                      }}>Close</Button>
+                      {this.state.errorId &&
+                        <>
+                          <br/>
+                          <Alert key="idError" variant="danger">
+                            Invalid Id.
+                          </Alert>
+                        </>}
+                      {this.state.errorName &&
+                        <>
+                          <br/>
+                          <Alert key="nameError" variant="danger">
+                            Invalid name.
+                          </Alert>
+                        </>}
+                      {this.state.errorEmail &&
+                        <>
+                          <br/>
+                          <Alert key="emailError" variant="danger">
+                            Invalid email.
+                          </Alert>
+                        </>}
+                      {this.state.errorPW &&
+                        <>
+                          <br/>
+                          <Alert key="pwError" variant="danger">
+                            Invalid password.
+                          </Alert>
+                        </>}
+                  </Modal.Footer>
+                </Modal>
+              </>
+            }
+            {!context.user && <Redirect to="/login"/>}
+          </>
+        )}
+      </AuthContext.Consumer>
+    );
+  };  
 }
 
 function ListHeader() {

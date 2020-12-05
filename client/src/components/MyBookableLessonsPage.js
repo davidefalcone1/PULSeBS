@@ -102,7 +102,7 @@ class LessonListPageRender extends React.Component {
             event.preventDefault();
             this.props.selectLessonFunction(model.appointmentData.scheduleId).then((res) => {
             this.updateModalMessage(res ? "Your booking has been completed successfully!" : 
-              "Sorry, there are no more available seats. Don't worry, we will contact you as soon as a seat becomes available.");
+              "Sorry, there are no more available seats. Don't worry, we will send you an email as soon as a seat becomes available.");
             })
             .catch((errorObj) => { 
               console.log(errorObj); 
@@ -124,7 +124,7 @@ class LessonListPageRender extends React.Component {
       <AuthContext.Consumer>
         {(context) => (
           <>        
-            {context.user && this.props.lessonsList && 
+            {context.user && this.props.lessonsList &&
             <div style={{padding: "15px"}}>
               <Row>
                 <Col>

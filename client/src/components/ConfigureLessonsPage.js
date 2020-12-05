@@ -1,6 +1,8 @@
 import React from 'react';
 import ConfigureLessonsItem from './ConfigureLessonsItem';
 import ListGroup from 'react-bootstrap/ListGroup';
+import { Redirect } from 'react-router-dom';
+import { AuthContext } from '../_services/AuthContext';
 
 const configureLessonsPage = (props) => {
   return(

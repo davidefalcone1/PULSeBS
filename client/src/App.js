@@ -26,12 +26,14 @@ class App extends React.Component {
       isSupportOfficer: false,
       loginError: false,
       configurationCompleted: false,
-      lessons: [],
+      lessons: [], //usata per bookableLessons, lezioni di Teacher (coursesLessons), lista totale lezioni (support officer)
       myBookedLessons: [],
       myWaitingBookedLessons: [],
-      courses: [],
+      courses: [], //usata per lista corsi teacher, lista totale corsi (support officer)
       studentsBookings: [],
-      studentsInfos: [],
+      studentsInfos: [], //usata per dati studenti a teacher, lista totale studenti (support officer)
+      teachersInfos: [], //usata per lista totale teachers (support officer)
+      classes: [], //usata per lista totale classi (support officer)
     };
   }
 
@@ -48,7 +50,7 @@ class App extends React.Component {
     API.login(username, password)
       .then((user) => {
         console.log("Login completed " + user);
-        this.setState({ user, loginError: false });
+        this.setState({ user: user, loginError: false });
         if (user.accessLevel === 1) { //student
           this.setState({ isTeacher: false, isStudent: true,
             isBookingManager: false, isSupportOfficer: false, });
@@ -94,7 +96,7 @@ class App extends React.Component {
         if (user.accessLevel === 3) { //booking manager
           this.setState({ isTeacher: false, isStudent: false,
             isBookingManager: true, isSupportOfficer: false});
-
+          this.updateSupportOfficerData();
         }
         if (user.accessLevel === 4) { //support officer
           this.setState({ isTeacher: false, isStudent: false,
@@ -122,7 +124,6 @@ class App extends React.Component {
       this.setState({ waitingBookings: myWaitingBookedLessons });
     }).catch((errorObj) => { console.log(errorObj); });
   }
-
   bookLesson = async (lessonId) => {
     return API.bookLesson(lessonId).then((response) => {//TODO bookLesson will return if it was an actual booking or the student is in the waiting queue
       console.log("Lesson booked.");
@@ -174,6 +175,62 @@ class App extends React.Component {
     }).catch((errorObj) => { console.log(errorObj); });    
   }
 
+  createNewCourse = (courseName, teacherId) => {
+    API.createNewCourse(courseName, teacherId).then(() => {
+      API.getAllCourses().then((coursesList) => {
+        this.setState({courses: coursesList});
+      }).catch((errorObj) => { console.log(errorObj); });
+    }).catch((errorObj) => { console.log(errorObj); });  
+  }
+  createNewClass = (classroomName, maxSeats) => {
+    API.createNewClass(classroomName, maxSeats).then(() => {
+      API.getAllClassrooms().then((classesList) => {
+        this.setState({classes: classesList});
+      }).catch((errorObj) => { console.log(errorObj); });
+    }).catch((errorObj) => { console.log(errorObj); });
+  }
+  createNewUser = (userId, fullName, email, password, type) => {
+    API.createNewUser(userId, fullName, email, password, type).then(() => {
+      if(type === 'student') {
+        API.getAllStudents().then((studentsList) => {
+          this.setState({studentsInfos: studentsList});
+        }).catch((errorObj) => { console.log(errorObj); });
+      }
+      else if(type === 'teacher') {
+        API.getAllTeachers().then((teachersList) => {
+          this.setState({teachersInfos: teachersList});
+        }).catch((errorObj) => { console.log(errorObj); }); 
+      }
+    }).catch((errorObj) => { console.log(errorObj); }); 
+  }
+  createNewLesson = () => {
+
+  }
+  editLesson = () => {
+
+  }
+  updateSupportOfficerData = () => {
+    API.getAllClassrooms().then((classesList) => {
+      this.setState({classes: classesList});
+    }).catch((errorObj) => { console.log(errorObj); });
+
+    API.getAllCourses().then((coursesList) => {
+      this.setState({courses: coursesList});
+    }).catch((errorObj) => { console.log(errorObj); });
+
+    API.getAllStudents().then((studentsList) => {
+      this.setState({studentsInfos: studentsList});
+    }).catch((errorObj) => { console.log(errorObj); });
+
+    API.getAllTeachers().then((teachersList) => {
+      this.setState({teachersInfos: teachersList});
+    }).catch((errorObj) => { console.log(errorObj); }); 
+
+    API.getAllLessons().then((lessonsList) => {
+      this.setState({lessons: LessonsList});
+    }).catch((errorObj) => { console.log(errorObj); });  
+  }
+
   render() {
     const value = {
       user: this.state.user,
@@ -209,24 +266,23 @@ class App extends React.Component {
               {!this.state.user ? <Redirect to='/login' /> : <MonitorUsage/>}
             </Route>
             <Route path='/configureStudentsList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"student"} usersList={}
-                createNewUser={} editUser={}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"student"} usersList={this.state.usersList}
+                createNewUser={this.createNewUser}/>}
             </Route>
             <Route path='/configureCoursesList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureCourses coursesList={} teachersList={}
-                createNewCourse={} editCourse={}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureCourses coursesList={this.state.courses} teachersList={this.state.usersList}
+                createNewCourse={this.createNewCourse}/>}
             </Route>
             <Route path='/configureTeachersList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"teacher"}  usersList={}
-                createNewUser={} editUser={}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"teacher"}  usersList={this.state.usersList}
+                createNewUser={this.createNewUser}/>}
             </Route>
             <Route path='/configureLessonsList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureLessons lessonsList={} coursesList={}
-                classesList={} createNewLesson={} editLesson={}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureLessons lessonsList={this.state.lessons} coursesList={this.state.courses}
+                classesList={this.state.classes} createNewLesson={this.createNewLesson} editLesson={this.editLesson}/>}
             </Route>
             <Route path='/configureClassesList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureClasses classesList={}
-                createNewClass={} editClass={}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureClasses classesList={this.state.classes} createNewClass={this.createNewClass}/>}
             </Route>
             <Route path="/login">
               <LoginForm />
