@@ -13,7 +13,7 @@ import { AuthContext } from '../_services/AuthContext';
 const configureUserPage = (props) => {
   return(
     <ConfigureUser usersList={props.usersList} createNewUser={props.createNewUser} type={props.type}
-      uploadFileUser={props.uploadFileUser}/>
+      uploadFileUser={props.uploadFileUser} uploadFileEnrollment={props.uploadFileEnrollment}/>
   );
 }
 
@@ -23,7 +23,7 @@ class ConfigureUser extends React.Component {
     this.props = props;
     this.state = {
       file: undefined, isUploading: false, errorFile: false,
-      fileEnrollment: undefined, errorFileEnrollment: false,
+      fileEnrollment: undefined, errorFileEnrollment: false, isEnrolling: false,
       isCreating: false, userId: '', fullName:'', email: '', password: '',
       errorId: false, errorName: false, errorEmail: false, errorPW: false
     }
@@ -34,6 +34,9 @@ class ConfigureUser extends React.Component {
   }
   activateUploadFileModal = () => {
     this.setState({isUploading: true})
+  }
+  activateUploadFileEnrollmentModal = () => {
+    this.setState({isEnrolling: true});
   }
 
   updateField = (name, value) => {
@@ -91,10 +94,18 @@ class ConfigureUser extends React.Component {
       this.setState({errorFileEnrollment: true});
     }
     else {
-      if(this.props.type === 'student')
-        this.props.uploadFileUser(this.state.file, this.state.fileEnrollment)
-      else
         this.props.uploadFileUser(this.state.file)
+    }
+  }
+  handleSubmitFileEnrollment = () => {
+    if (!this.formFile.checkValidity()) {
+      this.formFile.reportValidity();
+    }
+    else if(this.props.type === 'student' && this.state.fileEnrollment.type !== 'text/csv'){ 
+      this.setState({errorFileEnrollment: true});
+    }
+    else {
+      this.props.uploadFileEnrollment(this.state.fileEnrollment)
     }
   }
 
@@ -122,6 +133,16 @@ class ConfigureUser extends React.Component {
                           Upload User File
                     </Button>
                   </Col>
+                  {this.props.type === 'student' &&
+                    <Col>
+                      <Button variant="primary" onClick={(event) => {
+                            event.preventDefault();
+                            this.activateUploadFileEnrollmentModal();
+                        }} id={"uploadFileEnrollmentOfUsers"}>
+                            Upload Enrollment File
+                      </Button>
+                    </Col>
+                  }
                 </Row>
                 <ListGroup as="ul" variant="flush">
                   <ListHeader />
@@ -223,14 +244,6 @@ class ConfigureUser extends React.Component {
                           value = {this.state.file} required
                           onChange={(ev) => this.updateField(ev.target.name, ev.target.files[0])}/>
                       </Form.Group>
-                      {this.props.type === 'student' &&
-                        <Form.Group>
-                        <Form.Label className="control-label">Insert student enrollment file</Form.Label>
-                        <Form.Control type="file" name="fileEnrollment" size = "lg"
-                          value = {this.state.fileEnrollment} required
-                          onChange={(ev) => this.updateField(ev.target.name, ev.target.files[0])}/>
-                        </Form.Group>
-                      }
                     </Form>
                   </Modal.Body>
                   <Modal.Footer>
@@ -246,15 +259,43 @@ class ConfigureUser extends React.Component {
                           Invalid file.
                         </Alert>
                       </>}
-                    {this.props.type === 'student' && this.state.errorFileEnrollment &&
-                      <>
-                        <br/>
-                        <Alert key="fileError" variant="danger">
-                          Invalid enrollment file.
-                        </Alert>
-                      </>}
                   </Modal.Footer>
                 </Modal>
+                
+                {this.props.type === 'student' &&
+                  <Modal show={this.state.isEnrolling} animation={false} scrollable={true}>
+                    <Modal.Header>
+                      <Modal.Title>Upload students' enrollment file</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <Form method="POST" action="" id="newUserFormFileEnrollment" onSubmit={(ev) => {
+                        ev.preventDefault();
+                        this.handleSubmitFileEnrollment();
+                      }} ref={(form) => this.formFileEnrollment = form}>    
+                        <Form.Group>
+                        <Form.Label className="control-label">Insert student enrollment file</Form.Label>
+                        <Form.Control type="file" name="fileEnrollment" size = "lg"
+                          value = {this.state.fileEnrollment} required
+                          onChange={(ev) => this.updateField(ev.target.name, ev.target.files[0])}/>
+                        </Form.Group>
+                      </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                      <Button variant="secondary" type="button" 
+                        onClick={(event) => {
+                          event.preventDefault();
+                          this.setState({isEnrolling: false});
+                        }}>Close</Button>
+                      {this.state.errorFileEnrollment &&
+                        <>
+                          <br/>
+                          <Alert key="fileError" variant="danger">
+                            Invalid enrollment file.
+                          </Alert>
+                        </>}
+                    </Modal.Footer>
+                  </Modal>
+                }  
               </>
             }
             {!context.user && <Redirect to="/login"/>}

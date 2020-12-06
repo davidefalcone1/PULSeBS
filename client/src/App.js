@@ -241,14 +241,12 @@ class App extends React.Component {
       }).catch((errorObj) => { console.log(errorObj); });  
     }).catch((errorObj) => { console.log(errorObj); });   
   }
-  uploadFileStudents = (file, fileEnrollment) => {
+  uploadFileStudents = (file) => {
     API.uploadFileStudents(file).then(() => {
       API.getAllStudents().then((studentsList) => {
         this.setState({studentsInfos: studentsList});
       }).catch((errorObj) => { console.log(errorObj); });
     }).catch((errorObj) => { console.log(errorObj); });
-
-    this.uploadFileEnrollment(fileEnrollment);
   }
   uploadFileTeachers = (file) => {
     API.uploadFileTeachers(file).then(() => {
@@ -278,8 +276,8 @@ class App extends React.Component {
       this.setState({lessons: LessonsList});
     }).catch((errorObj) => { console.log(errorObj); });  
   }
-  uploadFileEnrollment = () => {
-    API.uploadFileEnrollment()
+  uploadFileEnrollment = (file) => {
+    API.uploadFileEnrollment(file)
   }
 
   render() {
@@ -325,7 +323,7 @@ class App extends React.Component {
             {/* SUPPORT OFFICER */}
             <Route path='/configureStudentsList'>
               {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"student"} usersList={this.state.usersList}
-                createNewUser={this.createNewUser} uploadFileUser={this.uploadFileStudents}/>}
+                createNewUser={this.createNewUser} uploadFileUser={this.uploadFileStudents} uploadFileEnrollment={this.uploadFileEnrollment}/>}
             </Route>
             <Route path='/configureCoursesList'>
               {!this.state.user ? <Redirect to='/login' /> : <ConfigureCourses coursesList={this.state.courses} teachersList={this.state.usersList}
