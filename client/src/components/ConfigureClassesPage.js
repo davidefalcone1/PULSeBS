@@ -71,6 +71,7 @@ class ConfigureClasses extends React.Component {
     }
     else {
         this.props.uploadFileClassrooms(this.state.file)
+        this.setState({isUploading: false})
     }
   }
   
@@ -79,7 +80,7 @@ class ConfigureClasses extends React.Component {
       <AuthContext.Consumer>
         {(context) => (
           <>        
-            {context.user && this.props.classesList && (console.log(this.props.classesList) || true) &&
+            {context.user && this.props.classesList &&
               <>
                 <br/>
                 <Row className="justify-content-around">
@@ -178,10 +179,16 @@ class ConfigureClasses extends React.Component {
                             }
                             
                             f2(ev.target.files[0]).then(content => {
-                              console.log(content)
                               this.updateField("file", content)
                             }).catch(error => console.log(error))
                           }}/>
+                      </Form.Group>
+                      <Form.Group>
+                        <div>
+                          <button type="submit" className="btn btn-primary">
+                            UPLOAD
+                          </button>
+                        </div>
                       </Form.Group>
                     </Form>
                   </Modal.Body>

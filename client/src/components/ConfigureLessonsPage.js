@@ -11,7 +11,6 @@ import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../_services/AuthContext';
 
 const configureLessonsPage = (props) => {
-  console.log(props);
   return(
     <ConfigureLessons lessonsList = {props.lessonsList} coursesList = {props.coursesList}
       classesList = {props.classesList} createNewLesson={props.createNewLesson}
@@ -39,6 +38,7 @@ class ConfigureLessons extends React.Component {
     });
   }
   activateEditModal = (lesson) => {
+    console.log(lesson)
     this.setState({isEditing: true,
       scheduleId: lesson.scheduleId, courseId: lesson.courseId, lessonStatus: lesson.isLessonCancelled,
       lessonType: lesson.isLessonRemote, startDate: lesson.startDate,
@@ -117,7 +117,8 @@ class ConfigureLessons extends React.Component {
       this.setState({errorFile: true});
     }
     else {
-        this.props.uploadFileLessons(this.state.file)
+      this.props.uploadFileLessons(this.state.file)
+      this.setState({isUploading: false})
     }
   }
 
@@ -126,7 +127,7 @@ class ConfigureLessons extends React.Component {
       <AuthContext.Consumer>
         {(context) => (
           <>        
-            {context.user && this.props.coursesList && 
+            {context.user && this.props.coursesList && this.props.lessonsList && this.props.classesList &&
               <>
                 <br/>
                 <Row className="justify-content-around">
@@ -145,6 +146,7 @@ class ConfigureLessons extends React.Component {
                 </Row>
                 <ListGroup as="ul" variant="flush">
                   <ListHeader />
+                  {console.log(this.props.lessonsList)}
                   {this.props.lessonsList.map((lesson) => 
                     <ConfigureLessonsItem key = {lesson.scheduleId} lesson = {lesson} 
                       courses = {this.props.coursesList} editLesson={this.activateEditModal}/>)
@@ -163,6 +165,7 @@ class ConfigureLessons extends React.Component {
                       <Form.Group>
                         <Form.Label className="control-label">Course</Form.Label>
                         <Form.Control as="select" custom name="courseId" value = {this.state.courseId} 
+                            defaultValue = {this.state.courseId}
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                           <option>Select course</option>
                           {this.props.coursesList.map((course) =>
@@ -173,6 +176,7 @@ class ConfigureLessons extends React.Component {
                       <Form.Group>
                         <Form.Label className="control-label">Select Status</Form.Label>
                         <Form.Control as="select" custom name="lessonStatus" value = {this.state.lessonStatus} 
+                            defaultValue = {this.state.lessonStatus}
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                           <option>Select status</option>
                           <option value={true}>Active</option>
@@ -182,27 +186,31 @@ class ConfigureLessons extends React.Component {
                       <Form.Group>
                         <Form.Label className="control-label">Select Type</Form.Label>
                         <Form.Control as="select" custom name="lessonType" value = {this.state.lessonType} 
+                            defaultValue = {this.state.lessonType}
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                           <option>Select type</option>
-                          <option value={1}>In Presence</option>
-                          <option value={0}>Remote</option>
+                          <option value={false}>In Presence</option>
+                          <option value={true}>Remote</option>
                         </Form.Control>
                       </Form.Group>
                       <Form.Group>
                         <Form.Label className="control-label">Starting Date and Time</Form.Label>
                         <Form.Control type="datetime-local" name="startDate"
                           value = {this.state.startDate} min={moment().format("YYYY-MM-DD hh:mm")}
+                          defaultValue = {this.state.startDate}
                           onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
                       </Form.Group>
                       <Form.Group>
                         <Form.Label className="control-label">Ending Date and Time</Form.Label>
                         <Form.Control type="datetime-local" name="endDate"
                           value = {this.state.endDate} min={moment(this.state.startingDay).format("YYYY-MM-DD hh:mm")}
+                          defaultValue = {this.state.endDate}
                           onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
                       </Form.Group>
                       <Form.Group>
                         <Form.Label className="control-label">Classroom</Form.Label>
                         <Form.Control as="select" custom name="classroom" value = {this.state.classroom} 
+                            defaultValue = {this.state.classroom}
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                           <option>Select classroom</option>
                           {this.props.classesList.map((c) =>
@@ -294,10 +302,16 @@ class ConfigureLessons extends React.Component {
                             }
                             
                             f2(ev.target.files[0]).then(content => {
-                              console.log(content)
                               this.updateField("file", content)
                             }).catch(error => console.log(error))
                           }}/>
+                      </Form.Group>
+                      <Form.Group>
+                        <div>
+                          <button type="submit" className="btn btn-primary">
+                            UPLOAD
+                          </button>
+                        </div>
                       </Form.Group>
                     </Form>
                   </Modal.Body>
@@ -318,7 +332,7 @@ class ConfigureLessons extends React.Component {
                 </Modal>
               </>
             }
-            {context.user && !this.props.coursesList &&
+            {context.user && (!this.props.coursesList || !this.props.lessonsList || !this.props.classesList) &&
               <NoItemsImage/>
             }
             {!context.user && <Redirect to="/login"/>}

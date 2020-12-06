@@ -485,7 +485,7 @@ async function uploadFileClassrooms(file){
     return new Promise((resolve, reject) => {
         fetch("/uploadFileClassroom", {
             method: 'POST',
-            headers: { 'Content-Type': 'multipart/form-data' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ file })
         }).then((response) => {
             if (response.ok) {
@@ -506,7 +506,7 @@ async function uploadFileCourses(file){
     return new Promise((resolve, reject) => {
         fetch("/uploadFileCourses", {
             method: 'POST',
-            headers: { 'Content-Type': 'multipart/form-data' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ file })
         }).then((response) => {
             if (response.ok) {
@@ -527,7 +527,7 @@ async function uploadFileLessons(file){
     return new Promise((resolve, reject) => {
         fetch("/uploadFileLessons", {
             method: 'POST',
-            headers: { 'Content-Type': 'multipart/form-data' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ file })
         }).then((response) => {
             if (response.ok) {
@@ -548,7 +548,7 @@ async function uploadFileStudents(file){
     return new Promise((resolve, reject) => {
         fetch("/uploadFileStudents", {
             method: 'POST',
-            headers: { 'Content-Type': 'multipart/form-data' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ file })
         }).then((response) => {
             if (response.ok) {
@@ -569,7 +569,7 @@ async function uploadFileTeachers(file){
     return new Promise((resolve, reject) => {
         fetch("/uploadFileTeachers", {
             method: 'POST',
-            headers: { 'Content-Type': 'multipart/form-data' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ file })
         }).then((response) => {
             if (response.ok) {
@@ -590,7 +590,7 @@ async function uploadFileEnrollment(file){
     return new Promise((resolve, reject) => {
         fetch("/uploadFileEnrollment", {
             method: 'POST',
-            headers: { 'Content-Type': 'multipart/form-data' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ file })
         }).then((response) => {
             if (response.ok) {

@@ -228,14 +228,14 @@ class App extends React.Component {
     }).catch((errorObj) => { console.log(errorObj); });  
   }
   uploadFileCourses = (file) => {
-    API.createNewCourse(file).then(() => {
+    API.uploadFileCourses(file).then(() => {
       API.getAllCourses().then((coursesList) => {
         this.setState({courses: coursesList});
       }).catch((errorObj) => { console.log(errorObj); });
     }).catch((errorObj) => { console.log(errorObj); });  
   }
   uploadFileLessons = (file) => {
-    API.createNewLesson(file)
+    API.uploadFileLessons(file)
     .then(() => {
       API.getAllLessons().then((lessonsList) => {
         this.setState({lessons: lessonsList});
@@ -256,6 +256,9 @@ class App extends React.Component {
       }).catch((errorObj) => { console.log(errorObj); });
     }).catch((errorObj) => { console.log(errorObj); });
   }
+  uploadFileEnrollment = (file) => {
+    API.uploadFileEnrollment(file)
+  }
   updateSupportOfficerData = async () => {
     API.getAllClassrooms().then((classesList) => {
       this.setState({classes: classesList});
@@ -274,11 +277,8 @@ class App extends React.Component {
     }).catch((errorObj) => { console.log(errorObj); }); 
 
     API.getAllLessons().then((lessonsList) => {
-      this.setState({lessons: LessonsList});
+      this.setState({lessons: lessonsList});
     }).catch((errorObj) => { console.log(errorObj); });  
-  }
-  uploadFileEnrollment = (file) => {
-    API.uploadFileEnrollment(file)
   }
 
   render() {
