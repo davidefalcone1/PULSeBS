@@ -209,7 +209,7 @@ class ConfigureCourses extends React.Component {
               </>
             }
 
-            {context.user && !this.props.coursesList &&
+            {context.user && (!this.props.coursesList || this.props.teachersList) && 
               <NoItemsImage/>
             }
             {!context.user && <Redirect to="/login"/>}
