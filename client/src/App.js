@@ -6,7 +6,7 @@ import MyLessonsList from './components/MyBookedLessonsPage';
 import MyCoursesLessonsStudents from './components/MyCoursesLessonsStudentsPage';
 import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import ConfigureUsers from './components/ConfigureUsersPage';
-import ConfigureLessons from './components/MyBookableLessonsPage';
+import ConfigureLessons from './components/ConfigureLessonsPage';
 import ConfigureCourses from './components/ConfigureCoursesPage';
 import ConfigureClasses from './components/ConfigureClassesPage';
 import MonitorUsage from './components/MonitorUsagePage';
@@ -49,7 +49,7 @@ class App extends React.Component {
   login = async (username, password) => {
     API.login(username, password)
       .then((user) => {
-        console.log("Login completed " + user);
+        console.log("Login completed " + user.accessLevel);
         this.setState({ user: user, loginError: false });
         if (user.accessLevel === 1) { //student
           this.setState({ isTeacher: false, isStudent: true,
@@ -100,7 +100,9 @@ class App extends React.Component {
         if (user.accessLevel === 4) { //support officer
           this.setState({ isTeacher: false, isStudent: false,
             isBookingManager: false, isSupportOfficer: true});
-            this.updateSupportOfficerData();          
+          this.updateSupportOfficerData().then(() => {
+            this.setState({configurationCompleted: true});
+          });          
         }
       })
       .catch((e) => {
@@ -254,7 +256,7 @@ class App extends React.Component {
       }).catch((errorObj) => { console.log(errorObj); });
     }).catch((errorObj) => { console.log(errorObj); });
   }
-  updateSupportOfficerData = () => {
+  updateSupportOfficerData = async () => {
     API.getAllClassrooms().then((classesList) => {
       this.setState({classes: classesList});
     }).catch((errorObj) => { console.log(errorObj); });
@@ -321,15 +323,15 @@ class App extends React.Component {
 
             {/* SUPPORT OFFICER */}
             <Route path='/configureStudentsList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"student"} usersList={this.state.usersList}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"student"} usersList={this.state.studentsInfos}
                 createNewUser={this.createNewUser} uploadFileUser={this.uploadFileStudents} uploadFileEnrollment={this.uploadFileEnrollment}/>}
             </Route>
             <Route path='/configureCoursesList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureCourses coursesList={this.state.courses} teachersList={this.state.usersList}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureCourses coursesList={this.state.courses} teachersList={this.state.teachersInfos}
                 createNewCourse={this.createNewCourse} uploadFileCourses={this.uploadFileCourses}/>}
             </Route>
             <Route path='/configureTeachersList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"teacher"}  usersList={this.state.usersList}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"teacher"}  usersList={this.state.teachersInfos}
                 createNewUser={this.createNewUser} uploadFileUser={this.uploadFileTeachers}/>}
             </Route>
             <Route path='/configureLessonsList'>

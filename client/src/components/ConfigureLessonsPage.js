@@ -6,11 +6,12 @@ import Modal from 'react-bootstrap/Modal';
 import Alert from 'react-bootstrap/Alert';
 import Form from 'react-bootstrap/Form';
 import ListGroup from 'react-bootstrap/ListGroup';
-import Col from 'react-bootstrap/Col';
+import moment from 'moment';
 import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../_services/AuthContext';
 
 const configureLessonsPage = (props) => {
+  console.log(props);
   return(
     <ConfigureLessons lessonsList = {props.lessonsList} coursesList = {props.coursesList}
       classesList = {props.classesList} createNewLesson={props.createNewLesson}
@@ -71,7 +72,7 @@ class ConfigureLessons extends React.Component {
       if(this.state.classroom !== 'Select classroom'){
           this.setState({errorClassroom: false});
       }
-      if(this.state.file !== undefined){
+      if(this.state.file !== undefined && this.state.file !== ''){
         this.setState({errorFile: false});
       }
     });
@@ -112,7 +113,7 @@ class ConfigureLessons extends React.Component {
     if (!this.formFile.checkValidity()) {
       this.formFile.reportValidity();
     }
-    else if(this.state.file.type !== 'text/csv'){ 
+    else if(this.state.file === undefined || this.state.file === ''){ 
       this.setState({errorFile: true});
     }
     else {
@@ -127,23 +128,20 @@ class ConfigureLessons extends React.Component {
           <>        
             {context.user && this.props.coursesList && 
               <>
-                <Row className="justify-content-between">
-                  <Col>
+                <br/>
+                <Row className="justify-content-around">
                     <Button variant="primary" onClick={(event) => {
                           event.preventDefault();
                           this.activateCreateModal();
                       }} id={"activateModalOfLessons"}>
                           Add New
                     </Button>
-                  </Col>
-                  <Col>
                     <Button variant="primary" onClick={(event) => {
                           event.preventDefault();
                           this.activateUploadFileModal();
                       }} id={"uploadFileOfLessons"}>
                           Upload File
                     </Button>
-                  </Col>
                 </Row>
                 <ListGroup as="ul" variant="flush">
                   <ListHeader />
@@ -284,8 +282,22 @@ class ConfigureLessons extends React.Component {
                       <Form.Group>
                         <Form.Label className="control-label">Insert file</Form.Label>
                         <Form.Control type="file" name="file" size = "lg"
-                          value = {this.state.file} required autoFocus
-                          onChange={(ev) => this.updateField(ev.target.name, ev.target.files[0])}/>
+                          value = {this.state.file} required autoFocus accept=".csv"
+                          onChange={(ev) => {                            
+                            var f2 =function readFileContent(file) {
+                              const reader = new FileReader()
+                                return new Promise((resolve, reject) => {
+                                  reader.onload=event=>resolve(event.target.result)
+                                  reader.onerror = error => reject(error)
+                                  reader.readAsText(file)
+                                })
+                            }
+                            
+                            f2(ev.target.files[0]).then(content => {
+                              console.log(content)
+                              this.updateField("file", content)
+                            }).catch(error => console.log(error))
+                          }}/>
                       </Form.Group>
                     </Form>
                   </Modal.Body>
@@ -305,6 +317,9 @@ class ConfigureLessons extends React.Component {
                   </Modal.Footer>
                 </Modal>
               </>
+            }
+            {context.user && !this.props.coursesList &&
+              <NoItemsImage/>
             }
             {!context.user && <Redirect to="/login"/>}
           </>
@@ -328,17 +343,24 @@ function ListHeader() {
           <div className="col-sm-2">
               <h4>End Date</h4>
           </div>
-          <div className="col-sm-1">
+          <div className="col-sm-2">
               <h4>Max Available Seats</h4>
           </div>
           <div className="col-sm-2">
               <h4>Classroom</h4>
           </div>
-          <div className="col-sm-2">
+          <div className="col-sm-1">
               <h4>{' '}</h4>
           </div>
         </div>
     </ListGroup.Item>
+  );
+}
+function NoItemsImage(props){
+  return(
+      <div className="col-sm-12 pt-3">
+          <img width="800" height="600" className="img-button" src='./images/no_data_image.png' alt=""/>
+      </div>
   );
 }
 

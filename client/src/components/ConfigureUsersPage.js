@@ -6,11 +6,11 @@ import Row from 'react-bootstrap/Row';
 import Modal from 'react-bootstrap/Modal';
 import Alert from 'react-bootstrap/Alert';
 import Form from 'react-bootstrap/Form';
-import Col from 'react-bootstrap/Col';
 import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../_services/AuthContext';
 
 const configureUserPage = (props) => {
+  (console.log(props.usersList))
   return(
     <ConfigureUser usersList={props.usersList} createNewUser={props.createNewUser} type={props.type}
       uploadFileUser={props.uploadFileUser} uploadFileEnrollment={props.uploadFileEnrollment}/>
@@ -53,10 +53,10 @@ class ConfigureUser extends React.Component {
       if(this.state.password !== ''){
         this.setState({errorPW: false});
       }
-      if(this.state.file !== undefined){
+      if(this.state.file !== undefined && this.state.file !== ''){
         this.setState({errorFile: false});
       }
-      if(this.props.type === 'student' && this.state.fileEnrollment.type === 'text/csv'){ 
+      if(this.props.type === 'student' && this.state.fileEnrollment !== undefined && this.state.fileEnrollment !== ''){ 
         this.setState({errorFileEnrollment: false});
       }
     });
@@ -87,10 +87,10 @@ class ConfigureUser extends React.Component {
     if (!this.formFile.checkValidity()) {
       this.formFile.reportValidity();
     }
-    else if(this.state.file.type !== 'text/csv'){ 
+    else if(this.state.file === undefined || this.state.file === ''){ 
       this.setState({errorFile: true});
     }
-    else if(this.props.type === 'student' && this.state.fileEnrollment.type !== 'text/csv'){ 
+    else if(this.props.type === 'student' && (this.state.file === undefined || this.state.file === '')){ 
       this.setState({errorFileEnrollment: true});
     }
     else {
@@ -101,7 +101,7 @@ class ConfigureUser extends React.Component {
     if (!this.formFile.checkValidity()) {
       this.formFile.reportValidity();
     }
-    else if(this.props.type === 'student' && this.state.fileEnrollment.type !== 'text/csv'){ 
+    else if(this.props.type === 'student' && (this.state.fileEnrollment === undefined || this.state.fileEnrollment === '')){ 
       this.setState({errorFileEnrollment: true});
     }
     else {
@@ -114,34 +114,29 @@ class ConfigureUser extends React.Component {
       <AuthContext.Consumer>
         {(context) => (
           <>        
-            {context.user && this.props.usersList && 
+            {context.user && this.props.usersList &&
               <>
-                <Row className="justify-content-between">
-                  <Col>
+                <br/>
+                <Row className="justify-content-around">
                     <Button variant="primary" onClick={(event) => {
                           event.preventDefault();
                           this.activateModal();
                       }} id={"activateModalOfUsers"}>
                           Add New
                     </Button>
-                  </Col>
-                  <Col>
                     <Button variant="primary" onClick={(event) => {
                           event.preventDefault();
                           this.activateUploadFileModal();
                       }} id={"uploadFileOfUsers"}>
                           Upload User File
                     </Button>
-                  </Col>
                   {this.props.type === 'student' &&
-                    <Col>
                       <Button variant="primary" onClick={(event) => {
                             event.preventDefault();
                             this.activateUploadFileEnrollmentModal();
                         }} id={"uploadFileEnrollmentOfUsers"}>
                             Upload Enrollment File
                       </Button>
-                    </Col>
                   }
                 </Row>
                 <ListGroup as="ul" variant="flush">
@@ -241,8 +236,22 @@ class ConfigureUser extends React.Component {
                       <Form.Group>
                         <Form.Label className="control-label">Insert {this.props.type} infos file</Form.Label>
                         <Form.Control type="file" name="file" size = "lg"
-                          value = {this.state.file} required
-                          onChange={(ev) => this.updateField(ev.target.name, ev.target.files[0])}/>
+                          value = {this.state.file} required autoFocus accept=".csv"
+                          onChange={(ev) => {                            
+                            var f2 =function readFileContent(file) {
+                              const reader = new FileReader()
+                                return new Promise((resolve, reject) => {
+                                  reader.onload=event=>resolve(event.target.result)
+                                  reader.onerror = error => reject(error)
+                                  reader.readAsText(file)
+                                })
+                            }
+                            
+                            f2(ev.target.files[0]).then(content => {
+                              console.log(content)
+                              this.updateField("file", content)
+                            }).catch(error => console.log(error))
+                          }}/>
                       </Form.Group>
                     </Form>
                   </Modal.Body>
@@ -275,8 +284,22 @@ class ConfigureUser extends React.Component {
                         <Form.Group>
                         <Form.Label className="control-label">Insert student enrollment file</Form.Label>
                         <Form.Control type="file" name="fileEnrollment" size = "lg"
-                          value = {this.state.fileEnrollment} required
-                          onChange={(ev) => this.updateField(ev.target.name, ev.target.files[0])}/>
+                          value = {this.state.fileEnrollment} required autoFocus accept=".csv"
+                          onChange={(ev) => {                            
+                            var f2 =function readFileContent(file) {
+                              const reader = new FileReader()
+                                return new Promise((resolve, reject) => {
+                                  reader.onload=event=>resolve(event.target.result)
+                                  reader.onerror = error => reject(error)
+                                  reader.readAsText(file)
+                                })
+                            }
+                            
+                            f2(ev.target.files[0]).then(content => {
+                              console.log(content)
+                              this.updateField("fileEnrollment", content)
+                            }).catch(error => console.log(error))
+                          }}/>
                         </Form.Group>
                       </Form>
                     </Modal.Body>
@@ -297,6 +320,10 @@ class ConfigureUser extends React.Component {
                   </Modal>
                 }  
               </>
+            }
+
+            {context.user && !this.props.usersList &&
+              <NoItemsImage/>
             }
             {!context.user && <Redirect to="/login"/>}
           </>
@@ -321,6 +348,13 @@ function ListHeader() {
           </div>
         </div>
     </ListGroup.Item>
+  );
+}
+function NoItemsImage(props){
+  return(
+      <div className="col-sm-12 pt-3">
+          <img width="800" height="600" className="img-button" src='./images/no_data_image.png' alt=""/>
+      </div>
   );
 }
 

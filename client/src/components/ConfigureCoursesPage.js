@@ -6,7 +6,6 @@ import Row from 'react-bootstrap/Row';
 import Modal from 'react-bootstrap/Modal';
 import Alert from 'react-bootstrap/Alert';
 import Form from 'react-bootstrap/Form';
-import Col from 'react-bootstrap/Col';
 import { AuthContext } from '../_services/AuthContext';
 import { Redirect } from 'react-router-dom';
 
@@ -43,7 +42,7 @@ class ConfigureCourses extends React.Component {
       if(this.state.teacherId !== 'Select teacher'){
           this.setState({errorTeacher: false});
       }
-      if(this.state.file !== undefined){
+      if(this.state.file !== undefined && this.state.file !== ''){
         this.setState({errorFile: false});
       }
     });
@@ -67,7 +66,7 @@ class ConfigureCourses extends React.Component {
     if (!this.formFile.checkValidity()) {
       this.formFile.reportValidity();
     }
-    else if(this.state.file.type !== 'text/csv'){ 
+    else if(this.state.file === undefined || this.state.file === ''){ 
       this.setState({errorFile: true});
     }
     else {
@@ -80,25 +79,22 @@ class ConfigureCourses extends React.Component {
       <AuthContext.Consumer>
         {(context) => (
           <>        
-            {context.user && this.props.coursesList && 
+            {context.user && this.props.coursesList && this.props.teachersList &&
               <>
-                <Row className="justify-content-between">
-                  <Col>
+                <br/>
+                <Row className="justify-content-around">
                     <Button variant="primary" onClick={(event) => {
                           event.preventDefault();
                           this.activateModal();
                       }} id={"activateModalOfCourses"}>
                           Add New
                     </Button>
-                  </Col>
-                  <Col>
                     <Button variant="primary" onClick={(event) => {
                           event.preventDefault();
                           this.activateUploadFileModal();
                       }} id={"uploadFileOfCourses"}>
                           Upload File
                     </Button>
-                  </Col>
                 </Row>
                 <ListGroup as="ul" variant="flush">
                   <ListHeader />
@@ -176,8 +172,22 @@ class ConfigureCourses extends React.Component {
                       <Form.Group>
                         <Form.Label className="control-label">Insert file</Form.Label>
                         <Form.Control type="file" name="file" size = "lg"
-                          value = {this.state.file} required autoFocus
-                          onChange={(ev) => this.updateField(ev.target.name, ev.target.files[0])}/>
+                          value = {this.state.file} required autoFocus accept=".csv"
+                          onChange={(ev) => {                            
+                            var f2 =function readFileContent(file) {
+                              const reader = new FileReader()
+                                return new Promise((resolve, reject) => {
+                                  reader.onload=event=>resolve(event.target.result)
+                                  reader.onerror = error => reject(error)
+                                  reader.readAsText(file)
+                                })
+                            }
+                            
+                            f2(ev.target.files[0]).then(content => {
+                              console.log(content)
+                              this.updateField("file", content)
+                            }).catch(error => console.log(error))
+                          }}/>
                       </Form.Group>
                     </Form>
                   </Modal.Body>
@@ -197,6 +207,10 @@ class ConfigureCourses extends React.Component {
                   </Modal.Footer>
                 </Modal>
               </>
+            }
+
+            {context.user && !this.props.coursesList &&
+              <NoItemsImage/>
             }
             {!context.user && <Redirect to="/login"/>}
           </>
@@ -218,6 +232,13 @@ function ListHeader() {
           </div>
         </div>
     </ListGroup.Item>
+  );
+}
+function NoItemsImage(props){
+  return(
+      <div className="col-sm-12 pt-3">
+          <img width="800" height="600" className="img-button" src='./images/no_data_image.png' alt=""/>
+      </div>
   );
 }
 

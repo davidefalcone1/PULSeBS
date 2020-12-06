@@ -54,7 +54,7 @@ function EndDateField(props){
 
 function SeatsField(props){
     return(
-        <div className="col-sm-1">
+        <div className="col-sm-2">
             <p id={"seatsOfLesson" + props.id}>
                 {props.seats}
             </p>
@@ -74,7 +74,7 @@ function ClassroomField(props){
 
 function ButtonField(props){
     return(
-        <div className="col-sm-2">
+        <div className="col-sm-1">
             <Button variant="primary" onClick={(event) => {
                 event.preventDefault();
                 props.editLesson(props.lesson);
