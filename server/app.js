@@ -10,6 +10,8 @@ const bookingDao = require('./dao/bookingDao');
 const dailyMailer = require('./dailyMailer');
 const teacherDao = require('./dao/teacherDao');
 const emailDao = require('./dao/emailDao');
+const officerDao = require('./dao/officerDao');
+const { resolveContent } = require("nodemailer/lib/shared");
 
 const jwtSecret = '123456789';
 const expireTime = 900; //seconds
@@ -60,6 +62,11 @@ app.post('/users/authenticate', async (req, res) => {
 });
 
 app.use(cookieParser());
+
+app.get('/test', (req, res) => {
+    officerDao.readCsv();
+    res.status(200).end();
+});
 
 app.post('/logout', (req, res) => {
     res.clearCookie('token').end();
