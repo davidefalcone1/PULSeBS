@@ -96,12 +96,11 @@ class App extends React.Component {
         if (user.accessLevel === 3) { //booking manager
           this.setState({ isTeacher: false, isStudent: false,
             isBookingManager: true, isSupportOfficer: false});
-          this.updateSupportOfficerData();
         }
         if (user.accessLevel === 4) { //support officer
           this.setState({ isTeacher: false, isStudent: false,
             isBookingManager: false, isSupportOfficer: true});
-          
+            this.updateSupportOfficerData();          
         }
       })
       .catch((e) => {

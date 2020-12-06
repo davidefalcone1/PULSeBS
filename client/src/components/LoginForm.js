@@ -79,6 +79,8 @@ class LoginForm extends React.Component {
                         }
                         {context.configurationCompleted && context.isStudent && <Redirect to="myBookableLessonsList"/> }
                         {context.configurationCompleted && context.isTeacher && <Redirect to="myCoursesLessonslist"/> }
+                        {context.configurationCompleted && context.isBookingManager && <Redirect to="myCoursesLessonslist"/> }
+                        {context.configurationCompleted && context.isSupportOfficer && <Redirect to="myCoursesLessonslist"/> }
                     </>
                 )}
             </AuthContext.Consumer>

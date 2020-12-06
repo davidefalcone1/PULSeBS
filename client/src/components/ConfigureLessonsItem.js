@@ -85,4 +85,4 @@ function ButtonField(props){
     );
 }
 
-export default configureCourseItem;
+export default configureLessonItem;
