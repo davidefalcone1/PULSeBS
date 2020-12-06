@@ -380,6 +380,11 @@ app.get('/allLessons', async (req, res) => {
     }
 });
 
+app.post('/uploadFileCourses', (req, res) => {
+    console.log(req.body);
+    res.status(200).end()
+});
+
 app.post('/logout', (req, res) => {
     res.clearCookie('token').end();
 });
