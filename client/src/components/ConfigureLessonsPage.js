@@ -195,15 +195,13 @@ class ConfigureLessons extends React.Component {
                       <Form.Group>
                         <Form.Label className="control-label">Starting Date and Time</Form.Label>
                         <Form.Control type="datetime-local" name="startDate"
-                          value = {this.state.startDate} min={moment().format("YYYY-MM-DD hh:mm")}
-                          defaultValue = {this.state.startDate}
+                          value = {moment(this.state.startDate).format("YYYY-MM-DDTHH:mm")} min={moment().format("YYYY-MM-DDTHH:mm")}
                           onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
                       </Form.Group>
                       <Form.Group>
                         <Form.Label className="control-label">Ending Date and Time</Form.Label>
                         <Form.Control type="datetime-local" name="endDate"
-                          value = {this.state.endDate} min={moment(this.state.startingDay).format("YYYY-MM-DD hh:mm")}
-                          defaultValue = {this.state.endDate}
+                          value = {moment(this.state.endDate).format("YYYY-MM-DDTHH:mm")} min={moment(this.state.startDate).format("YYYY-MM-DDTHH:mm")}
                           onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
                       </Form.Group>
                       <Form.Group>
