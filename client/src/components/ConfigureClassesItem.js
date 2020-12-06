@@ -6,7 +6,7 @@ const configureClassItem = (props) => {
   return (
     <ListGroup.Item id = {"class-" + props.class.classId}>
         <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
-            <NameField id = {props.class.classId} name = {props.class.className}/>
+            <NameField id = {props.class.classId} name = {props.class.classroomName}/>
             <SeatsField id = {props.class.classId} seats = {props.class.maxSeats}/>
         </div>
     </ListGroup.Item>

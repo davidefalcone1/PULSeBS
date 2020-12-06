@@ -10,7 +10,6 @@ import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../_services/AuthContext';
 
 const configureUserPage = (props) => {
-  (console.log(props.usersList))
   return(
     <ConfigureUser usersList={props.usersList} createNewUser={props.createNewUser} type={props.type}
       uploadFileUser={props.uploadFileUser} uploadFileEnrollment={props.uploadFileEnrollment}/>
@@ -95,6 +94,7 @@ class ConfigureUser extends React.Component {
     }
     else {
         this.props.uploadFileUser(this.state.file)
+        this.setState({isUploading: false})
     }
   }
   handleSubmitFileEnrollment = () => {
@@ -106,6 +106,7 @@ class ConfigureUser extends React.Component {
     }
     else {
       this.props.uploadFileEnrollment(this.state.fileEnrollment)
+      this.setState({isEnrolling: false})
     }
   }
 
@@ -252,6 +253,14 @@ class ConfigureUser extends React.Component {
                             }).catch(error => console.log(error))
                           }}/>
                       </Form.Group>
+
+                      <Form.Group>
+                        <div>
+                          <button type="submit" className="btn btn-primary">
+                            UPLOAD
+                          </button>
+                        </div>
+                      </Form.Group>
                     </Form>
                   </Modal.Body>
                   <Modal.Footer>
@@ -295,10 +304,16 @@ class ConfigureUser extends React.Component {
                             }
                             
                             f2(ev.target.files[0]).then(content => {
-                              console.log(content)
                               this.updateField("fileEnrollment", content)
                             }).catch(error => console.log(error))
                           }}/>
+                        </Form.Group>
+                        <Form.Group>
+                          <div>
+                            <button type="submit" className="btn btn-primary">
+                              UPLOAD
+                            </button>
+                          </div>
                         </Form.Group>
                       </Form>
                     </Modal.Body>

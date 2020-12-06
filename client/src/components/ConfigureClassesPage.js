@@ -71,6 +71,7 @@ class ConfigureClasses extends React.Component {
     }
     else {
         this.props.uploadFileClassrooms(this.state.file)
+        this.setState({isUploading: false})
     }
   }
   
@@ -178,10 +179,16 @@ class ConfigureClasses extends React.Component {
                             }
                             
                             f2(ev.target.files[0]).then(content => {
-                              console.log(content)
                               this.updateField("file", content)
                             }).catch(error => console.log(error))
                           }}/>
+                      </Form.Group>
+                      <Form.Group>
+                        <div>
+                          <button type="submit" className="btn btn-primary">
+                            UPLOAD
+                          </button>
+                        </div>
                       </Form.Group>
                     </Form>
                   </Modal.Body>

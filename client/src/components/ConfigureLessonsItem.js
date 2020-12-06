@@ -3,7 +3,6 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 
 const configureLessonItem = (props) => {
-
   return (
     <ListGroup.Item id = {"lesson-" + props.lesson.scheduleId}>
         <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
@@ -11,9 +10,9 @@ const configureLessonItem = (props) => {
                 courses = {props.courses}/>
             <StartDateField id = {props.lesson.scheduleId} startDate = {props.lesson.startDate}/>
             <EndDateField id = {props.lesson.scheduleId} endDate = {props.lesson.endDate}/>
-            <SeatsField id = {props.lesson.scheduleId} seats = {props.availableSeats}/>
-            <ClassroomField id = {props.lesson.scheduleId} classroom = {props.classroom}/>
-            <ButtonField id = {props.lesson.scheduleId} lesson = {props.lesson} editCourse = {props.editCourse}/>
+            <SeatsField id = {props.lesson.scheduleId} seats = {props.lesson.availableSeats}/>
+            <ClassroomField id = {props.lesson.scheduleId} classroom = {props.lesson.classroom}/>
+            <ButtonField id = {props.lesson.scheduleId} lesson = {props.lesson} editLesson = {props.editLesson}/>
         </div>
     </ListGroup.Item>
   );
@@ -36,7 +35,7 @@ function StartDateField(props){
     return(
         <div className="col-sm-2">
             <p id={"startDateOfLesson" + props.id}>
-                {props.endDate.format("ddd DD-MM-YYYY HH:mm").toString()}
+                {props.startDate.format("ddd DD-MM-YYYY HH:mm").toString()}
             </p>
         </div>
     );
