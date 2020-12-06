@@ -586,6 +586,27 @@ async function uploadFileTeachers(file){
         }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
+async function uploadFileEnrollment(file){
+    return new Promise((resolve, reject) => {
+        fetch("/uploadFileEnrollment", {
+            method: 'POST',
+            headers: { 'Content-Type': 'multipart/form-data' },
+            body: JSON.stringify({ file })
+        }).then((response) => {
+            if (response.ok) {
+                resolve(null);
+            }
+            else {
+                response.json()
+                    .then((obj) => { reject(obj); })
+                    .catch((err) => {
+                        reject(
+                            { errors: [{ param: "Application", msg: "Cannot parse server response" }] })
+                    });
+            }
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
+}
 
 
 async function login(username, password) {
@@ -634,11 +655,11 @@ async function logout() {
 }
 
 const API = {
-    login, logout, getStudentCourses, getMyBookableLessons, getMyBookedLessons, getMyWaitingBookedLessons,
-    getMyCoursesLessons, bookLesson, deleteBooking, getTeacherCourses, getBookedStudents,
-    getStudentsData, makeLessonRemote, cancelLesson, isAuthenticated, setStudentAsPresent,
+    login, logout,
+    getStudentCourses, getMyBookableLessons, getMyBookedLessons, getMyWaitingBookedLessons, bookLesson, deleteBooking,
+    getMyCoursesLessons, getTeacherCourses, getBookedStudents, getStudentsData, makeLessonRemote, cancelLesson, isAuthenticated, setStudentAsPresent,
     createNewClassroom, createNewCourse, createNewUser, createNewLesson, editLesson,
     getAllClassrooms, getAllCourses, getAllStudents, getAllTeachers, getAllLessons,
-    uploadFileClassrooms, uploadFileCourses, uploadFileLessons, uploadFileStudents, uploadFileTeachers
+    uploadFileClassrooms, uploadFileCourses, uploadFileLessons, uploadFileStudents, uploadFileTeachers, uploadFileEnrollment
 };
 export default API;

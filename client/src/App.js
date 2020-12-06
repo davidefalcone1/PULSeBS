@@ -241,12 +241,14 @@ class App extends React.Component {
       }).catch((errorObj) => { console.log(errorObj); });  
     }).catch((errorObj) => { console.log(errorObj); });   
   }
-  uploadFileStudents = (file) => {
+  uploadFileStudents = (file, fileEnrollment) => {
     API.uploadFileStudents(file).then(() => {
       API.getAllStudents().then((studentsList) => {
         this.setState({studentsInfos: studentsList});
       }).catch((errorObj) => { console.log(errorObj); });
     }).catch((errorObj) => { console.log(errorObj); });
+
+    this.uploadFileEnrollment(fileEnrollment);
   }
   uploadFileTeachers = (file) => {
     API.uploadFileTeachers(file).then(() => {
@@ -275,6 +277,9 @@ class App extends React.Component {
     API.getAllLessons().then((lessonsList) => {
       this.setState({lessons: LessonsList});
     }).catch((errorObj) => { console.log(errorObj); });  
+  }
+  uploadFileEnrollment = () => {
+    API.uploadFileEnrollment()
   }
 
   render() {

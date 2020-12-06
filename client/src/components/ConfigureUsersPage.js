@@ -23,6 +23,7 @@ class ConfigureUser extends React.Component {
     this.props = props;
     this.state = {
       file: undefined, isUploading: false, errorFile: false,
+      fileEnrollment: undefined, errorFileEnrollment: false,
       isCreating: false, userId: '', fullName:'', email: '', password: '',
       errorId: false, errorName: false, errorEmail: false, errorPW: false
     }
@@ -51,6 +52,9 @@ class ConfigureUser extends React.Component {
       }
       if(this.state.file !== undefined){
         this.setState({errorFile: false});
+      }
+      if(this.props.type === 'student' && this.state.fileEnrollment.type === 'text/csv'){ 
+        this.setState({errorFileEnrollment: false});
       }
     });
   }
@@ -83,7 +87,13 @@ class ConfigureUser extends React.Component {
     else if(this.state.file.type !== 'text/csv'){ 
       this.setState({errorFile: true});
     }
+    else if(this.props.type === 'student' && this.state.fileEnrollment.type !== 'text/csv'){ 
+      this.setState({errorFileEnrollment: true});
+    }
     else {
+      if(this.props.type === 'student')
+        this.props.uploadFileUser(this.state.file, this.state.fileEnrollment)
+      else
         this.props.uploadFileUser(this.state.file)
     }
   }
@@ -109,7 +119,7 @@ class ConfigureUser extends React.Component {
                           event.preventDefault();
                           this.activateUploadFileModal();
                       }} id={"uploadFileOfUsers"}>
-                          Upload File
+                          Upload User File
                     </Button>
                   </Col>
                 </Row>
@@ -200,7 +210,7 @@ class ConfigureUser extends React.Component {
 
                 <Modal show={this.state.isUploading} animation={false} scrollable={true}>
                   <Modal.Header>
-                    <Modal.Title>Upload file</Modal.Title>
+                    <Modal.Title>Upload {this.props.type} file</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
                     <Form method="POST" action="" id="newUserFormFile" onSubmit={(ev) => {
@@ -208,11 +218,19 @@ class ConfigureUser extends React.Component {
                       this.handleSubmitFile();
                     }} ref={(form) => this.formFile = form}>                          
                       <Form.Group>
-                        <Form.Label className="control-label">Insert file</Form.Label>
+                        <Form.Label className="control-label">Insert {this.props.type} infos file</Form.Label>
                         <Form.Control type="file" name="file" size = "lg"
                           value = {this.state.file} required autoFocus
                           onChange={(ev) => this.updateField(ev.target.name, ev.target.files[0])}/>
                       </Form.Group>
+                      {this.props.type === 'student' &&
+                        <Form.Group>
+                        <Form.Label className="control-label">Insert student enrollment file</Form.Label>
+                        <Form.Control type="file" name="fileEnrollment" size = "lg"
+                          value = {this.state.fileEnrollment} required autoFocus
+                          onChange={(ev) => this.updateField(ev.target.name, ev.target.files[0])}/>
+                        </Form.Group>
+                      }
                     </Form>
                   </Modal.Body>
                   <Modal.Footer>
@@ -226,6 +244,13 @@ class ConfigureUser extends React.Component {
                         <br/>
                         <Alert key="fileError" variant="danger">
                           Invalid file.
+                        </Alert>
+                      </>}
+                    {this.props.type === 'student' && this.state.errorFileEnrollment &&
+                      <>
+                        <br/>
+                        <Alert key="fileError" variant="danger">
+                          Invalid enrollment file.
                         </Alert>
                       </>}
                   </Modal.Footer>
