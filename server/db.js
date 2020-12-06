@@ -2,7 +2,8 @@
 
 const sqlite = require('sqlite3').verbose();
 
-const DBSOURCE = './db/db.db';
+//const DBSOURCE = './db/db.db';
+const DBSOURCE = './db/newdb.db';
 
 const db = new sqlite.Database(DBSOURCE, (err) => {
     if (err) {
