@@ -126,7 +126,7 @@ class ConfigureLessons extends React.Component {
       <AuthContext.Consumer>
         {(context) => (
           <>        
-            {context.user && this.props.coursesList && 
+            {context.user && this.props.coursesList && this.props.lessonsList && this.props.classesList &&
               <>
                 <br/>
                 <Row className="justify-content-around">
@@ -318,7 +318,7 @@ class ConfigureLessons extends React.Component {
                 </Modal>
               </>
             }
-            {context.user && !this.props.coursesList &&
+            {context.user && (!this.props.coursesList || !this.props.lessonsList || !this.props.classesList) &&
               <NoItemsImage/>
             }
             {!context.user && <Redirect to="/login"/>}

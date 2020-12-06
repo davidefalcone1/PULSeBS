@@ -79,7 +79,7 @@ class ConfigureClasses extends React.Component {
       <AuthContext.Consumer>
         {(context) => (
           <>        
-            {context.user && this.props.classesList && (console.log(this.props.classesList) || true) &&
+            {context.user && this.props.classesList &&
               <>
                 <br/>
                 <Row className="justify-content-around">
