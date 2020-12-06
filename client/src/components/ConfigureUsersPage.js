@@ -220,14 +220,14 @@ class ConfigureUser extends React.Component {
                       <Form.Group>
                         <Form.Label className="control-label">Insert {this.props.type} infos file</Form.Label>
                         <Form.Control type="file" name="file" size = "lg"
-                          value = {this.state.file} required autoFocus
+                          value = {this.state.file} required
                           onChange={(ev) => this.updateField(ev.target.name, ev.target.files[0])}/>
                       </Form.Group>
                       {this.props.type === 'student' &&
                         <Form.Group>
                         <Form.Label className="control-label">Insert student enrollment file</Form.Label>
                         <Form.Control type="file" name="fileEnrollment" size = "lg"
-                          value = {this.state.fileEnrollment} required autoFocus
+                          value = {this.state.fileEnrollment} required
                           onChange={(ev) => this.updateField(ev.target.name, ev.target.files[0])}/>
                         </Form.Group>
                       }
