@@ -4,6 +4,9 @@
     margin-left: 0;
     margin-right: 0;
   }
+.modalCreationForm {
+    width: 90%;
+}
 .main-from-nav{
     padding-top: 5rem;
     margin-left: 5px;

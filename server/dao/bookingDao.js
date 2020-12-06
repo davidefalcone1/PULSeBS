@@ -20,7 +20,7 @@ exports.getBookableLessons = function (studentID) {
             const availableLessons = rows.filter(row => checkStart(row.TimeStart))
                 .map((row) => new LessonData(row.CourseScheduleID, row.CourseID,
                     row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, 
-                    row.CourseStatus, row.CourseType));
+                    row.CourseStatus, row.CourseType, row.Classroom));
             resolve(availableLessons);
         });
     });
@@ -44,7 +44,7 @@ exports.getBookedLessons = function (studentID) {
                 .map((row) =>
                     new LessonData(row.CourseScheduleID, row.CourseID,
                         row.TimeStart, row.TimeEnd, row.OccupiedSeat, 
-                        row.MaxSeat, row.CourseStatus, row.CourseType));
+                        row.MaxSeat, row.CourseStatus, row.CourseType, row.Classroom));
             resolve(myLessons);
         });
     });

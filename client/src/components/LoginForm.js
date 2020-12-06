@@ -77,7 +77,7 @@ class LoginForm extends React.Component {
                                 </div>
                             </Fragment>
                         }
-                        {context.configurationCompleted && context.isStudent && <Redirect to="lessonslist"/> }
+                        {context.configurationCompleted && context.isStudent && <Redirect to="myBookableLessonsList"/> }
                         {context.configurationCompleted && context.isTeacher && <Redirect to="myCoursesLessonslist"/> }
                     </>
                 )}

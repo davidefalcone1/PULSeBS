@@ -5,19 +5,22 @@ import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
+import Row from 'react-bootstrap/Row';
+import Modal from 'react-bootstrap/Modal';
+import Col from 'react-bootstrap/esm/Col';
 import moment from 'moment';
 import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../_services/AuthContext';
-import Modal from 'react-bootstrap/Modal';
 
-const myCoursesLessons = (props) => {
+const myCoursesLessonsStudentsPage = (props) => {
   return (
     <MyCoursesLessonsPageRender teacherCourses={props.teacherCourses}
       myTeachedCoursesLessons={props.myTeachedCoursesLessons}
       studentsBookedToMyLessons={props.studentsBookedToMyLessons}
       myBookedStudentsInfos={props.myBookedStudentsInfos}
       cancelLesson={props.cancelLesson}
-      changeLessonToRemote={props.changeLessonToRemote} />
+      changeLessonToRemote={props.changeLessonToRemote}
+      setStudentAsPresent={props.setStudentAsPresent} />
   );
 }
 
@@ -49,13 +52,16 @@ class MyCoursesLessonsPageRender extends React.Component {
                     {this.props.teacherCourses.map((teacherCourse) => //per ogni mio corso
                       <Card>
                         <Card.Header>
-                          <Accordion.Toggle as={Button} variant="link" eventKey = {"course-" + teacherCourse.courseName}>
-                            <CourseHeader course = {teacherCourse.courseName}/>
-                          </Accordion.Toggle>
+                            <Accordion.Toggle as={Button} variant="link" eventKey = {"course-" + teacherCourse.courseName}>
+                              <CourseHeader course = {teacherCourse.courseName}/>
+                            </Accordion.Toggle>
                         </Card.Header>
                         <Accordion.Collapse eventKey={"course-" + teacherCourse.courseName}>
                           <Card.Body>
                             <Accordion>
+                              <CourseHeaderStatics normalBookingsAvgWeek = {teacherCourse.normalBookingsAvgWeek} cancelledBookingsAvgWeek = {teacherCourse.cancelledBookingsAvgWeek}
+                                waitingBookingsAvgWeek = {teacherCourse.waitingBookingsAvgWeek} normalBookingsAvgMonth = {teacherCourse.normalBookingsAvgMonth} 
+                                cancelledBookingsAvgMonth = {teacherCourse.cancelledBookingsAvgMonth} waitingBookingsAvgMonth = {teacherCourse.waitingBookingsAvgMonth}/>
                               {this.props.myTeachedCoursesLessons.map((courseLesson) => //per ogni lezione del mio corso
                                 (courseLesson.courseId === teacherCourse.courseId) &&
                                   <Card>
@@ -65,8 +71,6 @@ class MyCoursesLessonsPageRender extends React.Component {
                                           <LessonHeader id = {courseLesson.scheduleId} startDate = {courseLesson.startDate} endDate = {courseLesson.endDate}
                                             isLessonRemote={courseLesson.isLessonRemote} isLessonCancelled={courseLesson.isLessonCancelled}/>
                                         </Accordion.Toggle>
-                                        <LessonHeaderStatistics id = {courseLesson.scheduleId + "statistics"} normalBookings = {courseLesson.normalBookings}
-                                          cancelledBookings = {courseLesson.cancelledBookings} waitingBookings = {courseLesson.waitingBookings}/>
                                         <LessonsHeaderButtons id = {courseLesson.scheduleId + "buttons"} startDate = {courseLesson.startDate} endDate = {courseLesson.endDate}
                                             cancelLesson = {this.props.cancelLesson} changeLessonToRemote = {this.props.changeLessonToRemote} 
                                             isLessonRemote={courseLesson.isLessonRemote} isLessonCancelled={courseLesson.isLessonCancelled} activateModal = {this.activateModal}/>
@@ -74,6 +78,8 @@ class MyCoursesLessonsPageRender extends React.Component {
                                     </Card.Header>
                                     <Accordion.Collapse eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
                                       <Card.Body>
+                                        <LessonHeaderStatistics id = {courseLesson.scheduleId + "statistics"} normalBookings = {courseLesson.normalBookings}
+                                          cancelledBookings = {courseLesson.cancelledBookings} waitingBookings = {courseLesson.waitingBookings}/>
                                         <StudentHeader/>
                                         <ListGroup as="ul" variant="flush">
                                           {this.props.studentsBookedToMyLessons.map((studentBooking) => //per ogni prenotazione alla lezione del mio corso
@@ -81,7 +87,9 @@ class MyCoursesLessonsPageRender extends React.Component {
                                             <ListGroup.Item key = {studentBooking.studentId} id = {teacherCourse.courseName + "-" + courseLesson.scheduleId + "-" + studentBooking.studentId}>
                                               {this.props.myBookedStudentsInfos.map((student) => //trova e mostra i dati dello studente
                                               (studentBooking.studentId === student.personId) &&
-                                                <MyCourseLessonsStudentItem key = {student.personId} student = {student}/> 
+                                                <MyCourseLessonsStudentItem key = {student.personId} student = {student} 
+                                                  booking = {studentBooking}
+                                                  setStudentAsPresent = {this.props.setStudentAsPresent}/> 
                                               )}
                                             </ListGroup.Item>  
                                           )}
@@ -139,6 +147,33 @@ function CourseHeader(props) {
     </div>
   );
 }
+function CourseHeaderStatics(props) {
+  return (
+    <div id={props.id}>
+      <Row>
+        <Col>
+          <h5>Statistics per week</h5>
+          <h6>
+            {props.normalBookingsAvgWeek + props.cancelledBookingsAvgWeek + props.waitingBookingsAvgWeek} total bookings, {' '}
+            {props.normalBookingsAvgWeek} actual bookings, {' '}
+            {props.cancelledBookingsAvgWeek} cancelled bookings, {' '}
+            {props.waitingBookingsAvgWeek} waiting bookings{' '}
+          </h6>
+        </Col>
+        <Col>
+          <h5>Statistics per month</h5>
+          <h6>
+            {props.normalBookingsAvgMonth + props.cancelledBookingsAvgMonth + props.waitingBookingsAvgMonth} total bookings, {' '}
+            {props.normalBookingsAvgMonth} actual bookings, {' '}
+            {props.cancelledBookingsAvgMonth} cancelled bookings, 
+            {props.waitingBookingsAvgMonth} waiting bookings
+          </h6>
+        </Col>
+      </Row>
+      <br/>
+    </div>
+  );
+}
 function LessonHeader(props) {
   return (
     <>
@@ -157,12 +192,13 @@ function LessonHeader(props) {
 function LessonHeaderStatistics(props){
   return (
     <>
-      <div id={props.id} className="h7">
-          {props.normalBookings + props.cancelledBookings + props.waitingBookings} total bookings, 
-          {props.normalBookings} actual bookings, 
-          {props.cancelledBookings} cancelled bookings, 
+      <h6>
+          {props.normalBookings + props.cancelledBookings + props.waitingBookings} total bookings, {' '}
+          {props.normalBookings} actual bookings, {' '}
+          {props.cancelledBookings} cancelled bookings, {' '}
           {props.waitingBookings} waiting bookings
-      </div>
+      </h6>
+      <br/>
     </>
   );
 }
@@ -238,4 +274,4 @@ function NoItemsImage(props) {
   );
 }
 
-export default myCoursesLessons;
+export default myCoursesLessonsStudentsPage;
