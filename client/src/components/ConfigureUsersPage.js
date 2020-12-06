@@ -236,7 +236,7 @@ class ConfigureUser extends React.Component {
                       <Form.Group>
                         <Form.Label className="control-label">Insert {this.props.type} infos file</Form.Label>
                         <Form.Control type="file" name="file" size = "lg"
-                          value = {this.state.file} required autoFocus accept=".csv"
+                          required autoFocus accept=".csv"
                           onChange={(ev) => {                            
                             var f2 =function readFileContent(file) {
                               const reader = new FileReader()
@@ -248,8 +248,7 @@ class ConfigureUser extends React.Component {
                             }
                             
                             f2(ev.target.files[0]).then(content => {
-                              console.log(content)
-                              this.updateField("file", content)
+                              this.updateField('file', content)
                             }).catch(error => console.log(error))
                           }}/>
                       </Form.Group>
@@ -284,7 +283,7 @@ class ConfigureUser extends React.Component {
                         <Form.Group>
                         <Form.Label className="control-label">Insert student enrollment file</Form.Label>
                         <Form.Control type="file" name="fileEnrollment" size = "lg"
-                          value = {this.state.fileEnrollment} required autoFocus accept=".csv"
+                          required autoFocus accept=".csv"
                           onChange={(ev) => {                            
                             var f2 =function readFileContent(file) {
                               const reader = new FileReader()

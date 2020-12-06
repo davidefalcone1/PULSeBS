@@ -282,7 +282,7 @@ class ConfigureLessons extends React.Component {
                       <Form.Group>
                         <Form.Label className="control-label">Insert file</Form.Label>
                         <Form.Control type="file" name="file" size = "lg"
-                          value = {this.state.file} required autoFocus accept=".csv"
+                          required autoFocus accept=".csv"
                           onChange={(ev) => {                            
                             var f2 =function readFileContent(file) {
                               const reader = new FileReader()
