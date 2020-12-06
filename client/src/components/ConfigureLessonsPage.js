@@ -146,7 +146,6 @@ class ConfigureLessons extends React.Component {
                 </Row>
                 <ListGroup as="ul" variant="flush">
                   <ListHeader />
-                  {console.log(this.props.lessonsList)}
                   {this.props.lessonsList.map((lesson) => 
                     <ConfigureLessonsItem key = {lesson.scheduleId} lesson = {lesson} 
                       courses = {this.props.coursesList} editLesson={this.activateEditModal}/>)
@@ -214,7 +213,7 @@ class ConfigureLessons extends React.Component {
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                           <option>Select classroom</option>
                           {this.props.classesList.map((c) =>
-                            <option value={c.classId}>{c.classroomName}</option>
+                            <option value={c.classroomName}>{c.classroomName}</option>
                           )}
                         </Form.Control>
                       </Form.Group>
