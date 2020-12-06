@@ -33,9 +33,9 @@ exports.getMyCoursesLessons = function (teacherID) {
 exports.getBookingStatistics = function (teacherID) {
     return new Promise((resolve, reject) => {
         const sql = `
-        SELECT CS.CourseID, CAST(COUNT(BookID) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CS.TimeStart)) AS FLOAT) as MonthAvg, CAST(COUNT(BookID) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CS.TimeStart)) AS FLOAT) as WeekAvg,
-        FROM Course c,CourseSchedule as CS LEFT JOIN Booking as B on CS.CourseScheduleID = B.CourseScheduleID
-        WHERE CS.CourseID = C.CourseID and C.TeacherID= ?
+        SELECT CS.CourseID, CAST(COUNT(BookID) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CS.TimeStart)) AS FLOAT) AS MonthAvg, CAST(COUNT(BookID) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CS.TimeStart)) AS FLOAT) AS WeekAvg,
+        FROM Course C,CourseSchedule AS CS LEFT JOIN Booking AS B ON CS.CourseScheduleID = B.CourseScheduleID
+        WHERE CS.CourseID = C.CourseID AND C.TeacherID= ?
         GROUP BY CS.CourseID
         `;
         db.all(sql, [teacherID], function (err, rows) {
@@ -43,17 +43,43 @@ exports.getBookingStatistics = function (teacherID) {
                 reject();
             }
             let ret_array=[];
-                        for (let row of rows){
-                            ret_array.push(
-                                {
-                                    CourseID: row.courseId,
-                                    MonthAvg: row.MonthAvg.toFixed(2),
-                                    WeekAvg: row.WeekAvg.toFixed(2)
-                                }
-                                );
-                            }
+                for (let row of rows){
+                    ret_array.push(
+                        {
+                            CourseID: row.courseId,
+                            MonthAvg: row.MonthAvg.toFixed(2),
+                            WeekAvg: row.WeekAvg.toFixed(2)
+                        }
+                    );
+                }
             resolve(ret_array);
         });
+    });
+}
+
+exports.getLectureAttendance = function (teacherID,CourseScheduleID){
+    return new Promise((resolve,reject) =>{
+        const sql=`
+        SELECT CS.CourseScheduleID,COUNT(1) FILTER (WHERE B.attended= true) as PresentStudents, COUNT (*) as BookedStudents
+        FROM Course C,CourseSchedule AS CS, Booking as B
+        WHERE CS.CourseID = C.CourseID AND CS.CourseScheduleID = B.CourseScheduleID AND C.TeacherID= ? AND CS.CourseScheduleID=?
+        `;
+        db.all(sql, [teacherID,CourseScheduleID], function (err, rows) {
+            if (err) {
+                reject();
+            }
+            let ret_array=[];
+            for (let row of rows){
+                ret_array.push(
+                    {
+                        CourseScheduleID: row.CourseScheduleID,
+                        PresentStudents: row.PresentStudents,
+                        BookedStudents: row.BookedStudents
+                    }
+                );
+            }
+            resolve(ret_array);
+         });
     });
 }
 

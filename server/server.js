@@ -193,9 +193,22 @@ app.post('/studentsData', async (req, res) => {
 });
 
 
-app.get('/bookingStatistics', async (req, res) => {
+app.post('/bookingStatistics', async (req, res) => {
     try {
-        const result = await teacherDao.getBookingStatistics(req.user.user);
+        const userID = req.user.user;
+        const result = await teacherDao.getBookingStatistics(userID);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
+    }
+});
+
+app.post('/getLectureAttendance', async (req, res) => {
+    try {
+        const userID = req.user.user;
+        const lectureID = req.body.lessonID;
+        const result = await teacherDao.getLectureAttendance(userID,lectureID);
         res.status(200).json(result);
     }
     catch (err) {
