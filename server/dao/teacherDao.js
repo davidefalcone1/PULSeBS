@@ -30,7 +30,7 @@ exports.getMyCoursesLessons = function (teacherID) {
     });
 }
 
-exports.getBookingStatistics = function (teacherID,bookID) {
+exports.getBookingStatistics = function (teacherID,bookStatus) {
     return new Promise((resolve, reject) => {
         const sql = `
         SELECT CS.CourseID, CAST(COUNT(BookID) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CS.TimeStart)) AS FLOAT) AS MonthAvg, CAST(COUNT(BookID) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CS.TimeStart)) AS FLOAT) AS WeekAvg,
@@ -38,7 +38,7 @@ exports.getBookingStatistics = function (teacherID,bookID) {
         WHERE CS.CourseID = C.CourseID AND C.TeacherID= ? AND B.BookStatus = ?
         GROUP BY CS.CourseID
         `;
-        db.all(sql, [teacherID,bookID], function (err, rows) {
+        db.all(sql, [teacherID,bookStatus], function (err, rows) {
             if (err) {
                 reject();
             }
@@ -46,7 +46,7 @@ exports.getBookingStatistics = function (teacherID,bookID) {
                 for (let row of rows){
                     ret_array.push(
                         {
-                            CourseID: row.courseId,
+                            CourseID: row.CourseID,
                             MonthAvg: row.MonthAvg.toFixed(2),
                             WeekAvg: row.WeekAvg.toFixed(2)
                         }
@@ -57,14 +57,14 @@ exports.getBookingStatistics = function (teacherID,bookID) {
     });
 }
 
-exports.getLectureAttendance = function (teacherID,CourseScheduleID){
+exports.getLectureAttendance = function (teacherID,courseID){
     return new Promise((resolve,reject) =>{
         const sql=`
         SELECT CS.CourseScheduleID,COUNT(1) FILTER (WHERE B.attended= true) as PresentStudents, COUNT (*) as BookedStudents
         FROM Course C,CourseSchedule AS CS, Booking as B
-        WHERE CS.CourseID = C.CourseID AND CS.CourseScheduleID = B.CourseScheduleID AND C.TeacherID= ? AND CS.CourseScheduleID=?
+        WHERE CS.CourseID = C.CourseID AND CS.CourseScheduleID = B.CourseScheduleID AND C.TeacherID= ? AND CS.CourseID=?
         `;
-        db.all(sql, [teacherID,CourseScheduleID], function (err, rows) {
+        db.all(sql, [teacherID,courseID], function (err, rows) {
             if (err) {
                 reject();
             }

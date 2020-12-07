@@ -196,7 +196,8 @@ app.post('/studentsData', async (req, res) => {
 app.post('/bookingStatistics', async (req, res) => {
     try {
         const userID = req.user.user;
-        const result = await teacherDao.getBookingStatistics(userID);
+        const bookStatus= req.body.bookStatus;
+        const result = await teacherDao.getBookingStatistics(userID,bookStatus);
         res.status(200).json(result);
     }
     catch (err) {
@@ -204,11 +205,11 @@ app.post('/bookingStatistics', async (req, res) => {
     }
 });
 
-app.post('/getLectureAttendance', async (req, res) => {
+app.post('/lectureAttendance', async (req, res) => {
     try {
         const userID = req.user.user;
-        const lectureID = req.body.lessonID;
-        const result = await teacherDao.getLectureAttendance(userID,lectureID);
+        const courseID = req.body.lessonID;
+        const result = await teacherDao.getLectureAttendance(userID,courseID);
         res.status(200).json(result);
     }
     catch (err) {
