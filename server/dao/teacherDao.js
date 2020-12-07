@@ -30,15 +30,15 @@ exports.getMyCoursesLessons = function (teacherID) {
     });
 }
 
-exports.getBookingStatistics = function (teacherID) {
+exports.getBookingStatistics = function (teacherID,bookID) {
     return new Promise((resolve, reject) => {
         const sql = `
         SELECT CS.CourseID, CAST(COUNT(BookID) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CS.TimeStart)) AS FLOAT) AS MonthAvg, CAST(COUNT(BookID) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CS.TimeStart)) AS FLOAT) AS WeekAvg,
         FROM Course C,CourseSchedule AS CS LEFT JOIN Booking AS B ON CS.CourseScheduleID = B.CourseScheduleID
-        WHERE CS.CourseID = C.CourseID AND C.TeacherID= ?
+        WHERE CS.CourseID = C.CourseID AND C.TeacherID= ? AND B.BookStatus = ?
         GROUP BY CS.CourseID
         `;
-        db.all(sql, [teacherID], function (err, rows) {
+        db.all(sql, [teacherID,bookID], function (err, rows) {
             if (err) {
                 reject();
             }
