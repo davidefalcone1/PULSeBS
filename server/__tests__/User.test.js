@@ -1,5 +1,5 @@
 "use strict"
-import User from "../dao/User"
+const User = require("../dao/User");
 
 describe("User costructor test", () => {
 it('works', () => {

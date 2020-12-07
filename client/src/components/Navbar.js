@@ -11,18 +11,27 @@ const navbar = (props) => {
                 <Navbar bg="dark" variant="dark" expand="md">
                     <Navbar.Toggle data-toggle="collapse" data-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation" />
                     <Navbar.Brand>
-                        PUL Project
+                        PULSeBS Project
                     </Navbar.Brand>
 
                     <Nav className="mr-auto">
                         {context.isStudent && <>
-                            <Nav.Link as={NavLink} to="/lessonsList">Book a lesson!</Nav.Link> 
+                            <Nav.Link as={NavLink} to="/myBookableLessonsList"> Book a lesson!</Nav.Link> 
                             <Nav.Link as={NavLink} to="/myBookedLessonslist"> My booked lessons</Nav.Link>
                         </>}
                         {context.isTeacher && <>
                             <Nav.Link as={NavLink} to="/myCoursesLessonslist"> My courses details</Nav.Link>
                         </>}
-                        {/* {context.user.accessLevel === 3 && <></>} */}
+                        {context.isBookingManager && <>
+                            <Nav.Link as={NavLink} to="/monitorUsage"> Monitor usage of the system</Nav.Link>
+                        </>}
+                        {context.isSupportOfficer && <>
+                            <Nav.Link as={NavLink} to="/configureStudentsList"> Students</Nav.Link>
+                            <Nav.Link as={NavLink} to="/configureCoursesList"> Courses</Nav.Link>
+                            <Nav.Link as={NavLink} to="/configureTeachersList"> Teachers</Nav.Link>
+                            <Nav.Link as={NavLink} to="/configureLessonsList"> Lessons</Nav.Link>
+                            <Nav.Link as={NavLink} to="/configureClassesList"> Classes</Nav.Link>
+                        </>}
                     </Nav>
 
                     <Nav className="ml-md-auto">

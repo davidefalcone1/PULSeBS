@@ -1,5 +1,5 @@
 "use strict"
-import CourseData from "../dao/CourseData"
+const CourseData = require("../dao/CourseData");
 
 describe("CourseData costructor test", () => {
 it('works', () => {

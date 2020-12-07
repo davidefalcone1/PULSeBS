@@ -4,8 +4,6 @@
 ## Docker instructions
 
 ```bash
-git clone https://github.com/se2-group2/PULSeBS.git
-cd PULSeBS
 sudo docker pull alessiodeioanni/pulsebs_group2:release1
 sudo docker run -p 3000:3000 -p 3001:3001 alessiodeioanni/pulsebs_group2:release1
 ```

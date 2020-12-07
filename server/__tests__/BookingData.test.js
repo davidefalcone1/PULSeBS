@@ -1,5 +1,5 @@
 "use strict"
-import BookingData from "../dao/BookingData"
+const BookingData = require("../dao/BookingData");
 
 describe("BookingData costructor test", () => {
 it('works', () => {

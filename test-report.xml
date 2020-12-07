@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testExecutions version="1">
+  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\server.test.js">
+    <testCase name="/users/authenticate username is undefined" duration="115"/>
+    <testCase name="/users/authenticate password is undefined" duration="16"/>
+    <testCase name="/users/authenticate user does not exist" duration="22"/>
+    <testCase name="/users/authenticate invalid password" duration="333"/>
+    <testCase name="/users/authenticate login successful" duration="340"/>
+    <testCase name="/logout logout" duration="14"/>
+    <testCase name="/deleteBooking/:lessonID lesson exists" duration="171"/>
+    <testCase name="/deleteBooking/:lessonID lesson does not exists" duration="136"/>
+    <testCase name="/myBookableLessons " duration="1664"/>
+    <testCase name="/myBookedLessons lesson booked" duration="1766"/>
+    <testCase name="/myBookedLessons lesson not booked" duration="1542"/>
+    <testCase name="/studentCourses not enrolled" duration="15"/>
+    <testCase name="/studentCourses enrolled" duration="131"/>
+    <testCase name="/myBookableLessons not bookable" duration="14"/>
+    <testCase name="/myBookableLessons bookable" duration="128"/>
+    <testCase name="/myBookedLessons not booked" duration="32"/>
+    <testCase name="/myBookedLessons booked" duration="151"/>
+    <testCase name="/teacherCourses no courses for teacher" duration="31"/>
+    <testCase name="/teacherCourses there is a course taught by the professor" duration="153"/>
+    <testCase name="/myCoursesLessons no lecture" duration="17"/>
+    <testCase name="/myCoursesLessons there is a  lecture" duration="101"/>
+    <testCase name="/bookedStudents no students booked" duration="15"/>
+    <testCase name="/bookedStudents there is a booked student" duration="116"/>
+    <testCase name="/studentsData no students" duration="14"/>
+    <testCase name="/studentsData there is a student" duration="15"/>
+    <testCase name="/makeLessonRemote/:courseScheduleId lecture does not exist" duration="1232"/>
+    <testCase name="/makeLessonRemote/:courseScheduleId lecture exist" duration="1397"/>
+    <testCase name="/cancelLesson/:courseScheduleId lecture does not exist" duration="1242"/>
+    <testCase name="/user user is authenticated" duration="730"/>
+    <testCase name="/user user not authenticated" duration="712"/>
+    <testCase name="/bookLesson lecture exists" duration="1941"/>
+  </file>
+  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\bookingDao.test.js">
+    <testCase name="deleteBooking booking exists" duration="1643"/>
+    <testCase name="deleteBooking booking does not exist" duration="1330"/>
+    <testCase name="bookLesson the lesson exists and can be booked" duration="1578"/>
+    <testCase name="bookLesson the lesson does not exist and can&apos;t be booked" duration="1207"/>
+  </file>
+  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\userDao.test.js">
+    <testCase name="getUser user exists" duration="369"/>
+    <testCase name="getUser user doesn&apos;t exists" duration="113"/>
+    <testCase name="checkPassword password ok" duration="317"/>
+    <testCase name="checkPassword password wrong" duration="319"/>
+  </file>
+  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\teacherDao.test.js">
+    <testCase name="getBookedStudents No students booked" duration="3"/>
+    <testCase name="getBookedStudents One student is booked" duration="108"/>
+  </file>
+  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\emailDao.test.js">
+    <testCase name="getProfessorsToNotify no lectures tomorrow" duration="605"/>
+    <testCase name="getProfessorsToNotify there is a lecture tomorrow" duration="790"/>
+  </file>
+  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\LessonsData.test.js">
+    <testCase name="LessonsData costructor test works" duration="3"/>
+  </file>
+  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\User.test.js">
+    <testCase name="User costructor test works" duration="2"/>
+  </file>
+  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\CourseData.test.js">
+    <testCase name="CourseData costructor test works" duration="2"/>
+  </file>
+  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\BookingData.test.js">
+    <testCase name="BookingData costructor test works" duration="2"/>
+  </file>
+</testExecutions>

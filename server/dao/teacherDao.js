@@ -1,9 +1,27 @@
 'use strict';
-
+const BookingData = require('./BookingData');
+const CourseData = require('./CourseData');
+const LessonsData = require('./LessonsData');
 const moment = require("moment");
 const db = require('../db');
 
+// this is a UserData type that will fulfill the front-end (it is different from the User class)
+class UserData {
+    constructor(id, personId, fullName, email) {
+        if (id)
+            this.id = id;
+        this.personId = personId;
+        this.fullName = fullName;
+        this.email = email;
+    }
 
+    static fromJson(json) {
+        const temp = Object.assign(new UserData(), json);
+        return temp;
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////
 exports.getTeacherCourses = function (teacherID) {
     return new Promise((resolve, reject) => {
         const sql = "SELECT * FROM Course WHERE TeacherID = ?";
@@ -24,7 +42,13 @@ exports.getMyCoursesLessons = function (teacherID) {
             if (err) {
                 reject();
             }
-            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat));
+            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, row.CourseStatus, row.CourseType, row.Classroom))
+                .sort((lesson1, lesson2) => {
+                    // sort in DESCEDING ORDER by starting time
+                    const start1 = moment(lesson1.startingTime);
+                    const start2 = moment(lesson2.startingTime);
+                    return start1.isBefore(start2) ? 1 : -1;
+                });
             resolve(lessons);
         });
     });
@@ -86,7 +110,6 @@ exports.getLectureAttendance = function (teacherID,courseID){
 
 exports.getBookedStudents = function (CourseScheduleIDs) {
     return new Promise((resolve, reject) => {
-
         //Check if the CourseScheduleIDs is an array
         if (!Array.isArray(CourseScheduleIDs)) {
             let err = { message: "" };
@@ -139,67 +162,55 @@ exports.getStudentsData = function (studentsIds) {
 }
 
 
+exports.updateLessonType = function (courseScheduleId, status) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+        UPDATE CourseSchedule
+        SET CourseType = ?
+        WHERE Cast ((JulianDay(CourseSchedule.TimeStart)-JulianDay('now', 'localtime') ) * 24 * 60 As Integer) > 30 
+        AND CourseSchedule.CourseScheduleID = ?`;
 
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-class LessonsData {
-    constructor(scheduleId, courseId, startingTime, endingTime, occupiedSeats, availableSeats) {
-        if (scheduleId)
-            this.scheduleId = scheduleId;
-        this.courseId = courseId;
-        this.startingTime = moment(new Date(startingTime));
-        this.endingTime = moment(new Date(endingTime));
-        this.occupiedSeats = occupiedSeats;
-        this.availableSeats = availableSeats;
-    }
-
-    static fromJson(json) {
-        const temp = Object.assign(new LessonData(), json);
-        temp.startingTime = moment(new Date(temp.startingTime));
-        temp.endingTime = moment(new Date(temp.endingTime));
-        return temp;
-    }
+        db.run(sql, [status, courseScheduleId], function (err) {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(this.changes);
+        });
+    });
 }
 
-class UserData {
-    constructor(id, personId, fullName, email) {
-        if (id)
-            this.id = id;
-        this.personId = personId;
-        this.fullName = fullName;
-        this.email = email;
-    }
+exports.updateLessonStatus = function (courseScheduleId, status) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+        UPDATE CourseSchedule
+        SET CourseStatus = ?
+        WHERE Cast ((JulianDay(CourseSchedule.TimeStart)-JulianDay('now', 'localtime') ) * 24 * 60 As Integer) > 60 
+        AND CourseSchedule.CourseScheduleID = ?`;
 
-    static fromJson(json) {
-        const temp = Object.assign(new UserData(), json);
-        return temp;
-    }
+        db.run(sql, [status, courseScheduleId], function (err) {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(this.changes);
+        });
+    });
 }
 
-class CourseData {
-    constructor(courseId, courseName, teacherId) {
-        if (courseId)
-            this.courseId = courseId;
-        this.courseName = courseName;
-        this.teacherId = teacherId;
-    }
-}
+exports.cancelAllBooking = function (courseScheduleId) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+        UPDATE Booking
+        SET BookStatus = 4
+        WHERE CourseScheduleID = ?`;
 
-class BookingData {
-    constructor(id, scheduleId, studentId, status, attended) {
-        if (id)
-            this.id = id;
-        this.scheduleId = scheduleId;
-        this.studentId = studentId;
-        this.status = status;
-        this.attended = attended;
-    }
-
-    static fromJson(json) {
-        const temp = Object.assign(new BookingData(), json);
-        return temp;
-    }
+        db.run(sql, [courseScheduleId], function (err) {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve();
+        });
+    });
 }

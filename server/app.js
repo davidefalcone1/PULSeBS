@@ -1,16 +1,24 @@
-"use strict";
+const express = require("express");//import express
+const morgan = require("morgan"); // logging middleware
+const userDao = require('./dao/userDao');
+const jwt = require('express-jwt');
+const jsonwebtoken = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+const moment = require('moment');
+const emailAPI = require('./emailAPI');
+const bookingDao = require('./dao/bookingDao');
+const dailyMailer = require('./dailyMailer');
+const teacherDao = require('./dao/teacherDao');
+const emailDao = require('./dao/emailDao');
 
-const app = require('./app');
-const port = 3001;
+const jwtSecret = '123456789';
+const expireTime = 900; //seconds
 
+const app = express();
 
-app.use(morgan("tiny"));// Set-up logging
+app.use(morgan("tiny", { skip: (req, res) => process.env.NODE_ENV === 'test' }));// Set-up logging
 app.use(express.json());// Process body content
 app.use(cookieParser());
-
-app.get('/', (req, res) => {
-    res.send('Hello SoftENG members!');
-});
 
 // LOGIN API
 app.post('/users/authenticate', async (req, res) => {
@@ -19,19 +27,23 @@ app.post('/users/authenticate', async (req, res) => {
 
     if (!username) {
         res.status(500).json({ error: 'Missing username' });
+        return;
     }
     if (!password) {
         res.status(500).json({ error: 'Missing password' });
+        return;
     }
 
     try {
         const user = await userDao.getUser(username, password);
         if (user === undefined) {
             res.status(401).send({ error: 'Invalid username' });
+            return;
         }
         else {
             if (!userDao.checkPassword(user, password)) {
                 res.status(401).send({ error: 'Invalid password' });
+                return;
             }
             else {
                 // AUTHENTICATION SUCCESS
@@ -67,7 +79,25 @@ app.use(
 app.delete('/deleteBooking/:lessonID', (req, res) => {
     const lessonID = req.params.lessonID;
     bookingDao.deleteBooking(lessonID, req.user.user)
-        .then(() => res.status(204).end())
+        .then(bookingDao.checkWaitingList(lessonID).
+            then((result) => {
+                if (result === 0) {
+                    res.status(200).json();
+                }
+                else {
+                    // a new student has been extracted from the waiting queue
+                    // so he needs to be notified
+                    emailDao.getLectureInfo(result.lectureID)
+                        .then((info) => {
+                            userDao.getUserByID(result.studentID)
+                                .then((userData) => {
+                                    info.notificationType = 4;
+                                    emailAPI.sendNotification(userData.username, info);
+                                    res.status(204).json();
+                                })
+                        });
+                }
+            }))
         .catch((err) => res.status(500).json({ error: 'Server error: ' + err }));
 });
 
@@ -95,6 +125,18 @@ app.get('/myBookableLessons', async (req, res) => {
 app.get('/myBookedLessons', async (req, res) => {
     try {
         const result = await bookingDao.getBookedLessons(req.user.user);
+        res.json(result);
+        return;
+    }
+    catch (e) {
+        res.status(505).end();
+    }
+});
+
+// API for retrieving pending waiting lessons booked by a student
+app.get('/myWaitingBookedLessons', async (req, res) => {
+    try {
+        const result = await bookingDao.getPendingWaitingBookings(req.user.user);
         res.json(result);
     }
     catch (e) {
@@ -178,24 +220,55 @@ app.post('/studentsData', async (req, res) => {
 });
 
 
-app.post('/bookingStatistics', async (req, res) => {
+/**
+* Update CourseType of lectures to (1 = presence) / (0 = distance)
+* (turn a presence lecture into a distance one)
+* @route       PUT /lessonType/:courseScheduleId
+* @param       status
+* @access      Private
+* @returns     0 (the courseScheduleId does not exist or the 30 minutes limitation passes)
+*              1 (the lecture has been changed to distance)
+*/
+app.put('/makeLessonRemote/:courseScheduleId', async (req, res) => {
+    const status = (req.body.status || 0);
+    const courseScheduleId = req.params.courseScheduleId;
     try {
-        const userID = req.user.user;
-        const bookStatus= req.body.bookStatus;
-        const result = await teacherDao.getBookingStatistics(userID,bookStatus);
+        const result = await teacherDao.updateLessonType(courseScheduleId, status);
         res.status(200).json(result);
     }
     catch (err) {
-        res.status(400).json(err.message);
+        res.status(401).json(err.message);
     }
 });
 
-app.post('/lectureAttendance', async (req, res) => {
+
+/**
+* Update CourseStatus of lectures to (1 = active) / (0 = canceled)
+* (Cancel a lecture 1 hour before its scheduled time)
+* @route       PUT /lessonStatus/:courseScheduleId
+* @param       status
+* @access      Private
+* @returns     0 (the courseScheduleId does not exist or the 60 minutes limitation passes)
+*              1 (the lecture has been canceled, and also all related booking canceled too)
+*/
+app.delete('/cancelLesson/:courseScheduleId', async (req, res) => {
+    const status = (req.body.status || 0);
+    const courseScheduleId = req.params.courseScheduleId;
     try {
-        const userID = req.user.user;
-        const courseID = req.body.lessonID;
-        const result = await teacherDao.getLectureAttendance(userID,courseID);
+        const result = await teacherDao.updateLessonStatus(courseScheduleId, status);
+        if (result === 1) {
+            await teacherDao.cancelAllBooking(courseScheduleId);
+
+            // handle email notification to all booked students
+            const emails = await emailDao.getStudentsToNotify(courseScheduleId);
+            const info = await emailDao.getLectureInfo(courseScheduleId);
+            info.notificationType = 3;
+            emails.forEach((email) => {
+                emailAPI.sendNotification(email.UserName, info);
+            });
+        }
         res.status(200).json(result);
+        return;
     }
     catch (err) {
         res.status(400).json(err.message);
@@ -223,23 +296,32 @@ app.get('/user', (req, res) => {
         );
 });
 
+// return true if lecture booked, false if student put into waiting list
 app.post('/bookLesson', async (req, res) => {
     try {
         const userID = req.user.user;
         const lectureID = req.body.lessonId;
-        let result = await bookingDao.bookLesson(userID, lectureID);
+        const booked = await bookingDao.bookLesson(userID, lectureID);
         const user = await userDao.getUserByID(userID);
         const lectureData = await bookingDao.getLectureDataById(lectureID);
         const email = user.username;
-        const info = {
-            notificationType: 1,
-            course: lectureData.CourseName,
-            date: moment(lectureData.TimeStart).format('MM/DD/YYYY'),
-            start: moment(lectureData.TimeStart).format('HH:mm'),
-            end: moment(lectureData.TimeEnd).format('HH:mm')
+        if (!booked) {
+            res.json(false);
+            return;
         }
-        result = await emailAPI.sendNotification(email, info);
-        res.status(200).end();
+        else {
+            const info = {
+                notificationType: 1,
+                course: lectureData.CourseName,
+                date: moment(lectureData.TimeStart).format('MM/DD/YYYY'),
+                start: moment(lectureData.TimeStart).format('HH:mm'),
+                end: moment(lectureData.TimeEnd).format('HH:mm')
+            }
+            emailAPI.sendNotification(email, info);
+            res.json(true);
+            return;
+        }
+
     } catch (err) {
         res.status(505).json({ error: 'Server error: ' + err });
     }
@@ -254,7 +336,4 @@ app.post('/logout', (req, res) => {
 // set automatc email sending to professors
 dailyMailer.setDailyMail();
 
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
-});
-
+module.exports = app;

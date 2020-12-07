@@ -1,6 +1,6 @@
 "use strict"
-import LessonsData from "../dao/LessonsData"
-import moment from 'moment';
+const LessonsData = require("../dao/LessonsData");
+const moment = require('moment');
 
 describe("LessonsData costructor test", () => {
 it('works', () => {

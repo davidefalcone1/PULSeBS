@@ -1,9 +1,9 @@
-const moment = require('moment');
+import moment from 'moment';
 
-class LessonsData {
+class LessonData {
     constructor(scheduleId, courseId, startDate, endDate, occupiedSeats, availableSeats,
-            isLessonCancelled, isLessonRemote, classroom) {
-
+        isLessonCancelled, isLessonRemote, classroom
+        /*, normalBookings, cancelledBookings, waitingBookings */) {
         if (scheduleId)
             this.scheduleId = scheduleId;
         this.courseId = courseId;
@@ -11,9 +11,14 @@ class LessonsData {
         this.endDate = moment(new Date(endDate));
         this.occupiedSeats = occupiedSeats;
         this.availableSeats = availableSeats;
-        this.isLessonCancelled = !Boolean(parseInt(isLessonCancelled));
-        this.isLessonRemote = !Boolean(parseInt(isLessonRemote));
+        this.isLessonCancelled = isLessonCancelled;
+        this.isLessonRemote = isLessonRemote;
         this.classroom = classroom
+
+        //TODO use the correct variables
+        this.normalBookings = 0;
+        this.cancelledBookings = 0;
+        this.waitingBookings = 0;
     }
 
     static fromJson(json) {
@@ -24,4 +29,4 @@ class LessonsData {
     }
 }
 
-module.exports = LessonsData;
+export default LessonData;
