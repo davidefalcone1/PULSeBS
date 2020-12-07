@@ -52,7 +52,7 @@ exports.getBookingStatistics = function (teacherID) {
                         }
                     );
                 }
-            resolve(ret_array);
+            resolve(JSON.stringify(ret_array));
         });
     });
 }
@@ -78,7 +78,7 @@ exports.getLectureAttendance = function (teacherID,CourseScheduleID){
                     }
                 );
             }
-            resolve(ret_array);
+            resolve(JSON.stringify(ret_array));
          });
     });
 }
