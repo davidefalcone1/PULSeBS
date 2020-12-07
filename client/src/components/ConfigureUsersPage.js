@@ -98,7 +98,7 @@ class ConfigureUser extends React.Component {
     }
   }
   handleSubmitFileEnrollment = () => {
-    if (!this.formFile.checkValidity()) {
+    if (!this.formFileEnrollment.checkValidity()) {
       this.formFile.reportValidity();
     }
     else if(this.props.type === 'student' && (this.state.fileEnrollment === undefined || this.state.fileEnrollment === '')){ 
