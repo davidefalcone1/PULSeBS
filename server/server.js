@@ -178,30 +178,6 @@ app.post('/studentsData', async (req, res) => {
 });
 
 
-app.post('/bookingStatistics', async (req, res) => {
-    try {
-        const userID = req.user.user;
-        const bookStatus= req.body.bookStatus;
-        const result = await teacherDao.getBookingStatistics(userID,bookStatus);
-        res.status(200).json(result);
-    }
-    catch (err) {
-        res.status(400).json(err.message);
-    }
-});
-
-app.post('/lectureAttendance', async (req, res) => {
-    try {
-        const userID = req.user.user;
-        const courseID = req.body.lessonID;
-        const result = await teacherDao.getLectureAttendance(userID,courseID);
-        res.status(200).json(result);
-    }
-    catch (err) {
-        res.status(400).json(err.message);
-    }
-});
-
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //calling by isAuthenticated() API on the front-end
 // retrieve the user after login

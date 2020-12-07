@@ -24,12 +24,23 @@ class UserData {
 /////////////////////////////////////////////////////////////////////////
 exports.getTeacherCourses = function (teacherID) {
     return new Promise((resolve, reject) => {
-        const sql = "SELECT * FROM Course WHERE TeacherID = ?";
+        const sql = `
+        select c.courseid, c.coursename, c.teacherid,
+        CAST(COUNT(BookID) filter (where b.bookstatus=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CS.TimeStart)) AS FLOAT) AS normalBookingsAvgWeek,
+        CAST(COUNT(BookID) filter (where b.bookstatus=2) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CS.TimeStart)) AS FLOAT) AS cancelledBookingsAvgWeek,
+        CAST(COUNT(BookID) filter (where b.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CS.TimeStart)) AS FLOAT) AS waitingBookingsAvgWeek,
+        CAST(COUNT(BookID) filter (where b.bookstatus=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CS.TimeStart)) AS FLOAT) AS normalBookingsAvgMonth,
+        CAST(COUNT(BookID) filter (where b.bookstatus=2) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CS.TimeStart)) AS FLOAT) AS cancelledBookingsAvgMonth,
+        CAST(COUNT(BookID) filter (where b.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CS.TimeStart)) AS FLOAT) AS waitingBookingsAvgMonth,
+        from course c, courseschedule as cs LEFT JOIN Booking AS B ON CS.CourseScheduleID = B.CourseScheduleID
+        where c.courseid=cs.courseid and b.coursescheduleid=cs.coursescheduleid and c.teacherid=?
+        group by cs.courseid
+        `;
         db.all(sql, [teacherID], function (err, rows) {
             if (err) {
                 reject();
             }
-            const courses = rows.map((row) => new CourseData(row.CourseID, row.CourseName, row.TeacherID));
+            const courses = rows.map((row) => new CourseData(row.CourseID, row.CourseName, row.TeacherID, row.normalBookingsAvgWeek.toFixed(2), row.cancelledBookingsAvgWeek.toFixed(2),waitingBookingsAvgWeek.toFixed(2),row.normalBookingsAvgMonth.toFixed(2),row.cancelledBookingsAvgMonth.toFixed(2),row.waitingBookingsAvgMonth.toFixed(2)));
             resolve(courses);
         });
     });
@@ -37,12 +48,19 @@ exports.getTeacherCourses = function (teacherID) {
 
 exports.getMyCoursesLessons = function (teacherID) {
     return new Promise((resolve, reject) => {
-        const sql = "SELECT * FROM CourseSchedule JOIN Course ON CourseSchedule.CourseID = Course.CourseID WHERE Course.TeacherID = ?";
+        const sql = `
+        select cs.*,
+        count(1) filter (where b.bookstatus = 1) as normalBookings,
+        count(1) filter (where b.bookstatus = 2) as cancelledBookings,
+        count(1) filter (where b.bookstatus = 3) as waitingBookings
+        from courseschedule cs, course c,booking b
+        where c.courseid=cs.courseid and b.coursecheduleid=cs.coursescheduleid and c.teacherid=?
+        `;
         db.all(sql, [teacherID], function (err, rows) {
             if (err) {
                 reject();
             }
-            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, row.CourseStatus, row.CourseType, row.Classroom))
+            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, row.CourseStatus, row.CourseType, row.Classroom, row.normalBookings, row.cancelledBookings,row.waitingBookings))
                 .sort((lesson1, lesson2) => {
                     // sort in DESCEDING ORDER by starting time
                     const start1 = moment(lesson1.startingTime);
@@ -54,58 +72,6 @@ exports.getMyCoursesLessons = function (teacherID) {
     });
 }
 
-exports.getBookingStatistics = function (teacherID,bookStatus) {
-    return new Promise((resolve, reject) => {
-        const sql = `
-        SELECT CS.CourseID, CAST(COUNT(BookID) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CS.TimeStart)) AS FLOAT) AS MonthAvg, CAST(COUNT(BookID) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CS.TimeStart)) AS FLOAT) AS WeekAvg,
-        FROM Course C,CourseSchedule AS CS LEFT JOIN Booking AS B ON CS.CourseScheduleID = B.CourseScheduleID
-        WHERE CS.CourseID = C.CourseID AND C.TeacherID= ? AND B.BookStatus = ?
-        GROUP BY CS.CourseID
-        `;
-        db.all(sql, [teacherID,bookStatus], function (err, rows) {
-            if (err) {
-                reject();
-            }
-            let ret_array=[];
-                for (let row of rows){
-                    ret_array.push(
-                        {
-                            CourseID: row.CourseID,
-                            MonthAvg: row.MonthAvg.toFixed(2),
-                            WeekAvg: row.WeekAvg.toFixed(2)
-                        }
-                    );
-                }
-            resolve(JSON.stringify(ret_array));
-        });
-    });
-}
-
-exports.getLectureAttendance = function (teacherID,courseID){
-    return new Promise((resolve,reject) =>{
-        const sql=`
-        SELECT CS.CourseScheduleID,COUNT(1) FILTER (WHERE B.attended= true) as PresentStudents, COUNT (*) as BookedStudents
-        FROM Course C,CourseSchedule AS CS, Booking as B
-        WHERE CS.CourseID = C.CourseID AND CS.CourseScheduleID = B.CourseScheduleID AND C.TeacherID= ? AND CS.CourseID=?
-        `;
-        db.all(sql, [teacherID,courseID], function (err, rows) {
-            if (err) {
-                reject();
-            }
-            let ret_array=[];
-            for (let row of rows){
-                ret_array.push(
-                    {
-                        CourseScheduleID: row.CourseScheduleID,
-                        PresentStudents: row.PresentStudents,
-                        BookedStudents: row.BookedStudents
-                    }
-                );
-            }
-            resolve(JSON.stringify(ret_array));
-         });
-    });
-}
 
 
 exports.getBookedStudents = function (CourseScheduleIDs) {
