@@ -88,10 +88,10 @@ const checkHeaderFields = (header, fileType) => {
         case 'students':
             fields = ['Id', 'Name', 'Surname', 'City', 'OfficialEmail', 'Birthday', 'SSN'];
             break;
-        // NON CI STA UN SAMPLE FILE PER AGGIUNGERE CLASSI!!
-        /*case 'classrooms':
-            fields = [];
-            break;*/
+        // There is no sample file to add new classromms so if they upload it check here!!
+        case 'classrooms':
+            fields = ['Room', 'Seats'];
+            break;
     }
 
     // check if the csv has the right number of columns
@@ -411,6 +411,51 @@ exports.insertNewEnrollments = async (newEnrollments) => {
         for (let i = 0; i < newEnrollments.length; i++) {
             const enrollment = newEnrollments[i];
             await insertNewEnrollment(enrollment);
+        }
+    }
+    catch (err) {
+        throw (err);
+    }
+    return (true);
+}
+
+// check the fields of room if file is provided!
+// for now they are s upposed to be Room, Seats
+const insertNewRoom = (room) => {
+    return new Promise((resolve, reject) => {
+        const sql1 = 'SELECT * FROM Classroom WHERE ClassroomName = ?';
+        const sql2 = 'INSERT INTO Classroom(ClassroomName, MaxSeats) ' +
+            'VALUES (?, ?)';
+
+        db.get(sql1, [room.Room], (err, row) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            if (row) {
+                // there is already a room with that name!
+                resolve('Already existing');
+            }
+            else {
+                db.run(sql2, [room.Room, room.Seats], (error) => {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+                    else {
+                        resolve('Successfully inserted');
+                    }
+                });
+            }
+        });
+    });
+}
+
+exports.insertNewRooms = async (rooms) =>  {
+    try {
+        for (let i = 0; i < rooms.length; i++) {
+            const room = rooms[i];
+            await insertNewRoom(room);
         }
     }
     catch (err) {
