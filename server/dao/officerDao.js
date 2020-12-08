@@ -188,6 +188,7 @@ exports.insertNewCourses = async (courses) => {
 
 }
 
+// reads the semester a course is held
 const readSemester = (courseID) => {
     return new Promise ((resolve, reject) => {
         const sql = 'SELECT Semester FROM Course WHERE CourseID = ?';
@@ -254,10 +255,11 @@ const generateSchedule = async (schedule) => {
     }
 }
 
+// checks if a scjedule is already existing otherwise it inserts it into the db table CourseSchedule
 const insertNewSchedule = (lesson) => {
     return new Promise((resolve, reject) => {
         const sql1 = 'SELECT * FROM CourseSchedule WHERE CourseID = ? AND TimeStart = ?';
-        const sql2 = 'INSERT INTO CourseAchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom) ' +
+        const sql2 = 'INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom) ' +
             'VALUES (?, 1, 1, ?, ?, 0, ?, ?)'; 
         
             db.get(sql1, [lesson.Code, lesson.timeStart], (err, row) => {
@@ -283,6 +285,8 @@ const insertNewSchedule = (lesson) => {
             });
     });
 }
+
+// inserts all schedules read from the file sent by the front end
 exports.insertNewSchedules = async (newSchedules) => {
     try{
         for(let i = 0; i < newSchedules.length; i++){
@@ -295,6 +299,7 @@ exports.insertNewSchedules = async (newSchedules) => {
         }
     }
     catch(err){
+        console.log(err)
         throw(err);
     }
     return(true);
