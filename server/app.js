@@ -464,13 +464,21 @@ app.post('/uploadFileEnrollment', async (req, res) => {
     }
 });
 
-/* THERE IS NO SAMPLE FILE TO UPLOAD CLASSROOMS!
 app.post('/uploadFileClassroom', async (req, res) => {
     
     const file = req.body.file;
-    officerDao.readFile(file, 'classrooms');
-    res.status(200).end()
-});*/
+    const newRooms = officerDao.readFile(file, 'classrooms');
+    if (!newRooms) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+    try {
+        await officerDao.insertNewRooms(newRooms);
+        res.status(200).end();
+    }
+    catch (err) {
+        res.status(505).json(err);
+    }
+});
 
 app.post('/logout', (req, res) => {
     res.clearCookie('token').end();
