@@ -90,7 +90,6 @@ exports.getLectureInfo = (courseScheduleID) => {
                 return;
             }
             else {
-                console.log(row)
                 const info = {
                     course: row.CourseName,
                     date: moment(row.TimeStart).format('MM/DD/YYYY'),

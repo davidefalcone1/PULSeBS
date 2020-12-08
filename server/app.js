@@ -10,6 +10,7 @@ const bookingDao = require('./dao/bookingDao');
 const dailyMailer = require('./dailyMailer');
 const teacherDao = require('./dao/teacherDao');
 const emailDao = require('./dao/emailDao');
+const officerDao = require('./dao/officerDao');
 
 const jwtSecret = '123456789';
 const expireTime = 900; //seconds
@@ -17,7 +18,7 @@ const expireTime = 900; //seconds
 const app = express();
 
 app.use(morgan("tiny", { skip: (req, res) => process.env.NODE_ENV === 'test' }));// Set-up logging
-app.use(express.json());// Process body content
+app.use(express.json({ limit: '50mb' }));// Process body content
 app.use(cookieParser());
 
 // LOGIN API
@@ -325,6 +326,121 @@ app.post('/bookLesson', async (req, res) => {
     } catch (err) {
         res.status(505).json({ error: 'Server error: ' + err });
     }
+});
+
+
+//OFFICER API
+app.get('/allClassrooms', async (req, res) => {
+    try {
+        const classes = await officerDao.getClassrooms();
+        res.json(classes);
+    }
+    catch (error) {
+        res.status(505).json(error);
+    }
+});
+
+app.get('/allCourses', async (req, res) => {
+    try {
+        const classes = await officerDao.getCourses();
+        res.json(classes);
+    }
+    catch (error) {
+        res.status(505).json(error);
+    }
+});
+
+app.get('/allStudents', async (req, res) => {
+    try {
+        const students = await officerDao.getUsers(1);
+        res.json(students);
+    }
+    catch (error) {
+        res.status(505).json(error);
+    }
+});
+
+app.get('/allTeachers', async (req, res) => {
+    try {
+        const teachers = await officerDao.getUsers(2);
+        res.json(teachers);
+    }
+    catch (error) {
+        res.status(505).json(error);
+    }
+});
+
+app.get('/allLessons', async (req, res) => {
+    try {
+        const lessons = await officerDao.getLessons();
+        res.json(lessons);
+    }
+    catch (error) {
+        res.status(505).json(error);
+    }
+});
+
+app.post('/uploadFileCourses', async (req, res) => {
+
+    const file = req.body.file;
+    const newCourses = officerDao.readFile(file, 'courses');
+    if (!newCourses) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+
+    try {
+        await officerDao.insertNewCourses(newCourses);
+        res.status(200).end();
+    }
+    catch (err) {
+        res.status(505).json(err);
+    }
+});
+
+/* THERE IS NO SAMPLE FILE TO UPLOAD CLASSROOMS!
+app.post('/uploadFileClassroom', (req, res) => {
+    
+    const file = req.body.file;
+    officerDao.readFile(file, 'classrooms');
+    res.status(200).end()
+});*/
+
+app.post('/uploadFileStudents', (req, res) => {
+
+    const file = req.body.file;
+    officerDao.readFile(file, 'students');
+    res.status(200).end()
+});
+
+app.post('/uploadFileLessons', async (req, res) => {
+
+    const file = req.body.file;
+    const newLessons = officerDao.readFile(file, 'lessons');
+    if (!newLessons) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+
+    try {
+        await officerDao.insertNewSchedules(newLessons);
+        res.status(200).end();
+    }
+    catch (err) {
+        res.status(505).json(err);
+    }
+});
+
+app.post('/uploadFileTeachers', (req, res) => {
+
+    const file = req.body.file;
+    officerDao.readFile(file, 'teachers');
+    res.status(200).end()
+});
+
+app.post('/uploadFileEnrollment', (req, res) => {
+
+    const file = req.body.file;
+    officerDao.readFile(file, 'enrollment');
+    res.status(200).end()
 });
 
 app.post('/logout', (req, res) => {

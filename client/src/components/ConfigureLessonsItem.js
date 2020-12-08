@@ -3,17 +3,16 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 
 const configureLessonItem = (props) => {
-
   return (
     <ListGroup.Item id = {"lesson-" + props.lesson.scheduleId}>
         <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
             <CourseNameField id = {props.lesson.scheduleId} courseId = {props.lesson.courseId}
                 courses = {props.courses}/>
             <StartDateField id = {props.lesson.scheduleId} startDate = {props.lesson.startDate}/>
-            <EndDateField id = {props.course.scheduleId} endDate = {props.lesson.endDate}/>
-            <SeatsField id = {props.course.scheduleId} seats = {props.availableSeats}/>
-            <ClassroomField id = {props.course.scheduleId} classroom = {props.classroom}/>
-            <ButtonField id = {props.course.scheduleId} editCourse = {props.editCourse}/>
+            <EndDateField id = {props.lesson.scheduleId} endDate = {props.lesson.endDate}/>
+            <SeatsField id = {props.lesson.scheduleId} seats = {props.lesson.availableSeats}/>
+            <ClassroomField id = {props.lesson.scheduleId} classroom = {props.lesson.classroom}/>
+            <ButtonField id = {props.lesson.scheduleId} lesson = {props.lesson} editLesson = {props.editLesson}/>
         </div>
     </ListGroup.Item>
   );
@@ -36,7 +35,7 @@ function StartDateField(props){
     return(
         <div className="col-sm-2">
             <p id={"startDateOfLesson" + props.id}>
-                {props.endDate.format("ddd DD-MM-YYYY HH:mm").toString()}
+                {props.startDate.format("ddd DD-MM-YYYY HH:mm").toString()}
             </p>
         </div>
     );
@@ -54,7 +53,7 @@ function EndDateField(props){
 
 function SeatsField(props){
     return(
-        <div className="col-sm-1">
+        <div className="col-sm-2">
             <p id={"seatsOfLesson" + props.id}>
                 {props.seats}
             </p>
@@ -74,10 +73,10 @@ function ClassroomField(props){
 
 function ButtonField(props){
     return(
-        <div className="col-sm-2">
+        <div className="col-sm-1">
             <Button variant="primary" onClick={(event) => {
                 event.preventDefault();
-                props.editLesson(); //TODO SEND PARAMETERS
+                props.editLesson(props.lesson);
             }} id={"buttonFieldOflesson" + props.id}>
                 Edit
             </Button>
@@ -85,4 +84,4 @@ function ButtonField(props){
     );
 }
 
-export default configureCourseItem;
+export default configureLessonItem;
