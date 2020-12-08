@@ -175,29 +175,29 @@ const insertCourse = (course) => {
 }
 exports.insertNewCourses = async (courses) => {
 
-        try{
-            for(let i = 0; i < courses.length; i++){
-                const course = courses[i];
-                await insertCourse(course);
-            }
+    try {
+        for (let i = 0; i < courses.length; i++) {
+            const course = courses[i];
+            await insertCourse(course);
         }
-        catch(err){
-            throw(err);
-        }
-        return(true);
+    }
+    catch (err) {
+        throw (err);
+    }
+    return (true);
 
 }
 
 // reads the semester a course is held
 const readSemester = (courseID) => {
-    return new Promise ((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         const sql = 'SELECT Semester FROM Course WHERE CourseID = ?';
         db.get(sql, [courseID], (err, row) => {
-            if(err){
+            if (err) {
                 reject(err);
             }
             else {
-                if(row){
+                if (row) {
                     resolve(row.Semester);
                 }
                 else {
@@ -217,19 +217,19 @@ const adjustToISOformat = (time) => {
 
 // Generates all days of the semester in which the lecture is scheduled (e.g. all mondays from 14:00 to 15:30)
 const generateSchedule = async (schedule) => {
-    try{
+    try {
         const semester = await readSemester(schedule.Code);
-        if(!semester){
+        if (!semester) {
             return undefined;
         }
         else {
-        
+
             //compute dates of lectures
-            const semesterStart = semester === 1 ? moment('2020-09-28'): moment('2021-03-01');
-            const semesterEnd = semester === 1 ? moment('2021-01-15'): moment('2021-06-11');
-            
+            const semesterStart = semester === 1 ? moment('2020-09-28') : moment('2021-03-01');
+            const semesterEnd = semester === 1 ? moment('2021-01-15') : moment('2021-06-11');
+
             //go to the correct day of week
-            while(semesterStart.format('ddd').localeCompare(schedule.Day) !== 0){
+            while (semesterStart.format('ddd').localeCompare(schedule.Day) !== 0) {
                 semesterStart.add(1, 'days');
             }
 
@@ -238,20 +238,20 @@ const generateSchedule = async (schedule) => {
             const time = (schedule.Time).split('-');
             const startTime = adjustToISOformat(time[0]);
             const endTime = adjustToISOformat(time[1]);
-            const{Day, Time, ...info} = schedule;
-        
+            const { Day, Time, ...info } = schedule;
+
             //select all weeks days in the semester
-            while(selectedDate.isSameOrBefore(semesterEnd)){
+            while (selectedDate.isSameOrBefore(semesterEnd)) {
                 const timeStart = `${selectedDate.format('YYYY-MM-DD')}T${startTime}`;
                 const timeEnd = `${selectedDate.format('YYYY-MM-DD')}T${endTime}`;
-                selectedDates.push({...info, timeStart: timeStart, timeEnd: timeEnd});
+                selectedDates.push({ ...info, timeStart: timeStart, timeEnd: timeEnd });
                 selectedDate.add(7, 'days');
             }
             return selectedDates;
         }
     }
-    catch(err){
-        throw(err);
+    catch (err) {
+        throw (err);
     }
 }
 
@@ -260,47 +260,112 @@ const insertNewSchedule = (lesson) => {
     return new Promise((resolve, reject) => {
         const sql1 = 'SELECT * FROM CourseSchedule WHERE CourseID = ? AND TimeStart = ?';
         const sql2 = 'INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom) ' +
-            'VALUES (?, 1, 1, ?, ?, 0, ?, ?)'; 
-        
-            db.get(sql1, [lesson.Code, lesson.timeStart], (err, row) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-                if (row) {
-                    // there is already a scheduled lecture in that date for the course!
-                    resolve('Already existing');
-                }
-                else {
-                    db.run(sql2, [lesson.Code, lesson.timeStart, lesson.timeEnd, lesson.Seats, lesson.Room], (error) => {
-                        if (error) {
-                            reject(error);
-                            return;
-                        }
-                        else {
-                            resolve('Successfully inserted');
-                        }
-                    });
-                }
-            });
+            'VALUES (?, 1, 1, ?, ?, 0, ?, ?)';
+
+        db.get(sql1, [lesson.Code, lesson.timeStart], (err, row) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            if (row) {
+                // there is already a scheduled lecture in that date for the course!
+                resolve('Already existing');
+            }
+            else {
+                db.run(sql2, [lesson.Code, lesson.timeStart, lesson.timeEnd, lesson.Seats, lesson.Room], (error) => {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+                    else {
+                        resolve('Successfully inserted');
+                    }
+                });
+            }
+        });
     });
 }
 
 // inserts all schedules read from the file sent by the front end
 exports.insertNewSchedules = async (newSchedules) => {
-    try{
-        for(let i = 0; i < newSchedules.length; i++){
+    try {
+        for (let i = 0; i < newSchedules.length; i++) {
             const schedule = newSchedules[i];
             const lecturesToInsert = await generateSchedule(schedule);
-            for(let j = 0; j < lecturesToInsert.length; j++){
+            for (let j = 0; j < lecturesToInsert.length; j++) {
                 const lesson = lecturesToInsert[j];
                 await insertNewSchedule(lesson);
             }
         }
     }
-    catch(err){
-        console.log(err)
-        throw(err);
+    catch (err) {
+        throw (err);
     }
-    return(true);
+    return (true);
+}
+
+const insertNewUser = (user, userType) => {
+    return new Promise((resolve, reject) => {
+        
+        const sql1 = 'SELECT * FROM User WHERE UserID = ?';
+        const sql2 = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN) ' +
+            'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        const userID = userType === 1 ? user.Id : user.Number;
+        db.get(sql1, [userID], (err, row) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            if (row) {
+                // there is already a user with that id!
+                resolve('Already existing');
+            }
+            else {
+
+                const password = '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S';
+                const city = userType === 1 ? user.City : null;
+                const birthday = userType === 1 ? user.Birthday : null;
+                const name = userType === 1 ? user.Name : user.GivenName;
+                
+                db.run(sql2, [userID, name, user.Surname, user.OfficialEmail, userType, password, city, birthday, user.SSN], (error) => {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+                    else {
+                        resolve('Successfully inserted');
+                    }
+                });
+            }
+        });
+    });
+}
+
+exports.insertNewStudents = async (students) => {
+
+    try {
+        for (let i = 0; i < students.length; i++) {
+            const student = students[i];
+            await insertNewUser(student, 1);
+        }
+        console.log('finito')
+    }
+    catch (err) {
+        throw (err);
+    }
+    return (true);
+}
+
+exports.insertNewTeachers = async (teachers) => {
+
+    try {
+        for (let i = 0; i < teachers.length; i++) {
+            const teacher = teachers[i];
+            await insertNewUser(teacher, 2);
+        }
+    }
+    catch (err) {
+        throw (err);
+    }
+    return (true);
 }

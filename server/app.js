@@ -397,21 +397,6 @@ app.post('/uploadFileCourses', async (req, res) => {
     }
 });
 
-/* THERE IS NO SAMPLE FILE TO UPLOAD CLASSROOMS!
-app.post('/uploadFileClassroom', (req, res) => {
-    
-    const file = req.body.file;
-    officerDao.readFile(file, 'classrooms');
-    res.status(200).end()
-});*/
-
-app.post('/uploadFileStudents', (req, res) => {
-
-    const file = req.body.file;
-    officerDao.readFile(file, 'students');
-    res.status(200).end()
-});
-
 app.post('/uploadFileLessons', async (req, res) => {
 
     const file = req.body.file;
@@ -429,19 +414,55 @@ app.post('/uploadFileLessons', async (req, res) => {
     }
 });
 
-app.post('/uploadFileTeachers', (req, res) => {
+app.post('/uploadFileStudents', async (req, res) => {
 
     const file = req.body.file;
-    officerDao.readFile(file, 'teachers');
-    res.status(200).end()
+    const newStudents = officerDao.readFile(file, 'students');
+    if (!newStudents) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+    try {
+        await officerDao.insertNewStudents(newStudents);
+        res.status(200).end();
+    }
+    catch (err) {
+        console.log(err)
+        res.status(505).json(err);
+    }
+    
 });
 
-app.post('/uploadFileEnrollment', (req, res) => {
+app.post('/uploadFileTeachers', async (req, res) => {
+
+    const file = req.body.file;
+    const newTeachers = officerDao.readFile(file, 'teachers');
+    if (!newTeachers) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+    try {
+        await officerDao.insertNewTeachers(newTeachers);
+        res.status(200).end();
+    }
+    catch (err) {
+        console.log(error)
+        res.status(505).json(err);
+    }
+});
+
+app.post('/uploadFileEnrollment', async (req, res) => {
 
     const file = req.body.file;
     officerDao.readFile(file, 'enrollment');
     res.status(200).end()
 });
+
+/* THERE IS NO SAMPLE FILE TO UPLOAD CLASSROOMS!
+app.post('/uploadFileClassroom', async (req, res) => {
+    
+    const file = req.body.file;
+    officerDao.readFile(file, 'classrooms');
+    res.status(200).end()
+});*/
 
 app.post('/logout', (req, res) => {
     res.clearCookie('token').end();
