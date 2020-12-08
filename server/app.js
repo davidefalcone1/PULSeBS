@@ -444,7 +444,6 @@ app.post('/uploadFileTeachers', async (req, res) => {
         res.status(200).end();
     }
     catch (err) {
-        console.log(error)
         res.status(505).json(err);
     }
 });
@@ -452,8 +451,17 @@ app.post('/uploadFileTeachers', async (req, res) => {
 app.post('/uploadFileEnrollment', async (req, res) => {
 
     const file = req.body.file;
-    officerDao.readFile(file, 'enrollment');
-    res.status(200).end()
+    const newEnronllments = officerDao.readFile(file, 'enrollment');
+    if (!newEnronllments) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+    try {
+        await officerDao.insertNewEnrollments(newEnronllments);
+        res.status(200).end();
+    }
+    catch (err) {
+        res.status(505).json(err);
+    }
 });
 
 /* THERE IS NO SAMPLE FILE TO UPLOAD CLASSROOMS!

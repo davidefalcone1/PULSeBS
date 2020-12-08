@@ -236,6 +236,12 @@ const generateSchedule = async (schedule) => {
             const selectedDates = [];
             const selectedDate = semesterStart;
             const time = (schedule.Time).split('-');
+
+            if(time.length !== 2){
+                // the line is corrupted, so discard it!
+                return selectedDates;
+            }
+
             const startTime = adjustToISOformat(time[0]);
             const endTime = adjustToISOformat(time[1]);
             const { Day, Time, ...info } = schedule;
@@ -362,6 +368,49 @@ exports.insertNewTeachers = async (teachers) => {
         for (let i = 0; i < teachers.length; i++) {
             const teacher = teachers[i];
             await insertNewUser(teacher, 2);
+        }
+    }
+    catch (err) {
+        throw (err);
+    }
+    return (true);
+}
+
+const insertNewEnrollment = (enrollment) => {
+    return new Promise((resolve, reject) => {
+        const sql1 = 'SELECT * FROM StudentCourse WHERE CourseID = ? AND StudentID = ?';
+        const sql2 = 'INSERT INTO StudentCourse(CourseID, StudentID) ' +
+            'VALUES (?, ?)';
+
+        db.get(sql1, [enrollment.Code, enrollment.Student], (err, row) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            if (row) {
+                // the student is already enrolled in that course!
+                resolve('Already existing');
+            }
+            else {
+                db.run(sql2, [enrollment.Code, enrollment.Student], (error) => {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+                    else {
+                        resolve('Successfully inserted');
+                    }
+                });
+            }
+        });
+    });
+}
+exports.insertNewEnrollments = async (newEnrollments) => {
+
+    try {
+        for (let i = 0; i < newEnrollments.length; i++) {
+            const enrollment = newEnrollments[i];
+            await insertNewEnrollment(enrollment);
         }
     }
     catch (err) {
