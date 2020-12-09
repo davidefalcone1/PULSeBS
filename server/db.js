@@ -1,9 +1,9 @@
 'use strict';
 
 const sqlite = require('sqlite3').verbose();
+const path = require('path');
 
-//const DBSOURCE = './db/db.db';
-const DBSOURCE = './db/newdb.db';
+const DBSOURCE = path.resolve(__dirname, './db/db.db');
 
 const db = new sqlite.Database(DBSOURCE, (err) => {
     if (err) {
