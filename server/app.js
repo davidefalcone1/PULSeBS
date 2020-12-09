@@ -18,7 +18,7 @@ const expireTime = 900; //seconds
 const app = express();
 
 app.use(morgan("tiny", { skip: (req, res) => process.env.NODE_ENV === 'test' }));// Set-up logging
-app.use(express.json());// Process body content
+app.use(express.json({ limit: '50mb' }));// Process body content
 app.use(cookieParser());
 
 // LOGIN API
@@ -331,58 +331,153 @@ app.post('/bookLesson', async (req, res) => {
 
 //OFFICER API
 app.get('/allClassrooms', async (req, res) => {
-    try{
+    try {
         const classes = await officerDao.getClassrooms();
         res.json(classes);
     }
-    catch(error){
+    catch (error) {
         res.status(505).json(error);
     }
 });
 
 app.get('/allCourses', async (req, res) => {
-    try{
+    try {
         const classes = await officerDao.getCourses();
         res.json(classes);
     }
-    catch(error){
+    catch (error) {
         res.status(505).json(error);
     }
 });
 
 app.get('/allStudents', async (req, res) => {
-    try{
+    try {
         const students = await officerDao.getUsers(1);
         res.json(students);
     }
-    catch(error){
+    catch (error) {
         res.status(505).json(error);
     }
 });
 
 app.get('/allTeachers', async (req, res) => {
-    try{
+    try {
         const teachers = await officerDao.getUsers(2);
         res.json(teachers);
     }
-    catch(error){
+    catch (error) {
         res.status(505).json(error);
     }
 });
 
 app.get('/allLessons', async (req, res) => {
-    try{
+    try {
         const lessons = await officerDao.getLessons();
         res.json(lessons);
     }
-    catch(error){
+    catch (error) {
         res.status(505).json(error);
     }
 });
 
-app.post('/uploadFileCourses', (req, res) => {
-    console.log(req.body);
-    res.status(200).end()
+app.post('/uploadFileCourses', async (req, res) => {
+
+    const file = req.body.file;
+    const newCourses = officerDao.readFile(file, 'courses');
+    if (!newCourses) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+
+    try {
+        await officerDao.insertNewCourses(newCourses);
+        res.status(200).end();
+    }
+    catch (err) {
+        res.status(505).json(err);
+    }
+});
+
+app.post('/uploadFileLessons', async (req, res) => {
+
+    const file = req.body.file;
+    const newLessons = officerDao.readFile(file, 'lessons');
+    if (!newLessons) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+
+    try {
+        await officerDao.insertNewSchedules(newLessons);
+        res.status(200).end();
+    }
+    catch (err) {
+        res.status(505).json(err);
+    }
+});
+
+app.post('/uploadFileStudents', async (req, res) => {
+
+    const file = req.body.file;
+    const newStudents = officerDao.readFile(file, 'students');
+    if (!newStudents) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+    try {
+        await officerDao.insertNewStudents(newStudents);
+        res.status(200).end();
+    }
+    catch (err) {
+        console.log(err)
+        res.status(505).json(err);
+    }
+    
+});
+
+app.post('/uploadFileTeachers', async (req, res) => {
+
+    const file = req.body.file;
+    const newTeachers = officerDao.readFile(file, 'teachers');
+    if (!newTeachers) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+    try {
+        await officerDao.insertNewTeachers(newTeachers);
+        res.status(200).end();
+    }
+    catch (err) {
+        res.status(505).json(err);
+    }
+});
+
+app.post('/uploadFileEnrollment', async (req, res) => {
+
+    const file = req.body.file;
+    const newEnronllments = officerDao.readFile(file, 'enrollment');
+    if (!newEnronllments) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+    try {
+        await officerDao.insertNewEnrollments(newEnronllments);
+        res.status(200).end();
+    }
+    catch (err) {
+        res.status(505).json(err);
+    }
+});
+
+app.post('/uploadFileClassroom', async (req, res) => {
+    
+    const file = req.body.file;
+    const newRooms = officerDao.readFile(file, 'classrooms');
+    if (!newRooms) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+    try {
+        await officerDao.insertNewRooms(newRooms);
+        res.status(200).end();
+    }
+    catch (err) {
+        res.status(505).json(err);
+    }
 });
 
 app.post('/logout', (req, res) => {
