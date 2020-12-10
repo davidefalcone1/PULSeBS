@@ -158,52 +158,44 @@ exports.readFile = (fileContent, fileType) => {
     return rowsToInsert;
 }
 
+exports.insertNewCourses = async (courses) => {
+    return new Promise ((resolve, reject) => {
+        db.serialize(() => {
+            const sql1 = 'SELECT CourseID FROM Course';
+            db.all(sql1, [], (err, rows) => {
+                if(err){
+                    reject(err);
+                }
+                else {
 
-const insertCourse = (course) => {
-    return new Promise((resolve, reject) => {
+                    //filter courses excluding the ones already in the db
+                    const alreadyInserted = rows.map(row => row.CourseID);
+                    const coursesToInsert = courses.filter((course) => {
+                        return !alreadyInserted.includes(course.Code);
+                    });
 
-        const sql1 = 'SELECT * FROM Course WHERE CourseID = ?';
-        const sql2 = 'INSERT INTO Course(CourseID, Year, Semester, CourseName, TeacherID) ' +
-            'VALUES (?, ?, ?, ?, ?)';
-
-        db.get(sql1, [course.CourseID], (err, row) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            if (row) {
-                // there is already a course with the same course code!
-                resolve('Already existing');
-            }
-            else {
-                // insert the new course
-                db.run(sql2, [course.Code, course.Year, course.Semester, course.Course, course.Teacher], (error) => {
-                    if (error) {
-                        reject(error);
-                        return;
+                    if(coursesToInsert.length !== 0){
+                        const sql2 = 'INSERT INTO Course(CourseID, Year, Semester, CourseName, TeacherID) ' +
+                                        'VALUES (?, ?, ?, ?, ?)';
+                        for(let i = 0; i < coursesToInsert.length; i++){
+                            const course = coursesToInsert[i];
+                            db.run(sql2, [course.Code, course.Year, course.Semester, course.Course, course.Teacher], (error) => {
+                                if (error) {
+                                    reject(error);
+                                    return;
+                                }
+                                else {
+                                    resolve('Successfully inserted');
+                                }
+                            });
+                        }
                     }
-                    else {
-                        resolve('Successfully inserted');
-                    }
-                });
-            }
+                }
+            });
         });
     });
+
 }
-/*exports.insertNewCourses = async (courses) => {
-
-    try {
-        for (let i = 0; i < courses.length; i++) {
-            const course = courses[i];
-            await insertCourse(course);
-        }
-    }
-    catch (err) {
-        throw (err);
-    }
-    return (true);
-
-}*/
 
 // reads the semester a course is held
 const readSemester = (courseID) => {
@@ -425,44 +417,7 @@ exports.insertNewEnrollments = async (newEnrollments) => {
 
     })
 }
-exports.insertNewCourses = async (courses) => {
-    return new Promise ((resolve, reject) => {
-        db.serialize(() => {
-            const sql1 = 'SELECT CourseID FROM Course';
-            db.all(sql1, [], (err, rows) => {
-                if(err){
-                    reject(err);
-                }
-                else {
 
-                    const alreadyInserted = rows.map(row => row.CourseID);
-                    //filter courses excluding the ones already in the db
-                    const coursesToInsert = courses.filter((course) => {
-                        return !alreadyInserted.includes(course.Code);
-                    });
-                    console.log(coursesToInsert)
-                    if(coursesToInsert.length !== 0){
-                        const sql2 = 'INSERT INTO Course(CourseID, Year, Semester, CourseName, TeacherID) ' +
-                                        'VALUES (?, ?, ?, ?, ?)';
-                        for(let i = 0; i < coursesToInsert.length; i++){
-                            const course = coursesToInsert[i];
-                            db.run(sql2, [course.Code, course.Year, course.Semester, course.Course, course.Teacher], (error) => {
-                                if (error) {
-                                    reject(error);
-                                    return;
-                                }
-                                else {
-                                    resolve('Successfully inserted');
-                                }
-                            });
-                        }
-                    }
-                }
-            });
-        });
-    });
-
-}
 function comparer(otherArray) {
     return function (current) {
         return otherArray.filter(function (other) {
