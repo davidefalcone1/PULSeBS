@@ -10,7 +10,6 @@ import { AuthContext } from '../_services/AuthContext';
 import { Redirect } from 'react-router-dom';
 
 const configureClassesPage = (props) => {
-  console.log(props.enrollmentInfos)
   return(
     <ConfigureClasses courses={props.courses} studentsInfos={props.studentsInfos} 
         enrollmentInfos={props.enrollmentInfos} createNewEnrollment={props.createNewEnrollment}

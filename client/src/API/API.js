@@ -505,7 +505,7 @@ function getAllLessons(){
 }
 function getAllEnrollments(){
     return new Promise(async function (resolve, reject) {
-        fetch('/allEnrollements', {
+        fetch('/allEnrollments', {
             method: 'GET',
         })
             .then(async (response) => {
