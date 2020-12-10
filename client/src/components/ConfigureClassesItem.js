@@ -1,36 +1,44 @@
 import React from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-const configureClassItem = (props) => {
+const configureClassroomItem = (props) => {
 
   return (
     <ListGroup.Item id = {"class-" + props.class.classId}>
         <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
-            <NameField id = {props.class.classId} name = {props.class.classroomName}/>
-            <SeatsField id = {props.class.classId} seats = {props.class.maxSeats}/>
+            <CourseField id = {"c-" + props.enrollment.courseId + "-" + props.enrollment.studentId}
+                courseId = {props.enrollment.courseId} courses = {props.courses}/>
+            <StudentField id = {"s-" + props.enrollment.courseId + "-" + props.enrollment.studentId}
+                studentId = {props.enrollment.studentId} students = {props.studentsInfos}/>
         </div>
     </ListGroup.Item>
   );
 }
 
-function NameField(props){
+function CourseField(props){
     return(
         <div className="col-sm-6">
-            <h6 id={"nameOfClass_" + props.id}>
-                {props.name}
-            </h6>
+            {props.courses.map((c) => //per ogni lezione del mio corso
+                (c.courseId === props.courseId) &&
+                    <h6 id={"nameOfcourseForEnrollement_" + props.id}>
+                        {c.courseName}
+                    </h6>
+            )}
         </div>
     );
 }
 
-function SeatsField(props){
+function StudentField(props){
     return(
         <div className="col-sm-6">
-            <h6 id={"seatsOfClass_" + props.id}>
-                {props.seats}
-            </h6>
+            {props.studentsInfos.map((s) => //per ogni lezione del mio corso
+                (s.personId === props.studentId) &&
+                    <h6 id={"nameOfstudentForEnrollement_" + props.id}>
+                        {s.fullName}
+                    </h6>
+            )}
         </div>
     );
 }
 
-export default configureClassItem;
+export default configureClassroomItem;
