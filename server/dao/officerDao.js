@@ -5,6 +5,7 @@ const ClassroomData = require('./ClassroomData');
 const CourseData = require('./CourseData');
 const UserData = require('./UserData');
 const LessonsData = require('./LessonsData');
+const EnrollmentData = require('./EnrollmentData');
 const moment = require('moment');
 
 exports.getClassrooms = () => {
@@ -68,6 +69,20 @@ exports.getLessons = () => {
             }
         });
     });
+}
+
+exports.getEnrollments = () => {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT * FROM StudentCourse';
+        db.all(sql, [], (err, rows) => {
+            if(err){
+                reject (err);
+            }
+            else {
+                const enrollments = rows.map(row => new EnrollmentData(row.CourseID, row.StudentID));
+            }
+        });
+    })
 }
 
 const checkHeaderFields = (header, fileType) => {
