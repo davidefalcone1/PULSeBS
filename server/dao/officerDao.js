@@ -480,10 +480,11 @@ exports.insertNewRooms = async (rooms) => {
 }
 
 exports.createEnrollment = (enrollment) => {
+    console.log(enrollment)
     return new Promise ((resolve, reject) => {
         const sql = 'INSERT INTO StudentCourse(CourseID, StudentID) ' +
                     'VALUES (?, ?)';
-        db.run(sql, [enrollment.courseID, enrollment.studentID], (err) => {
+        db.run(sql, [enrollment.courseId, enrollment.studentId], (err) => {
             if(err){
                 reject (err);
             }
