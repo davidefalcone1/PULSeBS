@@ -112,14 +112,6 @@ class ConfigureUser extends React.Component {
                       }} id={"uploadFileOfUsers"}>
                           Upload User File
                     </Button>
-                  {this.props.type === 'student' &&
-                      <Button variant="primary" onClick={(event) => {
-                            event.preventDefault();
-                            this.activateUploadFileEnrollmentModal();
-                        }} id={"uploadFileEnrollmentOfUsers"}>
-                            Upload Enrollment File
-                      </Button>
-                  }
                 </Row>
                 <ListGroup as="ul" variant="flush">
                   <ListHeader />
