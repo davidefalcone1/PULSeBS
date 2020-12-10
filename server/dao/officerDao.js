@@ -7,6 +7,7 @@ const UserData = require('./UserData');
 const LessonsData = require('./LessonsData');
 const EnrollmentData = require('./EnrollmentData');
 const moment = require('moment');
+const { routes } = require('../app');
 
 exports.getClassrooms = () => {
     return new Promise((resolve, reject) => {
@@ -189,7 +190,7 @@ const insertCourse = (course) => {
         });
     });
 }
-exports.insertNewCourses = async (courses) => {
+/*exports.insertNewCourses = async (courses) => {
 
     try {
         for (let i = 0; i < courses.length; i++) {
@@ -202,7 +203,7 @@ exports.insertNewCourses = async (courses) => {
     }
     return (true);
 
-}
+}*/
 
 // reads the semester a course is held
 const readSemester = (courseID) => {
@@ -424,7 +425,44 @@ exports.insertNewEnrollments = async (newEnrollments) => {
 
     })
 }
+exports.insertNewCourses = async (courses) => {
+    return new Promise ((resolve, reject) => {
+        db.serialize(() => {
+            const sql1 = 'SELECT CourseID FROM Course';
+            db.all(sql1, [], (err, rows) => {
+                if(err){
+                    reject(err);
+                }
+                else {
 
+                    const alreadyInserted = rows.map(row => row.CourseID);
+                    //filter courses excluding the ones already in the db
+                    const coursesToInsert = courses.filter((course) => {
+                        return !alreadyInserted.includes(course.Code);
+                    });
+                    console.log(coursesToInsert)
+                    if(coursesToInsert.length !== 0){
+                        const sql2 = 'INSERT INTO Course(CourseID, Year, Semester, CourseName, TeacherID) ' +
+                                        'VALUES (?, ?, ?, ?, ?)';
+                        for(let i = 0; i < coursesToInsert.length; i++){
+                            const course = coursesToInsert[i];
+                            db.run(sql2, [course.Code, course.Year, course.Semester, course.Course, course.Teacher], (error) => {
+                                if (error) {
+                                    reject(error);
+                                    return;
+                                }
+                                else {
+                                    resolve('Successfully inserted');
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+        });
+    });
+
+}
 function comparer(otherArray) {
     return function (current) {
         return otherArray.filter(function (other) {
