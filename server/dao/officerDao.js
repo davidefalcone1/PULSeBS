@@ -237,7 +237,7 @@ const generateSchedule = async (schedule) => {
             const selectedDate = semesterStart;
             const time = (schedule.Time).split('-');
 
-            if(time.length !== 2){
+            if (time.length !== 2) {
                 // the line is corrupted, so discard it!
                 return selectedDates;
             }
@@ -312,7 +312,7 @@ exports.insertNewSchedules = async (newSchedules) => {
 
 const insertNewUser = (user, userType) => {
     return new Promise((resolve, reject) => {
-        
+
         const sql1 = 'SELECT * FROM User WHERE UserID = ?';
         const sql2 = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN) ' +
             'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
@@ -332,7 +332,7 @@ const insertNewUser = (user, userType) => {
                 const city = userType === 1 ? user.City : null;
                 const birthday = userType === 1 ? user.Birthday : null;
                 const name = userType === 1 ? user.Name : user.GivenName;
-                
+
                 db.run(sql2, [userID, name, user.Surname, user.OfficialEmail, userType, password, city, birthday, user.SSN], (error) => {
                     if (error) {
                         reject(error);
@@ -376,48 +376,47 @@ exports.insertNewTeachers = async (teachers) => {
     return (true);
 }
 
-const insertNewEnrollment = (enrollment) => {
-    return new Promise((resolve, reject) => {
-        const sql1 = 'SELECT * FROM StudentCourse WHERE CourseID = ? AND StudentID = ?';
-        const sql2 = 'INSERT INTO StudentCourse(CourseID, StudentID) ' +
-            'VALUES (?, ?)';
-
-        db.get(sql1, [enrollment.Code, enrollment.Student], (err, row) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            if (row) {
-                // the student is already enrolled in that course!
-                resolve('Already existing');
-            }
-            else {
-                db.run(sql2, [enrollment.Code, enrollment.Student], (error) => {
-                    if (error) {
-                        reject(error);
-                        return;
-                    }
-                    else {
-                        resolve('Successfully inserted');
-                    }
-                });
-            }
-        });
-    });
-}
 exports.insertNewEnrollments = async (newEnrollments) => {
+    return new Promise((resolve, reject) => {
+        db.serialize(function () {
+            db.all('SELECT * FROM StudentCourse', (err, row) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
 
-    try {
-        for (let i = 0; i < newEnrollments.length; i++) {
-            const enrollment = newEnrollments[i];
-            await insertNewEnrollment(enrollment);
-        }
-    }
-    catch (err) {
-        throw (err);
-    }
-    return (true);
+                //filter new Enrollments file by exist records in DB
+                var filteredEnrollment = newEnrollments.filter(comparer(row));
+                if (filteredEnrollment.length) {
+                    db.run("begin transaction");
+                    for (var i = 0; i < filteredEnrollment.length; i++) {
+                        db.run('INSERT INTO StudentCourse(CourseID, StudentID) VALUES (?, ?)', [filteredEnrollment[i].Code, filteredEnrollment[i].Student], (error) => {
+                            if (error) {
+                                reject(error);
+                                return;
+                            }
+                            else {
+                                resolve('Successfully inserted');
+                            }
+                        });
+                    }
+                    db.run("commit");//bulk insert
+                }
+                resolve('Successfully inserted');
+            });
+        });
+
+    })
 }
+
+function comparer(otherArray) {
+    return function (current) {
+        return otherArray.filter(function (other) {
+            return other.CourseID == current.Code && other.StudentID == current.Student
+        }).length == 0;
+    }
+}
+
 
 // check the fields of room if file is provided!
 // for now they are s upposed to be Room, Seats
@@ -451,7 +450,7 @@ const insertNewRoom = (room) => {
     });
 }
 
-exports.insertNewRooms = async (rooms) =>  {
+exports.insertNewRooms = async (rooms) => {
     try {
         for (let i = 0; i < rooms.length; i++) {
             const room = rooms[i];
