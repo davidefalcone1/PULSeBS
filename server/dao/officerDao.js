@@ -480,7 +480,6 @@ exports.insertNewRooms = async (rooms) => {
 }
 
 exports.createEnrollment = (enrollment) => {
-    console.log(enrollment)
     return new Promise ((resolve, reject) => {
         const sql = 'INSERT INTO StudentCourse(CourseID, StudentID) ' +
                     'VALUES (?, ?)';
