@@ -478,3 +478,18 @@ exports.insertNewRooms = async (rooms) => {
     }
     return (true);
 }
+
+exports.createEnrollment = (enrollment) => {
+    return new Promise ((resolve, reject) => {
+        const sql = 'INSERT INTO StudentCourse(CourseID, StudentID) ' +
+                    'VALUES (?, ?)';
+        db.run(sql, [enrollment.courseID, enrollment.studentID], (err) => {
+            if(err){
+                reject (err);
+            }
+            else {
+                resolve('Succesfully inserted!')
+            }
+        });
+    });
+}
