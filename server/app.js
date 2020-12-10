@@ -20,7 +20,15 @@ const app = express();
 app.use(morgan("tiny", { skip: (req, res) => process.env.NODE_ENV === 'test' }));// Set-up logging
 app.use(express.json({ limit: '50mb' }));// Process body content
 app.use(cookieParser());
-
+app.get('/allEnrollments', async(req, res) => {
+    try{
+        const enrollments = await officerDao.getEnrollments();
+        res.json(enrollments);
+    }
+    catch(error){
+        res.status(505).json(error)
+    }
+});
 // LOGIN API
 app.post('/users/authenticate', async (req, res) => {
     const username = req.body.username;

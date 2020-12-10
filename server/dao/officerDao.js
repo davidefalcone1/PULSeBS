@@ -80,6 +80,7 @@ exports.getEnrollments = () => {
             }
             else {
                 const enrollments = rows.map(row => new EnrollmentData(row.CourseID, row.StudentID));
+                resolve(enrollments);
             }
         });
     })
