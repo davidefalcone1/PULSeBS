@@ -10,9 +10,10 @@ import { AuthContext } from '../_services/AuthContext';
 import { Redirect } from 'react-router-dom';
 
 const configureClassesPage = (props) => {
+  console.log(props.enrollmentInfos)
   return(
     <ConfigureClasses courses={props.courses} studentsInfos={props.studentsInfos} 
-        enrollementsInfos={props.enrollmentInfos} createNewEnrollment={props.createNewEnrollment}
+        enrollmentInfos={props.enrollmentInfos} createNewEnrollment={props.createNewEnrollment}
         uploadFileEnrollment={props.uploadFileEnrollment}/>
   )
 }
@@ -80,8 +81,9 @@ class ConfigureClasses extends React.Component {
     return(
       <AuthContext.Consumer>
         {(context) => (
-          <>        
-            {context.user && this.props.courses && this.props.studentsInfos && this.props.enrollementsInfos &&
+          <>
+            {context.user && this.props.courses && this.props.studentsInfos 
+              && this.props.enrollmentInfos &&
               <>
                 <br/>
                 <Row className="justify-content-around">
@@ -100,7 +102,7 @@ class ConfigureClasses extends React.Component {
                 </Row>
                 <ListGroup as="ul" variant="flush">
                     <ListHeader />
-                    {this.props.enrollementsInfos.map((e) => 
+                    {this.props.enrollmentInfos.map((e) => 
                         <ConfigureClassesItem key = {e.studentId + "-" + e.courseId}
                             enrollment = {e} students = {this.props.studentsInfos}
                             courses = {this.props.courses}/>)}
@@ -223,7 +225,7 @@ class ConfigureClasses extends React.Component {
               </>
             }
 
-            {context.user && (!this.props.courses || !this.props.studentsInfos || !this.props.enrollementsInfos) &&
+            {context.user && (!this.props.courses || !this.props.studentsInfos || !this.props.enrollmentInfos) &&
               <NoItemsImage/>
             }
             {!context.user && <Redirect to="/login"/>}

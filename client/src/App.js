@@ -362,7 +362,7 @@ class App extends React.Component {
             </Route>
             <Route path='/configureClassesList'>
               {!this.state.user ? <Redirect to='/login' /> : <ConfigureClasses courses={this.state.courses}
-                studentsInfos={this.state.studentsInfos} enrollementsInfos={this.state.enrollmentInfos}
+                studentsInfos={this.state.studentsInfos} enrollmentInfos={this.state.enrollmentInfos}
                 createNewEnrollment={this.createNewEnrollment} uploadFileEnrollment={this.uploadFileEnrollment}/>}
             </Route>
             <Route path="/login">
