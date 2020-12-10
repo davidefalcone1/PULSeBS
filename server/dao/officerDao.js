@@ -481,14 +481,28 @@ exports.insertNewRooms = async (rooms) => {
 
 exports.createEnrollment = (enrollment) => {
     return new Promise ((resolve, reject) => {
-        const sql = 'INSERT INTO StudentCourse(CourseID, StudentID) ' +
+        const sql1 = 'SELECT * FROM StudentCourse WHERE CourseID = ? AND StudentID = ?'
+        const sql2 = 'INSERT INTO StudentCourse(CourseID, StudentID) ' +
                     'VALUES (?, ?)';
-        db.run(sql, [enrollment.courseId, enrollment.studentId], (err) => {
-            if(err){
-                reject (err);
+
+        db.get(sql1, [enrollment.courseId, enrollment.studentId], (error, row) => {
+            if(error){
+                reject(error);
             }
             else {
-                resolve('Succesfully inserted!')
+                if(row){
+                    resolve('ALready existing!');
+                }
+                else {
+                    db.run(sql2, [enrollment.courseId, enrollment.studentId], (err) => {
+                        if(err){
+                            reject (err);
+                        }
+                        else {
+                            resolve('Succesfully inserted!')
+                        }
+                    });
+                }
             }
         });
     });
