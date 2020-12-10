@@ -3,6 +3,7 @@ import CourseData from './CourseData';
 import UserData from './UserData';
 import BookingData from './BookingData';
 import ClassroomData from './ClassroomData';
+import EnrollmentData from './EnrollementData';
 import { BehaviorSubject } from 'rxjs';
 
 
@@ -307,6 +308,27 @@ async function createNewClassroom(classRoomName, maxSeats){
         }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
+async function createNewEnrollment(studentId, courseId){
+    return new Promise((resolve, reject) => {
+        fetch("/createNewEnrollment", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ studentId, courseId })
+        }).then((response) => {
+            if (response.ok) {
+                resolve(null);
+            }
+            else {
+                response.json()
+                    .then((obj) => { reject(obj); })
+                    .catch((err) => {
+                        reject(
+                            { errors: [{ param: "Application", msg: "Cannot parse server response" }] })
+                    });
+            }
+        }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
+}
 async function createNewCourse(courseName, teacherId){
     return new Promise((resolve, reject) => {
         fetch("/createNewCourse", {
@@ -473,6 +495,24 @@ function getAllLessons(){
                 if (response.ok) {
                     const list = lessonsJson.map((lesson) => {
                         return LessonsData.fromJson(lesson);
+                    });
+                    resolve(list);
+                } else {
+                    reject();
+                }
+            }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
+    });
+}
+function getAllEnrollments(){
+    return new Promise(async function (resolve, reject) {
+        fetch('/allEnrollements', {
+            method: 'GET',
+        })
+            .then(async (response) => {
+                const enrollmentsJson = await response.json();
+                if (response.ok) {
+                    const list = enrollmentsJson.map((lesson) => {
+                        return EnrollmentData.fromJson(lesson);
                     });
                     resolve(list);
                 } else {
@@ -658,8 +698,8 @@ const API = {
     login, logout,
     getStudentCourses, getMyBookableLessons, getMyBookedLessons, getMyWaitingBookedLessons, bookLesson, deleteBooking,
     getMyCoursesLessons, getTeacherCourses, getBookedStudents, getStudentsData, makeLessonRemote, cancelLesson, isAuthenticated, setStudentAsPresent,
-    createNewClassroom, createNewCourse, createNewUser, createNewLesson, editLesson,
-    getAllClassrooms, getAllCourses, getAllStudents, getAllTeachers, getAllLessons,
+    createNewClassroom, createNewCourse, createNewUser, createNewLesson, editLesson, createNewEnrollment,
+    getAllClassrooms, getAllCourses, getAllStudents, getAllTeachers, getAllLessons, getAllEnrollments,
     uploadFileClassrooms, uploadFileCourses, uploadFileLessons, uploadFileStudents, uploadFileTeachers, uploadFileEnrollment
 };
 export default API;

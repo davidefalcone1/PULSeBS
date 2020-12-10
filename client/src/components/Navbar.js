@@ -31,6 +31,7 @@ const navbar = (props) => {
                             <Nav.Link as={NavLink} to="/configureTeachersList"> Teachers</Nav.Link>
                             <Nav.Link as={NavLink} to="/configureLessonsList"> Lessons</Nav.Link>
                             <Nav.Link as={NavLink} to="/configureClassesList"> Classes</Nav.Link>
+                            <Nav.Link as={NavLink} to="/configureClassroomsList"> Classrooms</Nav.Link>
                         </>}
                     </Nav>
 

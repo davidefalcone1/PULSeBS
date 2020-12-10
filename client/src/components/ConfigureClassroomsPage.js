@@ -1,29 +1,29 @@
 import React from 'react';
-import ConfigureUsersItem from './ConfigureUsersItem';
+import ConfigureClassroomItem from './ConfigureClassroomsItem';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/esm/Button';
 import Row from 'react-bootstrap/Row';
 import Modal from 'react-bootstrap/Modal';
 import Alert from 'react-bootstrap/Alert';
 import Form from 'react-bootstrap/Form';
-import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../_services/AuthContext';
+import { Redirect } from 'react-router-dom';
 
-const configureUserPage = (props) => {
+const configureClassroomsPage = (props) => {
   return(
-    <ConfigureUser usersList={props.usersList} createNewUser={props.createNewUser} type={props.type}
-      uploadFileUser={props.uploadFileUser} uploadFileEnrollment={props.uploadFileEnrollment}/>
-  );
+    <ConfigureClasses classesList = {props.classesList} createNewClass = {props.createNewClassroom}
+      uploadFileClassrooms={props.uploadFileClassrooms}/>
+  )
 }
 
-class ConfigureUser extends React.Component {
+class ConfigureClasses extends React.Component {
   constructor(props) {
     super(props);
     this.props = props;
     this.state = {
       file: undefined, isUploading: false, errorFile: false,
-      isCreating: false, userId: '', fullName:'', email: '', password: '',
-      errorId: false, errorName: false, errorEmail: false, errorPW: false
+      isCreating: false, classRoomName: '', maxSeats: 0,
+      errorName: false, errorSeats: false
     }
   }
 
@@ -36,17 +36,11 @@ class ConfigureUser extends React.Component {
 
   updateField = (name, value) => {
     this.setState({[name]: value}, () => {
-      if(this.state.userId !== ''){
-        this.setState({errorId: false});
-      }
-      if(this.state.fullName !== ''){
+      if(this.state.classRoomName !== ''){
         this.setState({errorName: false});
       }
-      if(this.state.email !== ''){
-        this.setState({errorEmail: false});
-      }
-      if(this.state.password !== ''){
-        this.setState({errorPW: false});
+      if(this.state.maxSeats > 0){
+          this.setState({errorSeats: false});
       }
       if(this.state.file !== undefined && this.state.file !== ''){
         this.setState({errorFile: false});
@@ -58,21 +52,14 @@ class ConfigureUser extends React.Component {
     if (!this.form.checkValidity()) {
         this.form.reportValidity();
     }
-    if(this.state.userId !== ''){
-      this.setState({errorId: false});
+    else if(this.state.classRoomName === ''){
+        this.setState({errorName: true});
     }
-    if(this.state.fullName !== ''){
-      this.setState({errorName: false});
-    }
-    if(this.state.email !== ''){
-      this.setState({errorEmail: false});
-    }
-    if(this.state.password !== ''){
-      this.setState({errorPW: false});
+    else if(this.state.maxSeats <= 0){
+        this.setState({errorSeats: true});
     }
     else {
-        this.props.createNewUser(this.state.userId, this.state.fullName, this.state.email,
-          this.state.password, this.props.type)
+        this.props.createNewClass(this.state.classRoomName, this.state.maxSeats)
     }
   }
   handleSubmitFile = () => {
@@ -82,85 +69,61 @@ class ConfigureUser extends React.Component {
     else if(this.state.file === undefined || this.state.file === ''){ 
       this.setState({errorFile: true});
     }
-    else if(this.props.type === 'student' && (this.state.file === undefined || this.state.file === '')){ 
-      this.setState({errorFileEnrollment: true});
-    }
     else {
-        this.props.uploadFileUser(this.state.file)
+        this.props.uploadFileClassrooms(this.state.file)
         this.setState({isUploading: false})
     }
   }
-
+  
   render(){
     return(
       <AuthContext.Consumer>
         {(context) => (
           <>        
-            {context.user && this.props.usersList &&
+            {context.user && this.props.classesList &&
               <>
                 <br/>
                 <Row className="justify-content-around">
                     <Button variant="primary" onClick={(event) => {
                           event.preventDefault();
                           this.activateModal();
-                      }} id={"activateModalOfUsers"}>
+                      }} id={"activateModalOfClasses"}>
                           Add New
                     </Button>
                     <Button variant="primary" onClick={(event) => {
                           event.preventDefault();
                           this.activateUploadFileModal();
-                      }} id={"uploadFileOfUsers"}>
-                          Upload User File
+                      }} id={"uploadFileOfClasses"}>
+                          Upload File
                     </Button>
-                  {this.props.type === 'student' &&
-                      <Button variant="primary" onClick={(event) => {
-                            event.preventDefault();
-                            this.activateUploadFileEnrollmentModal();
-                        }} id={"uploadFileEnrollmentOfUsers"}>
-                            Upload Enrollment File
-                      </Button>
-                  }
                 </Row>
                 <ListGroup as="ul" variant="flush">
-                  <ListHeader />
-                    {this.props.usersList.map((user) => 
-                      <ConfigureUsersItem key = {user.personId} user = {user}/>)
-                    }
+                    <ListHeader />
+                    {this.props.classesList.map((c) => 
+                        <ConfigureClassroomItem key = {c.classId} class = {c}/>)}
                 </ListGroup>
 
                 <Modal show={this.state.isCreating} animation={false} scrollable={true}>
                   <Modal.Header>
-                    <Modal.Title>Create new {this.props.type}</Modal.Title>
+                    <Modal.Title>Create new class</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
-                    <Form method="POST" action="" id="newUserForm" onSubmit={(ev) => {
+                    <Form method="POST" action="" id="newClassForm" onSubmit={(ev) => {
                       ev.preventDefault();
                       this.handleSubmit();
                     }} ref={(form) => this.form = form}>
                           
                       <Form.Group>
-                        <Form.Label className="control-label">User Id</Form.Label>
-                        <Form.Control type="text" name="userId" size = "lg"
-                          value = {this.state.userId} required autoFocus
+                        <Form.Label className="control-label">Classroom Name</Form.Label>
+                        <Form.Control type="text" name="classRoomName" size = "lg"
+                          value = {this.state.classRoomName} required autoFocus
                           onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
                       </Form.Group>
                       <Form.Group>
-                        <Form.Label className="control-label">User Full Name</Form.Label>
-                        <Form.Control type="text" name="fullName" size = "lg"
-                          value = {this.state.fullName} required
-                          onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
-                      </Form.Group>
-                      <Form.Group>
-                        <Form.Label className="control-label">User Email</Form.Label>
-                        <Form.Control type="text" name="email" size = "lg"
-                          value = {this.state.email} required
-                          onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
-                      </Form.Group>
-                      <Form.Group>
-                        <Form.Label className="control-label">User Id</Form.Label>
-                        <Form.Control type="text" name="password" size = "lg"
-                          value = {this.state.password} required
-                          onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
+                        <Form.Label className="control-label">Max Available Seats</Form.Label>
+                        <Form.Control type="number" name="maxSeats" size = "lg" required
+                          value = {this.state.maxSeats} onChange={(ev) => 
+                            this.updateField(ev.target.name, Number(ev.target.value))}/>
                       </Form.Group>
                       <Form.Group>
                         <div>
@@ -175,48 +138,34 @@ class ConfigureUser extends React.Component {
                         event.preventDefault();
                         this.setState({isCreating: false});
                       }}>Close</Button>
-                      {this.state.errorId &&
-                        <>
-                          <br/>
-                          <Alert key="idError" variant="danger">
-                            Invalid Id.
-                          </Alert>
-                        </>}
-                      {this.state.errorName &&
-                        <>
-                          <br/>
-                          <Alert key="nameError" variant="danger">
-                            Invalid name.
-                          </Alert>
-                        </>}
-                      {this.state.errorEmail &&
-                        <>
-                          <br/>
-                          <Alert key="emailError" variant="danger">
-                            Invalid email.
-                          </Alert>
-                        </>}
-                      {this.state.errorPW &&
-                        <>
-                          <br/>
-                          <Alert key="pwError" variant="danger">
-                            Invalid password.
-                          </Alert>
-                        </>}
+                    {this.state.errorName &&
+                      <>
+                        <br/>
+                        <Alert key="nameError" variant="danger">
+                          Invalid name.
+                        </Alert>
+                      </>}
+                    {this.state.errorSeats &&
+                      <>
+                        <br/>
+                        <Alert key="seatsError" variant="danger">
+                          Invalid seats number.
+                        </Alert>
+                      </>}
                   </Modal.Footer>
                 </Modal>
 
                 <Modal show={this.state.isUploading} animation={false} scrollable={true}>
                   <Modal.Header>
-                    <Modal.Title>Upload {this.props.type} file</Modal.Title>
+                    <Modal.Title>Upload file</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
-                    <Form method="POST" action="" id="newUserFormFile" onSubmit={(ev) => {
+                    <Form method="POST" action="" id="newClassFormFile" onSubmit={(ev) => {
                       ev.preventDefault();
                       this.handleSubmitFile();
                     }} ref={(form) => this.formFile = form}>                          
                       <Form.Group>
-                        <Form.Label className="control-label">Insert {this.props.type} infos file</Form.Label>
+                        <Form.Label className="control-label">Insert file</Form.Label>
                         <Form.Control type="file" name="file" size = "lg"
                           required autoFocus accept=".csv"
                           onChange={(ev) => {                            
@@ -230,11 +179,10 @@ class ConfigureUser extends React.Component {
                             }
                             
                             f2(ev.target.files[0]).then(content => {
-                              this.updateField('file', content)
+                              this.updateField("file", content)
                             }).catch(error => console.log(error))
                           }}/>
                       </Form.Group>
-
                       <Form.Group>
                         <div>
                           <button type="submit" className="btn btn-primary">
@@ -258,11 +206,11 @@ class ConfigureUser extends React.Component {
                         </Alert>
                       </>}
                   </Modal.Footer>
-                </Modal>  
+                </Modal>
               </>
             }
 
-            {context.user && !this.props.usersList &&
+            {context.user && !this.props.classesList &&
               <NoItemsImage/>
             }
             {!context.user && <Redirect to="/login"/>}
@@ -275,16 +223,13 @@ class ConfigureUser extends React.Component {
 
 function ListHeader() {
   return(
-    <ListGroup.Item id = {"usersList-header"}>
+    <ListGroup.Item id = {"classesList-header"}>
         <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
-          <div className="col-sm-3">
-            <h4>User Id</h4>
+          <div className="col-sm-6">
+              <h4>Class Name</h4>
           </div>
-          <div className="col-sm-4">
-            <h4>Full Name</h4>
-          </div>
-          <div className="col-sm-5">
-            <h4>Email (Username)</h4>
+          <div className="col-sm-6">
+              <h4>Max Available Seats</h4>
           </div>
         </div>
     </ListGroup.Item>
@@ -298,4 +243,4 @@ function NoItemsImage(props){
   );
 }
 
-export default configureUserPage;
+export default configureClassroomsPage;

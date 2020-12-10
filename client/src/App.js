@@ -8,6 +8,7 @@ import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import ConfigureUsers from './components/ConfigureUsersPage';
 import ConfigureLessons from './components/ConfigureLessonsPage';
 import ConfigureCourses from './components/ConfigureCoursesPage';
+import ConfigureClassrooms from './components/ConfigureClassroomsPage';
 import ConfigureClasses from './components/ConfigureClassesPage';
 import MonitorUsage from './components/MonitorUsagePage';
 import LoginForm from './components/LoginForm'
@@ -34,6 +35,7 @@ class App extends React.Component {
       studentsInfos: [], //usata per dati studenti a teacher, lista totale studenti (support officer)
       teachersInfos: [], //usata per lista totale teachers (support officer)
       classes: [], //usata per lista totale classi (support officer)
+      enrollmentInfos: [], //usata per lista totale di iscrizione ai corsi (support officer)
     };
   }
 
@@ -183,10 +185,17 @@ class App extends React.Component {
       }).catch((errorObj) => { console.log(errorObj); });
     }).catch((errorObj) => { console.log(errorObj); });  
   }
-  createNewClass = (classroomName, maxSeats) => {
+  createNewClassroom = (classroomName, maxSeats) => {
     API.createNewClass(classroomName, maxSeats).then(() => {
       API.getAllClassrooms().then((classesList) => {
         this.setState({classes: classesList});
+      }).catch((errorObj) => { console.log(errorObj); });
+    }).catch((errorObj) => { console.log(errorObj); });
+  }
+  createNewEnrollment = (studentId, courseId) => {
+    API.createNewEnrollment(studentId, courseId).then(() => {
+      API.getAllEnrollments().then((enrollementsList) => {
+        this.setState({enrollmentInfos: enrollementsList});
       }).catch((errorObj) => { console.log(errorObj); });
     }).catch((errorObj) => { console.log(errorObj); });
   }
@@ -257,7 +266,11 @@ class App extends React.Component {
     }).catch((errorObj) => { console.log(errorObj); });
   }
   uploadFileEnrollment = (file) => {
-    API.uploadFileEnrollment(file)
+    API.uploadFileEnrollment(file).then(() => {
+      API.getAllEnrollments().then((enrollementsList) => {
+        this.setState({enrollmentInfos: enrollementsList})
+      }).catch((errorObj) => { console.log(errorObj); });
+    }).catch((errorObj) => { console.log(errorObj); });
   }
   updateSupportOfficerData = async () => {
     API.getAllClassrooms().then((classesList) => {
@@ -279,6 +292,10 @@ class App extends React.Component {
     API.getAllLessons().then((lessonsList) => {
       this.setState({lessons: lessonsList});
     }).catch((errorObj) => { console.log(errorObj); });  
+
+    API.getAllEnrollments().then((enrollementsList) => {
+      this.setState({enrollmentInfos: enrollementsList})
+    })
   }
 
   render() {
@@ -324,7 +341,7 @@ class App extends React.Component {
             {/* SUPPORT OFFICER */}
             <Route path='/configureStudentsList'>
               {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"student"} usersList={this.state.studentsInfos}
-                createNewUser={this.createNewUser} uploadFileUser={this.uploadFileStudents} uploadFileEnrollment={this.uploadFileEnrollment}/>}
+                createNewUser={this.createNewUser} uploadFileUser={this.uploadFileStudents}/>}
             </Route>
             <Route path='/configureCoursesList'>
               {!this.state.user ? <Redirect to='/login' /> : <ConfigureCourses coursesList={this.state.courses} teachersList={this.state.teachersInfos}
@@ -339,9 +356,14 @@ class App extends React.Component {
                 coursesList={this.state.courses} classesList={this.state.classes} createNewLesson={this.createNewLesson}
                 editLesson={this.editLesson} uploadFileLessons={this.uploadFileLessons}/>}
             </Route>
+            <Route path='/configureClassroomsList'>
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureClassrooms classesList={this.state.classes}
+                createNewClassroom={this.createNewClassroom} uploadFileClassrooms={this.uploadFileClassrooms}/>}
+            </Route>
             <Route path='/configureClassesList'>
-              {!this.state.user ? <Redirect to='/login' /> : <ConfigureClasses classesList={this.state.classes}
-                createNewClass={this.createNewClass} uploadFileClassrooms={this.uploadFileClassrooms}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <ConfigureClasses courses={this.state.courses}
+                studentsInfos={this.state.studentsInfos} enrollementsInfos={this.state.enrollmentInfos}
+                createNewEnrollment={this.createNewEnrollment} uploadFileEnrollment={this.uploadFileEnrollment}/>}
             </Route>
             <Route path="/login">
               <LoginForm />

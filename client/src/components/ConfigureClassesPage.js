@@ -1,5 +1,5 @@
 import React from 'react';
-import ConfigureClassItem from './ConfigureClassesItem';
+import ConfigureClassesItem from './ConfigureClassesItem';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/esm/Button';
 import Row from 'react-bootstrap/Row';
@@ -11,8 +11,9 @@ import { Redirect } from 'react-router-dom';
 
 const configureClassesPage = (props) => {
   return(
-    <ConfigureClasses classesList = {props.classesList} createNewClass = {props.createNewClass}
-      uploadFileClassrooms={props.uploadFileClassrooms}/>
+    <ConfigureClasses courses={props.courses} studentsInfos={props.studentsInfos} 
+        enrollementsInfos={props.enrollmentInfos} createNewEnrollment={props.createNewEnrollment}
+        uploadFileEnrollment={props.uploadFileEnrollment}/>
   )
 }
 
@@ -22,8 +23,8 @@ class ConfigureClasses extends React.Component {
     this.props = props;
     this.state = {
       file: undefined, isUploading: false, errorFile: false,
-      isCreating: false, classRoomName: '', maxSeats: 0,
-      errorName: false, errorSeats: false
+      isCreating: false, studentId: 'Select student', courseId: 'Select course',
+      errorStudent: false, errorCourse: false
     }
   }
 
@@ -36,11 +37,11 @@ class ConfigureClasses extends React.Component {
 
   updateField = (name, value) => {
     this.setState({[name]: value}, () => {
-      if(this.state.classRoomName !== ''){
-        this.setState({errorName: false});
+      if(this.state.studentId !== 'Select student'){
+        this.setState({errorStudent: false});
       }
-      if(this.state.maxSeats > 0){
-          this.setState({errorSeats: false});
+      if(this.state.courseId !== 'Select course'){
+          this.setState({errorCourse: false});
       }
       if(this.state.file !== undefined && this.state.file !== ''){
         this.setState({errorFile: false});
@@ -52,14 +53,14 @@ class ConfigureClasses extends React.Component {
     if (!this.form.checkValidity()) {
         this.form.reportValidity();
     }
-    else if(this.state.classRoomName === ''){
-        this.setState({errorName: true});
+    else if(this.state.studentId === 'Select student'){
+        this.setState({errorStudent: true});
     }
-    else if(this.state.maxSeats <= 0){
-        this.setState({errorSeats: true});
+    else if(this.state.courseId === 'Select course'){
+        this.setState({errorCourse: true});
     }
     else {
-        this.props.createNewClass(this.state.classRoomName, this.state.maxSeats)
+        this.props.createNewEnrollment(this.state.studentId, this.state.courseId)
     }
   }
   handleSubmitFile = () => {
@@ -70,7 +71,7 @@ class ConfigureClasses extends React.Component {
       this.setState({errorFile: true});
     }
     else {
-        this.props.uploadFileClassrooms(this.state.file)
+        this.props.uploadFileEnrollment(this.state.file)
         this.setState({isUploading: false})
     }
   }
@@ -80,7 +81,7 @@ class ConfigureClasses extends React.Component {
       <AuthContext.Consumer>
         {(context) => (
           <>        
-            {context.user && this.props.classesList &&
+            {context.user && this.props.courses && this.props.studentsInfos && this.props.enrollementsInfos &&
               <>
                 <br/>
                 <Row className="justify-content-around">
@@ -99,13 +100,15 @@ class ConfigureClasses extends React.Component {
                 </Row>
                 <ListGroup as="ul" variant="flush">
                     <ListHeader />
-                    {this.props.classesList.map((c) => 
-                        <ConfigureClassItem key = {c.classId} class = {c}/>)}
+                    {this.props.enrollementsInfos.map((e) => 
+                        <ConfigureClassesItem key = {e.studentId + "-" + e.courseId}
+                            enrollment = {e} students = {this.props.studentsInfos}
+                            courses = {this.props.courses}/>)}
                 </ListGroup>
 
                 <Modal show={this.state.isCreating} animation={false} scrollable={true}>
                   <Modal.Header>
-                    <Modal.Title>Create new class</Modal.Title>
+                    <Modal.Title>Create new enrollment data</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
                     <Form method="POST" action="" id="newClassForm" onSubmit={(ev) => {
@@ -114,16 +117,26 @@ class ConfigureClasses extends React.Component {
                     }} ref={(form) => this.form = form}>
                           
                       <Form.Group>
-                        <Form.Label className="control-label">Classroom Name</Form.Label>
-                        <Form.Control type="text" name="classRoomName" size = "lg"
-                          value = {this.state.classRoomName} required autoFocus
-                          onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
+                        <Form.Label className="control-label">Course</Form.Label>
+                        <Form.Control as="select" custom name="courseId" value = {this.state.courseId} 
+                            defaultValue = {this.state.courseId}
+                            onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
+                          <option>Select course</option>
+                          {this.props.courses.map((course) =>
+                            <option value={course.courseId}>{course.courseName}</option>
+                          )}
+                        </Form.Control>
                       </Form.Group>
                       <Form.Group>
-                        <Form.Label className="control-label">Max Available Seats</Form.Label>
-                        <Form.Control type="number" name="maxSeats" size = "lg" required
-                          value = {this.state.maxSeats} onChange={(ev) => 
-                            this.updateField(ev.target.name, Number(ev.target.value))}/>
+                        <Form.Label className="control-label">Student</Form.Label>
+                        <Form.Control as="select" custom name="studentId" value = {this.state.studentId} 
+                            defaultValue = {this.state.studentId}
+                            onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
+                          <option>Select student</option>
+                          {this.props.studentsInfos.map((s) =>
+                            <option value={s.personId}>{s.fullName}</option>
+                          )}
+                        </Form.Control>
                       </Form.Group>
                       <Form.Group>
                         <div>
@@ -138,18 +151,18 @@ class ConfigureClasses extends React.Component {
                         event.preventDefault();
                         this.setState({isCreating: false});
                       }}>Close</Button>
-                    {this.state.errorName &&
+                    {this.state.errorStudent &&
                       <>
                         <br/>
                         <Alert key="nameError" variant="danger">
-                          Invalid name.
+                          Invalid student.
                         </Alert>
                       </>}
-                    {this.state.errorSeats &&
+                    {this.state.errorCourse &&
                       <>
                         <br/>
                         <Alert key="seatsError" variant="danger">
-                          Invalid seats number.
+                          Invalid course.
                         </Alert>
                       </>}
                   </Modal.Footer>
@@ -210,7 +223,7 @@ class ConfigureClasses extends React.Component {
               </>
             }
 
-            {context.user && !this.props.classesList &&
+            {context.user && (!this.props.courses || !this.props.studentsInfos || !this.props.enrollementsInfos) &&
               <NoItemsImage/>
             }
             {!context.user && <Redirect to="/login"/>}
@@ -226,10 +239,10 @@ function ListHeader() {
     <ListGroup.Item id = {"classesList-header"}>
         <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
           <div className="col-sm-6">
-              <h4>Class Name</h4>
+              <h4>Course</h4>
           </div>
           <div className="col-sm-6">
-              <h4>Max Available Seats</h4>
+              <h4>Student</h4>
           </div>
         </div>
     </ListGroup.Item>
