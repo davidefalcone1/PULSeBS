@@ -25,22 +25,23 @@ class UserData {
 exports.getTeacherCourses = function (teacherID) {
     return new Promise((resolve, reject) => {
         const sql = `
-        select c.courseid, c.coursename, c.teacherid,
-        CAST(COUNT(BookID) filter (where b.bookstatus=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CS.TimeStart)) AS FLOAT) AS normalBookingsAvgWeek,
-        CAST(COUNT(BookID) filter (where b.bookstatus=2) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CS.TimeStart)) AS FLOAT) AS cancelledBookingsAvgWeek,
-        CAST(COUNT(BookID) filter (where b.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CS.TimeStart)) AS FLOAT) AS waitingBookingsAvgWeek,
-        CAST(COUNT(BookID) filter (where b.bookstatus=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CS.TimeStart)) AS FLOAT) AS normalBookingsAvgMonth,
-        CAST(COUNT(BookID) filter (where b.bookstatus=2) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CS.TimeStart)) AS FLOAT) AS cancelledBookingsAvgMonth,
-        CAST(COUNT(BookID) filter (where b.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CS.TimeStart)) AS FLOAT) AS waitingBookingsAvgMonth
-        from course c, courseschedule as cs LEFT JOIN Booking AS B ON CS.CourseScheduleID = B.CourseScheduleID
-        where c.courseid=cs.courseid and b.coursescheduleid=cs.coursescheduleid and c.teacherid=?
-        group by cs.courseid
+        select Course.CourseID,Course.CourseName,Course.TeacherID,CAST(COUNT(BookID) filter (where Booking.bookstatus=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT) AS normalBookingsAvgWeek,
+        CAST(COUNT(BookID) filter (where Booking.bookstatus=2) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT) AS cancelledBookingsAvgWeek,
+        CAST(COUNT(BookID) filter (where Booking.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT) AS waitingBookingsAvgWeek,
+        CAST(COUNT(BookID) filter (where Booking.bookstatus=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT) AS normalBookingsAvgMonth,
+        CAST(COUNT(BookID) filter (where Booking.bookstatus=2) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT) AS cancelledBookingsAvgMonth,
+        CAST(COUNT(BookID) filter (where Booking.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT) AS waitingBookingsAvgMonth
+        from Course join CourseSchedule
+        on Course.CourseID = CourseSchedule.CourseID left join Booking
+        on CourseSchedule.CourseScheduleID = Booking.CourseScheduleID
+        where course.TeacherID = ?
+        GROUP BY Course.CourseID
         `;
         db.all(sql, [teacherID], function (err, rows) {
             if (err) {
                 reject();
             }
-            const courses = rows.map((row) => new CourseData(row.CourseID, row.CourseName, row.TeacherID, row.normalBookingsAvgWeek.toFixed(2), row.cancelledBookingsAvgWeek.toFixed(2),row.waitingBookingsAvgWeek.toFixed(2),row.normalBookingsAvgMonth.toFixed(2),row.cancelledBookingsAvgMonth.toFixed(2),row.waitingBookingsAvgMonth.toFixed(2)));
+            const courses = rows.map((row) => new CourseData(row.CourseID, row.CourseName, row.TeacherID, row.normalBookingsAvgWeek.toFixed(2), row.cancelledBookingsAvgWeek.toFixed(2), row.waitingBookingsAvgWeek.toFixed(2), row.normalBookingsAvgMonth.toFixed(2), row.cancelledBookingsAvgMonth.toFixed(2), row.waitingBookingsAvgMonth.toFixed(2)));
             resolve(courses);
         });
     });
@@ -49,18 +50,30 @@ exports.getTeacherCourses = function (teacherID) {
 exports.getMyCoursesLessons = function (teacherID) {
     return new Promise((resolve, reject) => {
         const sql = `
-        select cs.*,
-        count(1) filter (where b.bookstatus = 1) as normalBookings,
-        count(1) filter (where b.bookstatus = 2) as cancelledBookings,
-        count(1) filter (where b.bookstatus = 3) as waitingBookings
-        from courseschedule cs, course c,booking b
-        where c.courseid=cs.courseid and b.coursescheduleid=cs.coursescheduleid and c.teacherid=?
+        SELECT CourseSchedule.CourseScheduleID ,
+        CourseSchedule.CourseScheduleID,
+        CourseSchedule.CourseID,
+        CourseSchedule.TimeStart,
+        CourseSchedule.TimeEnd,
+        CourseSchedule.OccupiedSeat,
+        CourseSchedule.MaxSeat,
+        CourseSchedule.CourseStatus,
+        CourseSchedule.CourseType,
+        CourseSchedule.Classroom,
+        count(1) filter (where Booking.bookstatus = 1) as normalBookings,
+        count(1) filter (where Booking.bookstatus = 2) as cancelledBookings,
+        count(1) filter (where Booking.bookstatus = 3) as waitingBookings
+        FROM Course join CourseSchedule
+        on Course.CourseID = CourseSchedule.CourseID LEFT JOIN Booking
+        on CourseSchedule.CourseScheduleID = Booking.CourseScheduleID
+        WHERE Course.TeacherID = ?
+        GROUP BY CourseSchedule.CourseScheduleID
         `;
         db.all(sql, [teacherID], function (err, rows) {
             if (err) {
                 reject();
             }
-            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, row.CourseStatus, row.CourseType, row.Classroom, row.normalBookings, row.cancelledBookings,row.waitingBookings))
+            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, row.CourseStatus, row.CourseType, row.Classroom, row.normalBookings, row.cancelledBookings, row.waitingBookings))
                 .sort((lesson1, lesson2) => {
                     // sort in DESCEDING ORDER by starting time
                     const start1 = moment(lesson1.startingTime);
