@@ -60,7 +60,8 @@ class ConfigureClasses extends React.Component {
         this.setState({errorCourse: true});
     }
     else {
-        this.props.createNewEnrollment(this.state.studentId, this.state.courseId)
+        this.props.createNewEnrollment(this.state.studentId, this.state.courseId);
+        this.setState({isCreating: false});
     }
   }
   handleSubmitFile = () => {

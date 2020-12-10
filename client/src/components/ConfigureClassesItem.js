@@ -2,14 +2,14 @@ import React from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 
 const configureClassroomItem = (props) => {
-
+    console.log(props)
   return (
     <ListGroup.Item id = {"class-" + props.enrollment.studentId + '-' + props.enrollment.courseId}>
         <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
             <CourseField id = {"c-" + props.enrollment.courseId + "-" + props.enrollment.studentId}
                 courseId = {props.enrollment.courseId} courses = {props.courses}/>
             <StudentField id = {"s-" + props.enrollment.courseId + "-" + props.enrollment.studentId}
-                studentId = {props.enrollment.studentId} students = {props.studentsInfos}/>
+                studentId = {props.enrollment.studentId} students = {props.students}/>
         </div>
     </ListGroup.Item>
   );

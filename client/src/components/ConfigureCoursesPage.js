@@ -60,6 +60,7 @@ class ConfigureCourses extends React.Component {
     }
     else {
         this.props.createNewCourse(this.state.courseName, this.state.teacherId)
+        this.setState({isCreating: false});
     }
   }
   handleSubmitFile = () => {
@@ -118,12 +119,12 @@ class ConfigureCourses extends React.Component {
                       <Form.Group>
                         <Form.Label className="control-label">Course Name</Form.Label>
                         <Form.Control type="text" name="courseName" size = "lg"
-                          value = {this.state.classRoomName} required autoFocus
+                          value = {this.state.courseName} required autoFocus
                           onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
                       </Form.Group>
                       <Form.Group>
                         <Form.Label className="control-label">Teacher</Form.Label>
-                        <Form.Control as="select" custom name="teacherId" value = {this.state.courseName} 
+                        <Form.Control as="select" custom name="teacherId" value = {this.state.teacherId} 
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                           <option>Select teacher</option>
                           {this.props.teachersList.map((teacher) =>

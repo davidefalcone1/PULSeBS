@@ -60,6 +60,7 @@ class ConfigureClasses extends React.Component {
     }
     else {
         this.props.createNewClass(this.state.classRoomName, this.state.maxSeats)
+        this.setState({isCreating: false});
     }
   }
   handleSubmitFile = () => {

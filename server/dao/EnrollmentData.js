@@ -1,7 +1,7 @@
 class EnrollmentData {
     constructor(courseID, studentID){
-        this.courseID = courseID;
-        this.studentID = studentID;
+        this.courseId = courseID;
+        this.studentId = studentID;
     }
 }
 

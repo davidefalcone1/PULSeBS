@@ -71,8 +71,9 @@ class ConfigureUser extends React.Component {
       this.setState({errorPW: false});
     }
     else {
-        this.props.createNewUser(this.state.userId, this.state.fullName, this.state.email,
-          this.state.password, this.props.type)
+      this.props.createNewUser(this.state.userId, this.state.fullName, this.state.email,
+        this.state.password, this.props.type)
+      this.setState({isCreating: false});
     }
   }
   handleSubmitFile = () => {
