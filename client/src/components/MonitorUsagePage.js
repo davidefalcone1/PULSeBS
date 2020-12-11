@@ -153,7 +153,6 @@ function LessonHeader(props) {
 }
 
 function LessonHeaderStatistics(props){
-  debugger;
   return (
     <>
       <h6>{props.normalBookings} Bookings</h6>

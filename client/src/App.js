@@ -13,8 +13,6 @@ import ConfigureClasses from './components/ConfigureClassesPage';
 import MonitorUsage from './components/MonitorUsagePage';
 import LoginForm from './components/LoginForm'
 import { AuthContext } from './_services/AuthContext';
-import CourseData from './API/CourseData';
-import LessonData from './API/LessonData';
 
 
 class App extends React.Component {
@@ -99,19 +97,20 @@ class App extends React.Component {
           }).catch((errorObj) => { console.log(errorObj); });
         }
         if (user.accessLevel === 3) { //booking manager
-          const lessons = [
-            new LessonData(0, 1, '2020-09-25T15:00', '2020-09-25T17:00', 40, 60, false, true, null),
-            new LessonData(1, 1, '2020-09-26T17:00', '2020-09-26T19:00', 40, 40, false, true, null),
-            new LessonData(2, 2, '2020-09-27T15:00', '2020-09-27T17:00', 20, 40, false, false, null),
-            new LessonData(3, 2, '2020-09-30T15:00', '2020-09-30T17:00', 40, 60, false, false, null),
-            new LessonData(4, 2, '2020-10-25T15:00', '2020-10-25T17:00', 40, 60, false, true, null)
-          ];
-          const courses = [
-            new CourseData(1, 'Mobile application development', 's12345'),           
-            new CourseData(2, 'Software engineering 2', 's54321')           
-          ];
           this.setState({ isTeacher: false, isStudent: false,
-            isBookingManager: true, isSupportOfficer: false, courses: courses, lessons: lessons});
+            isBookingManager: true, isSupportOfficer: false});
+          API.getLessonsStatistics()
+            .then((lessons)=>{
+              console.log(lessons);
+              this.setState({lessons: lessons});
+              API.getCoursesStatistics()
+                .then((courses)=>{
+                  console.log(courses);
+                  this.setState({courses: courses});
+                })
+                .catch(function(e){console.log(e);})
+            })
+            .catch(function(e){console.log(e);})
         }
         if (user.accessLevel === 4) { //support officer
           this.setState({ isTeacher: false, isStudent: false,

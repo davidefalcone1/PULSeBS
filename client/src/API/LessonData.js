@@ -1,9 +1,8 @@
 import moment from 'moment';
 
 class LessonData {
-    constructor(scheduleId, courseId, startDate, endDate, occupiedSeats, availableSeats,
-        isLessonCancelled, isLessonRemote, classroom
-        /*, normalBookings, cancelledBookings, waitingBookings */) {
+    constructor(scheduleId, courseId, startDate, endDate, occupiedSeats, availableSeats, isLessonCancelled, 
+        isLessonRemote, classroom, normalBookings, cancelledBookings, waitingBookings, attendanceCount) {
         if (scheduleId)
             this.scheduleId = scheduleId;
         this.courseId = courseId;
@@ -13,13 +12,11 @@ class LessonData {
         this.availableSeats = availableSeats;
         this.isLessonCancelled = isLessonCancelled;
         this.isLessonRemote = isLessonRemote;
-        this.classroom = classroom
-
-        //TODO use the correct variables
-        this.normalBookings = 0;
-        this.cancelledBookings = 0;
-        this.waitingBookings = 0;
-        this.attendanceCount = 0;
+        this.classroom = classroom;
+        this.normalBookings = normalBookings;
+        this.cancelledBookings = cancelledBookings;
+        this.waitingBookings = waitingBookings;
+        this.attendanceCount = attendanceCount;
     }
 
     static fromJson(json) {
