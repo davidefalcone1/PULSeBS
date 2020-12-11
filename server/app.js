@@ -147,16 +147,30 @@ app.get('/myWaitingBookedLessons', async (req, res) => {
 
 
 
+//statistics
+app.get('/coursesStatistics', async (req, res) => {
+    try {
+        const result = await teacherDao.getCoursesStatistics(req.user.user);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(505).end();
+    }
+});
+
+app.get('/lessonsStatistics', async (req, res) => {
+    try {
+        const result = await teacherDao.getLessonsStatistics(req.user.user);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(505).end();
+    }
+});
+
+
 
 //Teacher APIs
-
-/**
-* Get all courses for the given teacher
-* @route       GET /teacherCourses
-* @param       teacherId (read from cookie)
-* @access      Private
-* @returns     CourseData(courseId, courseName, teacherId)
-*/
 app.get('/teacherCourses', async (req, res) => {
     try {
         const result = await teacherDao.getTeacherCourses(req.user.user);
@@ -167,13 +181,6 @@ app.get('/teacherCourses', async (req, res) => {
     }
 });
 
-/**
-* Get all lectures for the given teacher
-* @route       GET /myCoursesLessons
-* @param       teacherId (read from cookie)
-* @access      Private
-* @returns     LessonsData(scheduleId, courseId, startingTime, endingTime, occupiedSeats, availableSeats)
-*/
 app.get('/myCoursesLessons', async (req, res) => {
     try {
         const result = await teacherDao.getMyCoursesLessons(req.user.user);
@@ -184,13 +191,6 @@ app.get('/myCoursesLessons', async (req, res) => {
     }
 });
 
-/**
-* Get a list of booked student for the given lessonsIds/CourseScheduleIDs
-* @route       POST /bookedStudents
-* @param       lessonsIds (CourseScheduleIDs)
-* @access      Private
-* @returns     BookingData(id, scheduleId, studentId, status, attended)
-*/
 app.post('/bookedStudents', async (req, res) => {
     const CourseScheduleIDs = req.body.lessonsIds;
     try {
@@ -202,13 +202,6 @@ app.post('/bookedStudents', async (req, res) => {
     }
 });
 
-/**
-* Get a list of student for the given studentsIds
-* @route       POST /studentsData
-* @param       studentsIds
-* @access      Private
-* @returns     UserData(id, personId, fullName, email)
-*/
 app.post('/studentsData', async (req, res) => {
     const studentsIds = req.body.studentsIds;
     try {
@@ -220,16 +213,6 @@ app.post('/studentsData', async (req, res) => {
     }
 });
 
-
-/**
-* Update CourseType of lectures to (1 = presence) / (0 = distance)
-* (turn a presence lecture into a distance one)
-* @route       PUT /lessonType/:courseScheduleId
-* @param       status
-* @access      Private
-* @returns     0 (the courseScheduleId does not exist or the 30 minutes limitation passes)
-*              1 (the lecture has been changed to distance)
-*/
 app.put('/makeLessonRemote/:courseScheduleId', async (req, res) => {
     const status = (req.body.status || 0);
     const courseScheduleId = req.params.courseScheduleId;
@@ -242,16 +225,6 @@ app.put('/makeLessonRemote/:courseScheduleId', async (req, res) => {
     }
 });
 
-
-/**
-* Update CourseStatus of lectures to (1 = active) / (0 = canceled)
-* (Cancel a lecture 1 hour before its scheduled time)
-* @route       PUT /lessonStatus/:courseScheduleId
-* @param       status
-* @access      Private
-* @returns     0 (the courseScheduleId does not exist or the 60 minutes limitation passes)
-*              1 (the lecture has been canceled, and also all related booking canceled too)
-*/
 app.delete('/cancelLesson/:courseScheduleId', async (req, res) => {
     const status = (req.body.status || 0);
     const courseScheduleId = req.params.courseScheduleId;
@@ -275,6 +248,20 @@ app.delete('/cancelLesson/:courseScheduleId', async (req, res) => {
         res.status(400).json(err.message);
     }
 });
+
+app.put('/setStudentAsPresent', async (req, res) => {
+    const lessonId = req.body.lessonId;
+    const studentId = req.body.studentId;
+    try {
+        const result = await teacherDao.setStudentAsPresent(lessonId, studentId);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(401).json(err.message);
+    }
+});
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //calling by isAuthenticated() API on the front-end
@@ -329,7 +316,95 @@ app.post('/bookLesson', async (req, res) => {
 });
 
 
+
+
 //OFFICER API
+app.put('/editLesson', async (req, res) => {
+    const scheduleId = req.body.scheduleId;
+    const courseId = req.body.courseId;
+    const errorLessonStatus = req.body.errorLessonStatus;
+    const lessonType = req.body.lessonType;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    const classroom = req.body.classroom;
+    try {
+        const result = await officerDao.editLesson(scheduleId, courseId, errorLessonStatus, lessonType, startDate, endDate, classroom);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(401).json(err.message);
+    }
+});
+
+app.post('/createNewClassroom', async (req, res) => {
+    const classRoomName = req.body.classRoomName;
+    const maxSeats = req.body.maxSeats;
+    try {
+        const result = await officerDao.createNewClassroom(classRoomName, maxSeats);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
+    }
+});
+
+app.post('/createNewEnrollment', async (req, res) => {
+    const studentId = req.body.studentId;
+    const courseId = req.body.courseId;
+    try {
+        const result = await officerDao.createNewEnrollment(studentId, courseId);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
+    }
+});
+
+app.post('/createNewCourse', async (req, res) => {
+    const courseName = req.body.courseName;
+    const teacherId = req.body.teacherId;
+    const year = (req.body.year || 1);
+    const semester = (req.body.semester || 1);
+    try {
+        const result = await officerDao.createNewCourse(year, semester, courseName, teacherId);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
+    }
+});
+
+app.post('/createNewUser', async (req, res) => {
+    const userId = req.body.userId;
+    const fullName = req.body.fullName;
+    const email = req.body.email;
+    const password = req.body.password;
+    const type = req.body.type;
+    try {
+        const result = await officerDao.createNewUser(userId, fullName, email, password, type);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
+    }
+});
+
+app.post('/createNewLesson', async (req, res) => {
+    const courseId = req.body.courseId;
+    const errorLessonStatus = req.body.errorLessonStatus;
+    const lessonType = req.body.lessonType;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    const classroom = req.body.classroom;
+    try {
+        const result = await officerDao.createNewLesson(courseId, errorLessonStatus, lessonType, startDate, endDate, classroom);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
+    }
+});
+
 app.get('/allClassrooms', async (req, res) => {
     try {
         const classes = await officerDao.getClassrooms();
@@ -380,6 +455,16 @@ app.get('/allLessons', async (req, res) => {
     }
 });
 
+app.get('/allEnrollments', async (req, res) => {
+    try {
+        const enrollments = await officerDao.getEnrollments();
+        res.json(enrollments);
+    }
+    catch (error) {
+        res.status(505).json(error)
+    }
+});
+
 app.post('/uploadFileCourses', async (req, res) => {
 
     const file = req.body.file;
@@ -395,21 +480,6 @@ app.post('/uploadFileCourses', async (req, res) => {
     catch (err) {
         res.status(505).json(err);
     }
-});
-
-/* THERE IS NO SAMPLE FILE TO UPLOAD CLASSROOMS!
-app.post('/uploadFileClassroom', (req, res) => {
-    
-    const file = req.body.file;
-    officerDao.readFile(file, 'classrooms');
-    res.status(200).end()
-});*/
-
-app.post('/uploadFileStudents', (req, res) => {
-
-    const file = req.body.file;
-    officerDao.readFile(file, 'students');
-    res.status(200).end()
 });
 
 app.post('/uploadFileLessons', async (req, res) => {
@@ -429,18 +499,82 @@ app.post('/uploadFileLessons', async (req, res) => {
     }
 });
 
-app.post('/uploadFileTeachers', (req, res) => {
+app.post('/uploadFileStudents', async (req, res) => {
 
     const file = req.body.file;
-    officerDao.readFile(file, 'teachers');
-    res.status(200).end()
+    const newStudents = officerDao.readFile(file, 'students');
+    if (!newStudents) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+    try {
+        await officerDao.insertNewStudents(newStudents);
+        res.status(200).end();
+    }
+    catch (err) {
+        console.log(err)
+        res.status(505).json(err);
+    }
+
 });
 
-app.post('/uploadFileEnrollment', (req, res) => {
+app.post('/uploadFileTeachers', async (req, res) => {
 
     const file = req.body.file;
-    officerDao.readFile(file, 'enrollment');
-    res.status(200).end()
+    const newTeachers = officerDao.readFile(file, 'teachers');
+    if (!newTeachers) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+    try {
+        await officerDao.insertNewTeachers(newTeachers);
+        res.status(200).end();
+    }
+    catch (err) {
+        res.status(505).json(err);
+    }
+});
+
+app.post('/uploadFileEnrollment', async (req, res) => {
+
+    const file = req.body.file;
+    const newEnronllments = officerDao.readFile(file, 'enrollment');
+    if (!newEnronllments) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+    try {
+        await officerDao.insertNewEnrollments(newEnronllments);
+        res.status(200).end();
+    }
+    catch (err) {
+        res.status(505).json(err);
+    }
+});
+
+app.post('/uploadFileClassroom', async (req, res) => {
+
+    const file = req.body.file;
+    const newRooms = officerDao.readFile(file, 'classrooms');
+    if (!newRooms) {
+        res.status(505).json('Wrong file uploaded!');
+    }
+    try {
+        await officerDao.insertNewRooms(newRooms);
+        res.status(200).end();
+    }
+    catch (err) {
+        res.status(505).json(err);
+    }
+});
+
+app.post('/createNewEnrollment', async (req, res) => {
+    const enrollment = req.body;
+    try {
+        await officerDao.createEnrollment(enrollment);
+        res.status(200).end();
+    }
+    catch (err) {
+        console.log(err)
+        res.status(505).json(err);
+    }
 });
 
 app.post('/logout', (req, res) => {

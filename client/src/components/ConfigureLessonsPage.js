@@ -107,6 +107,8 @@ class ConfigureLessons extends React.Component {
       else if(this.state.isEditing)
         this.props.editLesson(this.state.scheduleId, this.state.courseId, this.state.errorLessonStatus,
           this.state.lessonType, this.state.startDate, this.state.endDate, this.state.classroom);
+      
+      this.setState({isCreating: false});
     }
   }
   handleSubmitFile = () => {
