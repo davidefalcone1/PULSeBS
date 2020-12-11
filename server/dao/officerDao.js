@@ -382,34 +382,7 @@ exports.insertNewUsers = (users, usersType) => {
     });
 }
 
-/*exports.insertNewStudents = async (students) => {
-    return new Promise ((resolve, reject) => {
-    try {
-        for (let i = 0; i < students.length; i++) {
-            const student = students[i];
-            await insertNewUser(student, 1);
-        }
-    }
-    catch (err) {
-        throw (err);
-    }
-    return (true);
-}
 
-exports.insertNewTeachers = async (teachers) => {
-
-    try {
-        for (let i = 0; i < teachers.length; i++) {
-            const teacher = teachers[i];
-            await insertNewUser(teacher, 2);
-        }
-    }
-    catch (err) {
-        throw (err);
-    }
-    return (true);
-}
-*/
 exports.insertNewEnrollments = async (newEnrollments) => {
     return new Promise((resolve, reject) => {
         db.serialize(function () {
