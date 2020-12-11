@@ -177,6 +177,7 @@ exports.insertNewCourses = async (courses) => {
                     if (coursesToInsert.length !== 0) {
                         const sql2 = 'INSERT INTO Course(CourseID, Year, Semester, CourseName, TeacherID) ' +
                             'VALUES (?, ?, ?, ?, ?)';
+                        db.run("begin transaction");
                         for (let i = 0; i < coursesToInsert.length; i++) {
                             const course = coursesToInsert[i];
                             db.run(sql2, [course.Code, course.Year, course.Semester, course.Course, course.Teacher], (error) => {
@@ -189,6 +190,7 @@ exports.insertNewCourses = async (courses) => {
                                 }
                             });
                         }
+                        db.run("commit");
                     }
                 }
             });
