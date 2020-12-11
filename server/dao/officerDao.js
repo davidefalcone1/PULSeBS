@@ -233,13 +233,14 @@ const adjustToISOformat = (time) => {
 
 // Generates all days of the semester in which the lecture is scheduled (e.g. all mondays from 14:00 to 15:30)
 const generateSchedule = async (schedule) => {
+    
     try {
         const semester = await readSemester(schedule.Code);
         if (!semester) {
             return undefined;
         }
         else {
-
+            console.log(schedule)
             //compute dates of lectures
             const semesterStart = semester === 1 ? moment('2020-09-28') : moment('2021-03-01');
             const semesterEnd = semester === 1 ? moment('2021-01-15') : moment('2021-06-11');
@@ -269,6 +270,7 @@ const generateSchedule = async (schedule) => {
                 selectedDates.push({ ...info, timeStart: timeStart, timeEnd: timeEnd });
                 selectedDate.add(7, 'days');
             }
+            console.log(selectedDates)
             return selectedDates;
         }
     }
@@ -277,53 +279,58 @@ const generateSchedule = async (schedule) => {
     }
 }
 
-// checks if a scjedule is already existing otherwise it inserts it into the db table CourseSchedule
-const insertNewSchedule = (lesson) => {
-    return new Promise((resolve, reject) => {
-        const sql1 = 'SELECT * FROM CourseSchedule WHERE CourseID = ? AND TimeStart = ?';
-        const sql2 = 'INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom) ' +
-            'VALUES (?, 1, 1, ?, ?, 0, ?, ?)';
+// inserts all schedules read from the file sent by the front end
+exports.insertNewSchedules = async (newSchedules) => {
+    return new Promise (async (resolve, reject) => {
+        const lecturesToInsert = [];
+        for(let i = 0; i < newSchedules.length; i++){
+            const schedule = newSchedules[i];
+            const newLectures = await generateSchedule(schedule);
+            if(newLectures)
+                lecturesToInsert.push(...newLectures);
+        }
+        if(lecturesToInsert.length === 0){
+            resolve('No nsertion, since there are no courses!');
+            return;
+        }
+        else {
+            const sql1 = 'SELECT CourseID, TimeStart FROM CourseSchedule';
+            db.all(sql1, [], (err, rows) => {
+                if(err){
+                    reject (err);
+                }
+                else {
 
-        db.get(sql1, [lesson.Code, lesson.timeStart], (err, row) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            if (row) {
-                // there is already a scheduled lecture in that date for the course!
-                resolve('Already existing');
-            }
-            else {
-                db.run(sql2, [lesson.Code, lesson.timeStart, lesson.timeEnd, lesson.Seats, lesson.Room], (error) => {
-                    if (error) {
-                        reject(error);
-                        return;
+                    //filter schedules excluding the ones already in the db
+                    const schedulesToInsert = lecturesToInsert.filter((schedule) => {
+                        return rows.find((row) => {
+                            return row.CourseID === schedule.Code && row.TimeStart === schedule.timeStart;
+                        }) === undefined;
+                    });
+                    if(schedulesToInsert.length !== 0){
+                        const sql2 = 'INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom) ' +
+                                    'VALUES (?, 1, 1, ?, ?, 0, ?, ?)';
+                        db.run('begin transaction');
+                        for(let i = 0; i < schedulesToInsert.length; i++){
+                            const schedule = schedulesToInsert[i];
+                            db.run(sql2, [schedule.Code, schedule.timeStart, schedule.timeEnd, schedule.Seats, schedule.Room], (error) => {
+                                if(error){
+                                    reject(error);
+                                }
+                                else {
+                                    resolve('Successfully inserted!');
+                                }
+                            }); 
+                        }
+                        db.run('commit');
                     }
                     else {
                         resolve('Successfully inserted');
                     }
-                });
-            }
-        });
-    });
-}
-
-// inserts all schedules read from the file sent by the front end
-exports.insertNewSchedules = async (newSchedules) => {
-    try {
-        for (let i = 0; i < newSchedules.length; i++) {
-            const schedule = newSchedules[i];
-            const lecturesToInsert = await generateSchedule(schedule);
-            for (let j = 0; j < lecturesToInsert.length; j++) {
-                const lesson = lecturesToInsert[j];
-                await insertNewSchedule(lesson);
-            }
+                }
+            });
         }
-    }
-    catch (err) {
-        throw (err);
-    }
-    return (true);
+    });
 }
 
 exports.insertNewUsers = (users, usersType) => {
@@ -427,36 +434,6 @@ function comparer(otherArray) {
 
 // check the fields of room if file is provided!
 // for now they are s upposed to be Room, Seats
-const insertNewRoom = (room) => {
-    return new Promise((resolve, reject) => {
-        const sql1 = 'SELECT * FROM Classroom WHERE ClassroomName = ?';
-        const sql2 = 'INSERT INTO Classroom(ClassroomName, MaxSeats) ' +
-            'VALUES (?, ?)';
-
-        db.get(sql1, [room.Room], (err, row) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            if (row) {
-                // there is already a room with that name!
-                resolve('Already existing');
-            }
-            else {
-                db.run(sql2, [room.Room, room.Seats], (error) => {
-                    if (error) {
-                        reject(error);
-                        return;
-                    }
-                    else {
-                        resolve('Successfully inserted');
-                    }
-                });
-            }
-        });
-    });
-}
-
 exports.insertNewRooms = async (rooms) => {
     return new Promise ((resolve, reject) => {
          const sql1 = 'SELECT ClassroomName FROM Classroom';
