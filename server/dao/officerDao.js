@@ -192,6 +192,11 @@ exports.insertNewCourses = async (courses) => {
                         }
                         db.run("commit");
                     }
+                    else {
+
+                        //nothing to insert
+                        resolve('Succesfully inserted');
+                    }
                 }
             });
         });
@@ -321,51 +326,69 @@ exports.insertNewSchedules = async (newSchedules) => {
     return (true);
 }
 
-const insertNewUser = (user, userType) => {
+exports.insertNewUsers = (users, usersType) => {
     return new Promise((resolve, reject) => {
+        db.serialize(() => {
+            const sql1 = 'SELECT UserID FROM User WHERE AccessLevel = ?';
+            db.all(sql1, [usersType], (err, rows) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
 
-        const sql1 = 'SELECT * FROM User WHERE UserID = ?';
-        const sql2 = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN) ' +
-            'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        const userID = userType === 1 ? user.Id : user.Number;
-        db.get(sql1, [userID], (err, row) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            if (row) {
-                // there is already a user with that id!
-                resolve('Already existing');
-            }
-            else {
+                    // filter the students toinsert by excluding the ones already in the db
+                    const alreadyInserted = rows.map(row => row.UserID);
+                    const usersToInsert = users.filter((user) => {
+                        if(usersType === 1){
+                            return !alreadyInserted.includes(user.Id);
+                        }
+                        else {
+                            return !alreadyInserted.includes(user.Number);
+                        }  
+                    });
 
-                const password = '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S';
-                const city = userType === 1 ? user.City : null;
-                const birthday = userType === 1 ? user.Birthday : null;
-                const name = userType === 1 ? user.Name : user.GivenName;
-
-                db.run(sql2, [userID, name, user.Surname, user.OfficialEmail, userType, password, city, birthday, user.SSN], (error) => {
-                    if (error) {
-                        reject(error);
-                        return;
+                    if(usersToInsert.length !== 0){
+                        const sql2 = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN) ' +
+                                     'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                        
+                        db.run("begin transaction");
+                        for(let i = 0; i < usersToInsert.length; i++){
+                            const user = usersToInsert[i];
+                            const userID = usersType === 1 ? user.Id : user.Number;
+                            const password = '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S';
+                            const city = usersType === 1 ? user.City : null;
+                            const birthday = usersType === 1 ? user.Birthday : null;
+                            const name = usersType === 1 ? user.Name : user.GivenName;
+                            db.run(sql2, [userID, name, user.Surname, user.OfficialEmail, usersType, password, city, birthday, user.SSN], (error) => {
+                                if (error) {
+                                    reject(error);
+                                    return;
+                                }
+                                else {
+                                    resolve('Successfully inserted');
+                                }
+                            });
+                        }
+                        db.run("commit");
                     }
                     else {
-                        resolve('Successfully inserted');
+
+                        //nothing to insert
+                        resolve('Succesfully inserted');
                     }
-                });
-            }
-        });
+                }
+            });
+        });   
     });
 }
 
-exports.insertNewStudents = async (students) => {
-
+/*exports.insertNewStudents = async (students) => {
+    return new Promise ((resolve, reject) => {
     try {
         for (let i = 0; i < students.length; i++) {
             const student = students[i];
             await insertNewUser(student, 1);
         }
-        console.log('finito')
     }
     catch (err) {
         throw (err);
@@ -386,7 +409,7 @@ exports.insertNewTeachers = async (teachers) => {
     }
     return (true);
 }
-
+*/
 exports.insertNewEnrollments = async (newEnrollments) => {
     return new Promise((resolve, reject) => {
         db.serialize(function () {

@@ -507,7 +507,7 @@ app.post('/uploadFileStudents', async (req, res) => {
         res.status(505).json('Wrong file uploaded!');
     }
     try {
-        await officerDao.insertNewStudents(newStudents);
+        await officerDao.insertNewUsers(newStudents, 1);
         res.status(200).end();
     }
     catch (err) {
@@ -525,7 +525,7 @@ app.post('/uploadFileTeachers', async (req, res) => {
         res.status(505).json('Wrong file uploaded!');
     }
     try {
-        await officerDao.insertNewTeachers(newTeachers);
+        await officerDao.insertNewUsers(newTeachers, 2);
         res.status(200).end();
     }
     catch (err) {
