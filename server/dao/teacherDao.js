@@ -25,21 +25,49 @@ class UserData {
 exports.getTeacherCourses = function (teacherID) {
     return new Promise((resolve, reject) => {
         const sql = `
-        select Course.CourseID,Course.CourseName,Course.TeacherID,CAST(COUNT(BookID) filter (where Booking.bookstatus=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT) AS normalBookingsAvgWeek,
-        CAST(COUNT(BookID) filter (where Booking.bookstatus=2) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT) AS cancelledBookingsAvgWeek,
-        CAST(COUNT(BookID) filter (where Booking.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT) AS waitingBookingsAvgWeek,
-        CAST(COUNT(BookID) filter (where Booking.bookstatus=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT) AS normalBookingsAvgMonth,
-        CAST(COUNT(BookID) filter (where Booking.bookstatus=2) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT) AS cancelledBookingsAvgMonth,
-        CAST(COUNT(BookID) filter (where Booking.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT) AS waitingBookingsAvgMonth
-        from Course join CourseSchedule
+        select Course.CourseID,Course.CourseName,Course.TeacherID,
+		IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS normalBookingsAvgWeek,
+        IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=2) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS cancelledBookingsAvgWeek,
+        IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS waitingBookingsAvgWeek,
+        IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS normalBookingsAvgMonth,
+        IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=2) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS cancelledBookingsAvgMonth,
+        IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS waitingBookingsAvgMonth
+        from Course left join CourseSchedule
         on Course.CourseID = CourseSchedule.CourseID left join Booking
         on CourseSchedule.CourseScheduleID = Booking.CourseScheduleID
-        where course.TeacherID = ?
+		where course.TeacherID = ?
         GROUP BY Course.CourseID
         `;
         db.all(sql, [teacherID], function (err, rows) {
             if (err) {
                 reject();
+                return;
+            }
+            const courses = rows.map((row) => new CourseData(row.CourseID, row.CourseName, row.TeacherID, row.normalBookingsAvgWeek.toFixed(2), row.cancelledBookingsAvgWeek.toFixed(2), row.waitingBookingsAvgWeek.toFixed(2), row.normalBookingsAvgMonth.toFixed(2), row.cancelledBookingsAvgMonth.toFixed(2), row.waitingBookingsAvgMonth.toFixed(2)));
+            resolve(courses);
+        });
+    });
+}
+
+exports.getCoursesStatistics = function () {
+    return new Promise((resolve, reject) => {
+        const sql = `
+        select Course.CourseID,Course.CourseName,Course.TeacherID,
+		IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS normalBookingsAvgWeek,
+        IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=2) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS cancelledBookingsAvgWeek,
+        IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS waitingBookingsAvgWeek,
+        IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS normalBookingsAvgMonth,
+        IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=2) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS cancelledBookingsAvgMonth,
+        IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS waitingBookingsAvgMonth
+        from Course left join CourseSchedule
+        on Course.CourseID = CourseSchedule.CourseID left join Booking
+        on CourseSchedule.CourseScheduleID = Booking.CourseScheduleID
+        GROUP BY Course.CourseID
+        `;
+        db.all(sql, function (err, rows) {
+            if (err) {
+                reject();
+                return;
             }
             const courses = rows.map((row) => new CourseData(row.CourseID, row.CourseName, row.TeacherID, row.normalBookingsAvgWeek.toFixed(2), row.cancelledBookingsAvgWeek.toFixed(2), row.waitingBookingsAvgWeek.toFixed(2), row.normalBookingsAvgMonth.toFixed(2), row.cancelledBookingsAvgMonth.toFixed(2), row.waitingBookingsAvgMonth.toFixed(2)));
             resolve(courses);
@@ -70,6 +98,43 @@ exports.getMyCoursesLessons = function (teacherID) {
         GROUP BY CourseSchedule.CourseScheduleID
         `;
         db.all(sql, [teacherID], function (err, rows) {
+            if (err) {
+                reject();
+            }
+            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, row.CourseStatus, row.CourseType, row.Classroom, row.normalBookings, row.cancelledBookings, row.waitingBookings))
+                .sort((lesson1, lesson2) => {
+                    // sort in DESCEDING ORDER by starting time
+                    const start1 = moment(lesson1.startingTime);
+                    const start2 = moment(lesson2.startingTime);
+                    return start1.isBefore(start2) ? 1 : -1;
+                });
+            resolve(lessons);
+        });
+    });
+}
+
+exports.getLessonsStatistics = function () {
+    return new Promise((resolve, reject) => {
+        const sql = `
+        SELECT CourseSchedule.CourseScheduleID ,
+        CourseSchedule.CourseScheduleID,
+        CourseSchedule.CourseID,
+        CourseSchedule.TimeStart,
+        CourseSchedule.TimeEnd,
+        CourseSchedule.OccupiedSeat,
+        CourseSchedule.MaxSeat,
+        CourseSchedule.CourseStatus,
+        CourseSchedule.CourseType,
+        CourseSchedule.Classroom,
+        count(1) filter (where Booking.bookstatus = 1) as normalBookings,
+        count(1) filter (where Booking.bookstatus = 2) as cancelledBookings,
+        count(1) filter (where Booking.bookstatus = 3) as waitingBookings
+        FROM Course join CourseSchedule
+        on Course.CourseID = CourseSchedule.CourseID LEFT JOIN Booking
+        on CourseSchedule.CourseScheduleID = Booking.CourseScheduleID
+        GROUP BY CourseSchedule.CourseScheduleID
+        `;
+        db.all(sql, function (err, rows) {
             if (err) {
                 reject();
             }

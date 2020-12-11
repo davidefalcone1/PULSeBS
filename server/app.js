@@ -147,6 +147,28 @@ app.get('/myWaitingBookedLessons', async (req, res) => {
 
 
 
+//statistics
+app.get('/coursesStatistics', async (req, res) => {
+    try {
+        const result = await teacherDao.getCoursesStatistics(req.user.user);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(505).end();
+    }
+});
+
+app.get('/lessonsStatistics', async (req, res) => {
+    try {
+        const result = await teacherDao.getLessonsStatistics(req.user.user);
+        res.status(200).json(result);
+    }
+    catch (err) {
+        res.status(505).end();
+    }
+});
+
+
 
 //Teacher APIs
 app.get('/teacherCourses', async (req, res) => {
