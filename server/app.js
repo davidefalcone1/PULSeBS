@@ -228,8 +228,8 @@ app.delete('/cancelLesson/:courseScheduleId', async (req, res) => {
 });
 
 app.put('/setStudentAsPresent', async (req, res) => {
-    const lessonId = req.params.lessonId;
-    const studentId = req.params.studentId;
+    const lessonId = req.body.lessonId;
+    const studentId = req.body.studentId;
     try {
         const result = await teacherDao.setStudentAsPresent(lessonId, studentId);
         res.status(200).json(result);
