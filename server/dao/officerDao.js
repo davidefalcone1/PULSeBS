@@ -7,7 +7,7 @@ const UserData = require('./UserData');
 const LessonsData = require('./LessonsData');
 const EnrollmentData = require('./EnrollmentData');
 const moment = require('moment');
-const { routes } = require('../app');
+const bcrypt = require('bcrypt');
 
 exports.getClassrooms = () => {
     return new Promise((resolve, reject) => {
@@ -76,8 +76,8 @@ exports.getEnrollments = () => {
     return new Promise((resolve, reject) => {
         const sql = 'SELECT * FROM StudentCourse';
         db.all(sql, [], (err, rows) => {
-            if(err){
-                reject (err);
+            if (err) {
+                reject(err);
             }
             else {
                 const enrollments = rows.map(row => new EnrollmentData(row.CourseID, row.StudentID));
@@ -159,11 +159,11 @@ exports.readFile = (fileContent, fileType) => {
 }
 
 exports.insertNewCourses = async (courses) => {
-    return new Promise ((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         db.serialize(() => {
             const sql1 = 'SELECT CourseID FROM Course';
             db.all(sql1, [], (err, rows) => {
-                if(err){
+                if (err) {
                     reject(err);
                 }
                 else {
@@ -174,10 +174,10 @@ exports.insertNewCourses = async (courses) => {
                         return !alreadyInserted.includes(course.Code);
                     });
 
-                    if(coursesToInsert.length !== 0){
+                    if (coursesToInsert.length !== 0) {
                         const sql2 = 'INSERT INTO Course(CourseID, Year, Semester, CourseName, TeacherID) ' +
-                                        'VALUES (?, ?, ?, ?, ?)';
-                        for(let i = 0; i < coursesToInsert.length; i++){
+                            'VALUES (?, ?, ?, ?, ?)';
+                        for (let i = 0; i < coursesToInsert.length; i++) {
                             const course = coursesToInsert[i];
                             db.run(sql2, [course.Code, course.Year, course.Semester, course.Course, course.Teacher], (error) => {
                                 if (error) {
@@ -473,23 +473,23 @@ exports.insertNewRooms = async (rooms) => {
 }
 
 exports.createEnrollment = (enrollment) => {
-    return new Promise ((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         const sql1 = 'SELECT * FROM StudentCourse WHERE CourseID = ? AND StudentID = ?'
         const sql2 = 'INSERT INTO StudentCourse(CourseID, StudentID) ' +
-                    'VALUES (?, ?)';
+            'VALUES (?, ?)';
 
         db.get(sql1, [enrollment.courseId, enrollment.studentId], (error, row) => {
-            if(error){
+            if (error) {
                 reject(error);
             }
             else {
-                if(row){
+                if (row) {
                     resolve('ALready existing!');
                 }
                 else {
                     db.run(sql2, [enrollment.courseId, enrollment.studentId], (err) => {
-                        if(err){
-                            reject (err);
+                        if (err) {
+                            reject(err);
                         }
                         else {
                             resolve('Succesfully inserted!')
@@ -497,6 +497,102 @@ exports.createEnrollment = (enrollment) => {
                     });
                 }
             }
+        });
+    });
+}
+
+exports.createNewClassroom = (classRoomName, maxSeats) => {
+    return new Promise((resolve, reject) => {
+        const sql = 'INSERT INTO Classroom(ClassroomName, MaxSeats) VALUES (?, ?)';
+
+        db.get(sql, [classRoomName, maxSeats], (error) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            resolve('Classroom inserted');
+        });
+    });
+}
+
+exports.createNewEnrollment = (studentId, courseId) => {
+    return new Promise((resolve, reject) => {
+        const sql = 'INSERT INTO StudentCourse(CourseID, StudentID) VALUES (?, ?)';
+
+        db.get(sql, [courseId, studentId], (error) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            resolve('New enrollment inserted');
+        });
+    });
+}
+
+exports.createNewCourse = (year, semester, courseName, teacherId) => {
+    return new Promise((resolve, reject) => {
+        const sql = 'INSERT INTO Course(CourseID,Year,Semester,CourseName,TeacherID) VALUES (?,?,?,?,?)';
+        const id = Math.floor((Math.random() * 1000000) + 1);
+        db.get(sql, [id, year, semester, courseName, teacherId], (error) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            resolve('New course inserted');
+        });
+    });
+}
+
+exports.createNewUser = (userId, fullName, email, password, type) => {
+    return new Promise((resolve, reject) => {
+
+        const sql = 'INSERT INTO User(UserID, Name, UserName, AccessLevel, Password) VALUES (?,?,?,?,?)';
+
+        bcrypt.hash(password, 0, (err, hash) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            db.get(sql, [userId, fullName, email, type, hash], (error) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve('New user inserted');
+            });
+        });
+    });
+}
+
+exports.createNewLesson = (courseId, errorLessonStatus, lessonType, startDate, endDate, classroom) => {
+    return new Promise((resolve, reject) => {
+
+        const sql = 'INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, Classroom) VALUES (?,?,?,?,?,?)';
+
+        db.get(sql, [courseId, errorLessonStatus, lessonType, startDate, endDate, classroom], (error) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            resolve('New lesson inserted');
+        });
+    });
+}
+
+exports.editLesson = (scheduleId, courseId, errorLessonStatus, lessonType, startDate, endDate, classroom) => {
+    return new Promise((resolve, reject) => {
+
+        const sql = `
+        UPDATE CourseSchedule
+        SET CourseID = ?, CourseStatus = ?, CourseType = ?, TimeStart = ?, TimeEnd = ?, Classroom = ?
+        WHERE CourseScheduleID = ?`;
+
+        db.get(sql, [courseId, errorLessonStatus, lessonType, startDate, endDate, classroom, scheduleId], (error) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            resolve('Lesson updated');
         });
     });
 }

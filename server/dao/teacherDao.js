@@ -85,8 +85,6 @@ exports.getMyCoursesLessons = function (teacherID) {
     });
 }
 
-
-
 exports.getBookedStudents = function (CourseScheduleIDs) {
     return new Promise((resolve, reject) => {
         //Check if the CourseScheduleIDs is an array
@@ -115,7 +113,6 @@ exports.getBookedStudents = function (CourseScheduleIDs) {
     });
 }
 
-
 exports.getStudentsData = function (studentsIds) {
     return new Promise((resolve, reject) => {
 
@@ -139,7 +136,6 @@ exports.getStudentsData = function (studentsIds) {
         });
     });
 }
-
 
 exports.updateLessonType = function (courseScheduleId, status) {
     return new Promise((resolve, reject) => {
@@ -190,6 +186,23 @@ exports.cancelAllBooking = function (courseScheduleId) {
                 return;
             }
             resolve();
+        });
+    });
+}
+
+exports.setStudentAsPresent = function (lessonId, studentId) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+        UPDATE Booking
+        SET Attended = 1
+        WHERE CourseScheduleID = ? AND StudentID = ? `;
+
+        db.run(sql, [lessonId, studentId], function (err) {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve("Student set as present");
         });
     });
 }
