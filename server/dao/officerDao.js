@@ -336,7 +336,7 @@ exports.insertNewUsers = (users, usersType) => {
                 }
                 else {
 
-                    // filter the students toinsert by excluding the ones already in the db
+                    // filter the students to insert by excluding the ones already in the db
                     const alreadyInserted = rows.map(row => row.UserID);
                     const usersToInsert = users.filter((user) => {
                         if(usersType === 1){
@@ -458,16 +458,44 @@ const insertNewRoom = (room) => {
 }
 
 exports.insertNewRooms = async (rooms) => {
-    try {
-        for (let i = 0; i < rooms.length; i++) {
-            const room = rooms[i];
-            await insertNewRoom(room);
-        }
-    }
-    catch (err) {
-        throw (err);
-    }
-    return (true);
+    return new Promise ((resolve, reject) => {
+         const sql1 = 'SELECT ClassroomName FROM Classroom';
+         db.all(sql1, [], (err, rows) => {
+             if (err) {
+                reject(err);
+                return;
+            }
+            else {
+
+                //filter rooms to insert by excluding the ones already in the db
+                const alreadyInserted = rows.map(row => row.ClassroomName);
+                const roomsToInsert = rooms.filter((room) => {
+                        return !alreadyInserted.includes(room.Room);
+                });
+                if(roomsToInsert.length !== 0){
+                    const sql2 = 'INSERT INTO Classroom(ClassroomName, MaxSeats) ' +
+                                 'VALUES (?, ?)';
+                    db.run("begin transaction");
+                    for(let i = 0; i < roomsToInsert.length; i++){
+                        const room = roomsToInsert[i];
+                        db.run(sql2, [room.Room, room.Seats], (error) => {
+                            if (error) {
+                                reject(error);
+                                return;
+                    }
+                            else {
+                                resolve('Successfully inserted');
+                            }
+                        });                   
+                    }
+                    db.run("commit");
+                }
+                else {
+                    resolve('Successfully inserted');
+                }
+            }
+         });
+    });
 }
 
 exports.createEnrollment = (enrollment) => {
