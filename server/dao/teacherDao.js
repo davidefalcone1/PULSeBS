@@ -56,9 +56,11 @@ exports.getCoursesStatistics = function () {
 		IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS normalBookingsAvgWeek,
         IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=2) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS cancelledBookingsAvgWeek,
         IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS waitingBookingsAvgWeek,
+		IFNULL(CAST(COUNT(BookID) filter (where Booking.Attended=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS attendanceCountAvgWeek,
         IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS normalBookingsAvgMonth,
         IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=2) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS cancelledBookingsAvgMonth,
-        IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS waitingBookingsAvgMonth
+        IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS waitingBookingsAvgMonth,
+		IFNULL(CAST(COUNT(BookID) filter (where Booking.Attended=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS attendanceCountAvgMonth
         from Course left join CourseSchedule
         on Course.CourseID = CourseSchedule.CourseID left join Booking
         on CourseSchedule.CourseScheduleID = Booking.CourseScheduleID
@@ -69,7 +71,19 @@ exports.getCoursesStatistics = function () {
                 reject();
                 return;
             }
-            const courses = rows.map((row) => new CourseData(row.CourseID, row.CourseName, row.TeacherID, row.normalBookingsAvgWeek.toFixed(2), row.cancelledBookingsAvgWeek.toFixed(2), row.waitingBookingsAvgWeek.toFixed(2), row.normalBookingsAvgMonth.toFixed(2), row.cancelledBookingsAvgMonth.toFixed(2), row.waitingBookingsAvgMonth.toFixed(2)));
+            const courses = rows.map((row) => new CourseData(
+                row.CourseID,
+                row.CourseName,
+                row.TeacherID,
+                row.normalBookingsAvgWeek.toFixed(2),
+                row.cancelledBookingsAvgWeek.toFixed(2),
+                row.waitingBookingsAvgWeek.toFixed(2),
+                row.normalBookingsAvgMonth.toFixed(2),
+                row.cancelledBookingsAvgMonth.toFixed(2),
+                row.waitingBookingsAvgMonth.toFixed(2),
+                row.attendanceCountAvgMonth.toFixed(2),
+                row.attendanceCountAvgWeek.toFixed(2)
+            ));
             resolve(courses);
         });
     });
@@ -128,7 +142,8 @@ exports.getLessonsStatistics = function () {
         CourseSchedule.Classroom,
         count(1) filter (where Booking.bookstatus = 1) as normalBookings,
         count(1) filter (where Booking.bookstatus = 2) as cancelledBookings,
-        count(1) filter (where Booking.bookstatus = 3) as waitingBookings
+        count(1) filter (where Booking.bookstatus = 3) as waitingBookings,
+		count(1) filter (where Booking.Attended = 1) as attendanceCount
         FROM Course join CourseSchedule
         on Course.CourseID = CourseSchedule.CourseID LEFT JOIN Booking
         on CourseSchedule.CourseScheduleID = Booking.CourseScheduleID
@@ -138,7 +153,20 @@ exports.getLessonsStatistics = function () {
             if (err) {
                 reject();
             }
-            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, row.CourseStatus, row.CourseType, row.Classroom, row.normalBookings, row.cancelledBookings, row.waitingBookings))
+            const lessons = rows.map((row) => new LessonsData(
+                row.CourseScheduleID,
+                row.CourseID,
+                row.TimeStart,
+                row.TimeEnd,
+                row.OccupiedSeat,
+                row.MaxSeat,
+                row.CourseStatus,
+                row.CourseType,
+                row.Classroom,
+                row.normalBookings,
+                row.cancelledBookings,
+                row.waitingBookings,
+                row.attendanceCount))
                 .sort((lesson1, lesson2) => {
                     // sort in DESCEDING ORDER by starting time
                     const start1 = moment(lesson1.startingTime);

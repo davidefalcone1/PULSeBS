@@ -14,6 +14,7 @@ import MonitorUsage from './components/MonitorUsagePage';
 import LoginForm from './components/LoginForm'
 import { AuthContext } from './_services/AuthContext';
 
+
 class App extends React.Component {
 
   constructor(props) {
@@ -98,6 +99,16 @@ class App extends React.Component {
         if (user.accessLevel === 3) { //booking manager
           this.setState({ isTeacher: false, isStudent: false,
             isBookingManager: true, isSupportOfficer: false});
+          API.getLessonsStatistics()
+            .then((lessons)=>{
+              this.setState({lessons: lessons});
+              API.getCoursesStatistics()
+                .then((courses)=>{
+                  this.setState({courses: courses, configurationCompleted: true});
+                })
+                .catch(function(e){console.log(e);})
+            })
+            .catch(function(e){console.log(e);})
         }
         if (user.accessLevel === 4) { //support officer
           this.setState({ isTeacher: false, isStudent: false,
@@ -335,7 +346,7 @@ class App extends React.Component {
             
             {/* BOOKING MANAGER */}
             <Route path='/monitorUsage'>
-              {!this.state.user ? <Redirect to='/login' /> : <MonitorUsage/>}
+              {!this.state.user ? <Redirect to='/login' /> : <MonitorUsage lessons={this.state.lessons} courses={this.state.courses}/>}
             </Route>
 
             {/* SUPPORT OFFICER */}
