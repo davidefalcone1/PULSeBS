@@ -224,7 +224,7 @@ exports.getStudentsData = function (studentsIds) {
             if (err) {
                 reject();
             }
-            const users = rows.map((row) => new UserData(row.ID, row.UserID, row.FullName, row.UserName));
+            const users = rows.map((row) => new UserData(row.ID, row.UserID, row.Name + ' ' + row.Surname, row.UserName));
             resolve(users);
         });
     });

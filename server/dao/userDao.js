@@ -8,19 +8,19 @@ const bcrypt = require('bcrypt');
  * @param {*} row a row of the users table
  */
 const createUser = function (row) {
-     
+
     const userID = row.UserID;
-    const fullName = row.FullName;
+    const fullName = row.Name + ' ' + row.Surname;
     const username = row.UserName;
     const passwordHash = row.Password;
-    const accessLevel = row.AccessLevel; 
+    const accessLevel = row.AccessLevel;
     return new User(userID, fullName, username, passwordHash, accessLevel);
 }
 
 exports.getUser = (username) => {
 
     return new Promise((resolve, reject) => {
-        const sql = "SELECT * FROM User WHERE UserName = ?" 
+        const sql = "SELECT * FROM User WHERE UserName = ?"
         db.all(sql, [username], (err, rows) => {
             if (err)
                 reject(err);
@@ -37,7 +37,7 @@ exports.getUser = (username) => {
 exports.getUserByID = (userID) => {
 
     return new Promise((resolve, reject) => {
-        const sql = "SELECT * FROM User WHERE UserID = ?" 
+        const sql = "SELECT * FROM User WHERE UserID = ?"
         db.all(sql, [userID], (err, rows) => {
             if (err)
                 reject(err);
