@@ -104,7 +104,7 @@ class App extends React.Component {
               this.setState({lessons: lessons});
               API.getCoursesStatistics()
                 .then((courses)=>{
-                  this.setState({courses: courses});
+                  this.setState({courses: courses, configurationCompleted: true});
                 })
                 .catch(function(e){console.log(e);})
             })

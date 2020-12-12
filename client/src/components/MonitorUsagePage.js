@@ -105,21 +105,37 @@ function OverallStatistics(props) {
         <Col>
           <h5>Statistics per week (Average)</h5>
           <h6>
-            {(statistics.normalBookingsAvgWeek + statistics.cancelledBookingsAvgWeek + statistics.waitingBookingsAvgWeek).toFixed(2)} total bookings,{' '}
-            {statistics.normalBookingsAvgWeek.toFixed(2)} actual bookings, {' '}
-            {statistics.cancelledBookingsAvgWeek.toFixed(2)} cancelled bookings, {' '}
-            {statistics.waitingBookingsAvgWeek.toFixed(2)} waiting bookings, {' '}
-            {statistics.attendanceCountAvgWeek.toFixed(2)} attendance {' '}
+            {(statistics.normalBookingsAvgWeek + statistics.cancelledBookingsAvgWeek + statistics.waitingBookingsAvgWeek).toFixed(2)} Total bookings
+          </h6>
+          <h6>
+            {statistics.normalBookingsAvgWeek.toFixed(2)} Actual bookings
+          </h6>
+          <h6>
+            {statistics.cancelledBookingsAvgWeek.toFixed(2)} Cancelled bookings
+          </h6>
+          <h6>
+            {statistics.waitingBookingsAvgWeek.toFixed(2)} Waiting bookings
+          </h6>
+          <h6>
+            {statistics.attendanceCountAvgWeek.toFixed(2)} Attendance
           </h6>
         </Col>
         <Col>
           <h5>Statistics per month (Average)</h5>
           <h6>
-            {(statistics.normalBookingsAvgMonth + statistics.cancelledBookingsAvgMonth + statistics.waitingBookingsAvgMonth).toFixed(2)} total bookings, {' '}
-            {statistics.normalBookingsAvgMonth.toFixed(2)} actual bookings, {' '}
-            {statistics.cancelledBookingsAvgMonth.toFixed(2)} cancelled bookings, 
-            {statistics.waitingBookingsAvgMonth.toFixed(2)} waiting bookings,
-            {statistics.attendanceCountAvgMonth.toFixed(2)} attendance
+            {(statistics.normalBookingsAvgMonth + statistics.cancelledBookingsAvgMonth + statistics.waitingBookingsAvgMonth).toFixed(2)} Total bookings
+          </h6>
+          <h6>
+            {statistics.normalBookingsAvgMonth.toFixed(2)} Actual bookings
+          </h6>
+          <h6>
+            {statistics.cancelledBookingsAvgMonth.toFixed(2)} Cancelled bookings
+          </h6>
+          <h6>
+            {statistics.waitingBookingsAvgMonth.toFixed(2)} Waiting bookings
+          </h6>
+          <h6>
+            {statistics.attendanceCountAvgMonth.toFixed(2)} Attendance
           </h6>
         </Col>
       </Row>
