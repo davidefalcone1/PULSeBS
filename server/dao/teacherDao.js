@@ -104,7 +104,8 @@ exports.getMyCoursesLessons = function (teacherID) {
         CourseSchedule.Classroom,
         count(1) filter (where Booking.bookstatus = 1) as normalBookings,
         count(1) filter (where Booking.bookstatus = 2) as cancelledBookings,
-        count(1) filter (where Booking.bookstatus = 3) as waitingBookings
+        count(1) filter (where Booking.bookstatus = 3) as waitingBookings,
+        count(1) filter (where Booking.Attended = 1) as attendanceCount
         FROM Course join CourseSchedule
         on Course.CourseID = CourseSchedule.CourseID LEFT JOIN Booking
         on CourseSchedule.CourseScheduleID = Booking.CourseScheduleID
@@ -114,8 +115,22 @@ exports.getMyCoursesLessons = function (teacherID) {
         db.all(sql, [teacherID], function (err, rows) {
             if (err) {
                 reject();
+                return;
             }
-            const lessons = rows.map((row) => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, row.CourseStatus, row.CourseType, row.Classroom, row.normalBookings, row.cancelledBookings, row.waitingBookings))
+            const lessons = rows.map((row) => new LessonsData(
+                row.CourseScheduleID,
+                row.CourseID,
+                row.TimeStart,
+                row.TimeEnd,
+                row.OccupiedSeat,
+                row.MaxSeat,
+                row.CourseStatus,
+                row.CourseType,
+                row.Classroom,
+                row.normalBookings,
+                row.cancelledBookings,
+                row.waitingBookings,
+                row.attendanceCount))
                 .sort((lesson1, lesson2) => {
                     // sort in DESCEDING ORDER by starting time
                     const start1 = moment(lesson1.startingTime);
