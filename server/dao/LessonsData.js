@@ -14,10 +14,10 @@ class LessonsData {
         this.isLessonCancelled = !Boolean(parseInt(isLessonCancelled));
         this.isLessonRemote = !Boolean(parseInt(isLessonRemote));
         this.classroom = classroom;
-        this.normalBookings = normalBookings;
-        this.cancelledBookings = cancelledBookings;
-        this.waitingBookings = waitingBookings;
-        this.attendanceCount = attendanceCount;
+        this.normalBookings = parseFloat(normalBookings);
+        this.cancelledBookings = parseFloat(cancelledBookings);
+        this.waitingBookings = parseFloat(waitingBookings);
+        this.attendanceCount = parseFloat(attendanceCount);
     }
 
     static fromJson(json) {

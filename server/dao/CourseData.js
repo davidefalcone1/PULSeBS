@@ -8,14 +8,14 @@ class CourseData {
             this.courseId = courseId;
         this.courseName = courseName;
         this.teacherId = teacherId;
-        this.normalBookingsAvgWeek = normalBookingsAvgWeek;
-        this.cancelledBookingsAvgWeek = cancelledBookingsAvgWeek;
-        this.waitingBookingsAvgWeek = waitingBookingsAvgWeek;
-        this.normalBookingsAvgMonth = normalBookingsAvgMonth;
-        this.cancelledBookingsAvgMonth = cancelledBookingsAvgMonth;
-        this.waitingBookingsAvgMonth = waitingBookingsAvgMonth;
-        this.attendanceCountAvgWeek = attendanceCountAvgWeek;
-        this.attendanceCountAvgMonth = attendanceCountAvgMonth;
+        this.normalBookingsAvgWeek = parseFloat(normalBookingsAvgWeek);
+        this.cancelledBookingsAvgWeek = parseFloat(cancelledBookingsAvgWeek);
+        this.waitingBookingsAvgWeek = parseFloat(waitingBookingsAvgWeek);
+        this.normalBookingsAvgMonth = parseFloat(normalBookingsAvgMonth);
+        this.cancelledBookingsAvgMonth = parseFloat(cancelledBookingsAvgMonth);
+        this.waitingBookingsAvgMonth = parseFloat(waitingBookingsAvgMonth);
+        this.attendanceCountAvgWeek = parseFloat(attendanceCountAvgWeek);
+        this.attendanceCountAvgMonth = parseFloat(attendanceCountAvgMonth);
     }
 }
 
