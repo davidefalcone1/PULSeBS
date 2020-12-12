@@ -2,7 +2,7 @@ const moment = require('moment');
 
 class LessonsData {
     constructor(scheduleId, courseId, startDate, endDate, occupiedSeats, availableSeats,
-            isLessonCancelled, isLessonRemote, classroom, normalBookings, cancelledBookings, waitingBookings) {
+        isLessonCancelled, isLessonRemote, classroom, normalBookings, cancelledBookings, waitingBookings, attendanceCount) {
 
         if (scheduleId)
             this.scheduleId = scheduleId;
@@ -17,6 +17,7 @@ class LessonsData {
         this.normalBookings = normalBookings;
         this.cancelledBookings = cancelledBookings;
         this.waitingBookings = waitingBookings;
+        this.attendanceCount = attendanceCount;
     }
 
     static fromJson(json) {
