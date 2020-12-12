@@ -1,7 +1,6 @@
 import React from 'react';
 import {AuthContext} from '../_services/AuthContext';
 import {Redirect} from 'react-router-dom';
-import ListGroup from 'react-bootstrap/esm/ListGroup';
 import Accordion from 'react-bootstrap/esm/Accordion';
 import Card from 'react-bootstrap/esm/Card';
 import Button from 'react-bootstrap/esm/Button';
@@ -104,23 +103,23 @@ function OverallStatistics(props) {
     <div id={props.id}>
       <Row>
         <Col>
-          <h5>Statistics per week</h5>
+          <h5>Statistics per week (Average)</h5>
           <h6>
-            {statistics.normalBookingsAvgWeek + statistics.cancelledBookingsAvgWeek + statistics.waitingBookingsAvgWeek} total bookings,{' '}
-            {statistics.normalBookingsAvgWeek} actual bookings, {' '}
-            {statistics.cancelledBookingsAvgWeek} cancelled bookings, {' '}
-            {statistics.waitingBookingsAvgWeek} waiting bookings, {' '}
-            {statistics.attendanceCountAvgWeek} attendance {' '}
+            {(statistics.normalBookingsAvgWeek + statistics.cancelledBookingsAvgWeek + statistics.waitingBookingsAvgWeek).toFixed(2)} total bookings,{' '}
+            {statistics.normalBookingsAvgWeek.toFixed(2)} actual bookings, {' '}
+            {statistics.cancelledBookingsAvgWeek.toFixed(2)} cancelled bookings, {' '}
+            {statistics.waitingBookingsAvgWeek.toFixed(2)} waiting bookings, {' '}
+            {statistics.attendanceCountAvgWeek.toFixed(2)} attendance {' '}
           </h6>
         </Col>
         <Col>
-          <h5>Statistics per month</h5>
+          <h5>Statistics per month (Average)</h5>
           <h6>
-            {statistics.normalBookingsAvgMonth + statistics.cancelledBookingsAvgMonth + statistics.waitingBookingsAvgMonth} total bookings, {' '}
-            {statistics.normalBookingsAvgMonth} actual bookings, {' '}
-            {statistics.cancelledBookingsAvgMonth} cancelled bookings, 
-            {statistics.waitingBookingsAvgMonth} waiting bookings,
-            {statistics.attendanceCountAvgMonth} attendance
+            {(statistics.normalBookingsAvgMonth + statistics.cancelledBookingsAvgMonth + statistics.waitingBookingsAvgMonth).toFixed(2)} total bookings, {' '}
+            {statistics.normalBookingsAvgMonth.toFixed(2)} actual bookings, {' '}
+            {statistics.cancelledBookingsAvgMonth.toFixed(2)} cancelled bookings, 
+            {statistics.waitingBookingsAvgMonth.toFixed(2)} waiting bookings,
+            {statistics.attendanceCountAvgMonth.toFixed(2)} attendance
           </h6>
         </Col>
       </Row>
@@ -169,7 +168,7 @@ function CourseHeaderStatics(props) {
     <div id={props.course.id}>
       <Row>
         <Col>
-          <h5>Statistics per week</h5>
+          <h5>Statistics per week (Average)</h5>
           <h6>{props.course.normalBookingsAvgWeek} Bookings</h6>
           <h6>{props.course.cancelledBookingsAvgWeek} Cancelled bookings</h6>
           <h6>{props.course.waitingBookingsAvgWeek} Waiting bookings</h6>
@@ -177,7 +176,7 @@ function CourseHeaderStatics(props) {
           <h6>{props.course.attendanceCountAvgWeek} Attendance</h6>
         </Col>
         <Col>
-          <h5>Statistics per month</h5>
+          <h5>Statistics per month (Average)</h5>
           <h6>{props.course.normalBookingsAvgMonth} Bookings</h6>
           <h6>{props.course.cancelledBookingsAvgMonth} Cancelled bookings</h6>
           <h6>{props.course.waitingBookingsAvgMonth} Waiting bookings</h6>

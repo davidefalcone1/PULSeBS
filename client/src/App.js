@@ -101,11 +101,9 @@ class App extends React.Component {
             isBookingManager: true, isSupportOfficer: false});
           API.getLessonsStatistics()
             .then((lessons)=>{
-              console.log(lessons);
               this.setState({lessons: lessons});
               API.getCoursesStatistics()
                 .then((courses)=>{
-                  console.log(courses);
                   this.setState({courses: courses});
                 })
                 .catch(function(e){console.log(e);})
