@@ -31,7 +31,9 @@ exports.getTeacherCourses = function (teacherID) {
         IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS waitingBookingsAvgWeek,
         IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS normalBookingsAvgMonth,
         IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=2) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS cancelledBookingsAvgMonth,
-        IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS waitingBookingsAvgMonth
+        IFNULL(CAST(COUNT(BookID) filter (where Booking.bookstatus=3) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS waitingBookingsAvgMonth,
+		IFNULL(CAST(COUNT(BookID) filter (where Booking.Attended=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%W/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS attendanceCountAvgWeek,
+		IFNULL(CAST(COUNT(BookID) filter (where Booking.Attended=1) AS FLOAT)/CAST(COUNT(DISTINCT STRFTIME("%m/%Y", CourseSchedule.TimeStart)) AS FLOAT),0) AS attendanceCountAvgMonth
         from Course left join CourseSchedule
         on Course.CourseID = CourseSchedule.CourseID left join Booking
         on CourseSchedule.CourseScheduleID = Booking.CourseScheduleID
@@ -111,6 +113,7 @@ exports.getMyCoursesLessons = function (teacherID) {
         on CourseSchedule.CourseScheduleID = Booking.CourseScheduleID
         WHERE Course.TeacherID = ?
         GROUP BY CourseSchedule.CourseScheduleID
+        ORDER BY CourseSchedule.TimeStart ASC
         `;
         db.all(sql, [teacherID], function (err, rows) {
             if (err) {
@@ -130,13 +133,7 @@ exports.getMyCoursesLessons = function (teacherID) {
                 row.normalBookings,
                 row.cancelledBookings,
                 row.waitingBookings,
-                row.attendanceCount))
-                .sort((lesson1, lesson2) => {
-                    // sort in DESCEDING ORDER by starting time
-                    const start1 = moment(lesson1.startingTime);
-                    const start2 = moment(lesson2.startingTime);
-                    return start1.isBefore(start2) ? 1 : -1;
-                });
+                row.attendanceCount));
             resolve(lessons);
         });
     });
@@ -163,6 +160,7 @@ exports.getLessonsStatistics = function () {
         on Course.CourseID = CourseSchedule.CourseID LEFT JOIN Booking
         on CourseSchedule.CourseScheduleID = Booking.CourseScheduleID
         GROUP BY CourseSchedule.CourseScheduleID
+        ORDER BY CourseSchedule.TimeStart ASC
         `;
         db.all(sql, function (err, rows) {
             if (err) {
@@ -181,13 +179,7 @@ exports.getLessonsStatistics = function () {
                 row.normalBookings,
                 row.cancelledBookings,
                 row.waitingBookings,
-                row.attendanceCount))
-                .sort((lesson1, lesson2) => {
-                    // sort in DESCEDING ORDER by starting time
-                    const start1 = moment(lesson1.startingTime);
-                    const start2 = moment(lesson2.startingTime);
-                    return start1.isBefore(start2) ? 1 : -1;
-                });
+                row.attendanceCount));
             resolve(lessons);
         });
     });

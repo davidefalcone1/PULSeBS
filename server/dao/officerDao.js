@@ -32,7 +32,9 @@ exports.getCourses = () => {
                 reject(err);
             }
             else {
-                const courses = rows.map(row => new CourseData(row.CourseID, row.CourseName, row.TeacherID));
+                const courses = rows.map(row => new CourseData(
+                    row.CourseID, row.CourseName, row.TeacherID,
+                    0, 0, 0, 0, 0, 0, 0, 0));
                 resolve(courses);
             }
         });
@@ -65,7 +67,10 @@ exports.getLessons = () => {
                 reject(err);
             }
             else {
-                const courses = rows.map(row => new LessonsData(row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, row.CourseStatus, row.CourseType, row.Classroom));
+                const courses = rows.map(row => new LessonsData(
+                    row.CourseScheduleID, row.CourseID, row.TimeStart, row.TimeEnd,
+                    row.OccupiedSeat, row.MaxSeat, row.CourseStatus, row.CourseType, row.Classroom,
+                    0, 0, 0, 0));
                 resolve(courses);
             }
         });
