@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfigureClassesItem Renders correctly 1`] = `
+<div
+  className="list-group-item"
+  disabled={false}
+  id="class-12345-XY123"
+  onClick={[Function]}
+>
+  <div
+    className="d-flex w-100 pt-3 justify-content-between no-gutters"
+  >
+    <div
+      className="col-sm-6"
+    >
+      <h6
+        id="nameOfcourseForEnrollement_c-XY123-12345"
+      >
+        Software engineering 2
+      </h6>
+    </div>
+    <div
+      className="col-sm-6"
+    >
+      <h6
+        id="nameOfstudentForEnrollement_s-XY123-12345"
+      >
+        Davide Falcone
+      </h6>
+    </div>
+  </div>
+</div>
+`;

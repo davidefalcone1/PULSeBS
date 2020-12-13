@@ -1,0 +1,248 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Navbar Navbar renders correctly when user is a student 1`] = `
+<nav
+  className="navbar navbar-expand-md navbar-dark bg-dark"
+>
+  <button
+    aria-controls="sidebar"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+    className="navbar-toggler collapsed"
+    data-target="#sidebar"
+    data-toggle="collapse"
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="navbar-toggler-icon"
+    />
+  </button>
+  <span
+    className="navbar-brand"
+  >
+    PULSeBS Project
+  </span>
+  <div
+    className="mr-auto navbar-nav"
+    onKeyDown={[Function]}
+  >
+    <a
+      aria-current={null}
+      className="nav-link"
+      data-rb-event-key={null}
+      disabled={false}
+      href="/myBookableLessonsList"
+      onClick={[Function]}
+    >
+       Book a lesson!
+    </a>
+    <a
+      aria-current={null}
+      className="nav-link"
+      data-rb-event-key={null}
+      disabled={false}
+      href="/myBookedLessonslist"
+      onClick={[Function]}
+    >
+       My booked lessons
+    </a>
+  </div>
+  <div
+    className="ml-md-auto navbar-nav"
+    onKeyDown={[Function]}
+  >
+    <span
+      className="navbar-brand"
+    >
+      Welcome 
+      !
+    </span>
+    <a
+      className="nav-link"
+      data-rb-event-key={null}
+      href="#"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      role="button"
+    >
+      Logout
+    </a>
+  </div>
+</nav>
+`;
+
+exports[`Navbar Navbar renders correctly when user is a teacher 1`] = `
+<nav
+  className="navbar navbar-expand-md navbar-dark bg-dark"
+>
+  <button
+    aria-controls="sidebar"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+    className="navbar-toggler collapsed"
+    data-target="#sidebar"
+    data-toggle="collapse"
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="navbar-toggler-icon"
+    />
+  </button>
+  <span
+    className="navbar-brand"
+  >
+    PULSeBS Project
+  </span>
+  <div
+    className="mr-auto navbar-nav"
+    onKeyDown={[Function]}
+  >
+    <a
+      aria-current={null}
+      className="nav-link"
+      data-rb-event-key={null}
+      disabled={false}
+      href="/myCoursesLessonslist"
+      onClick={[Function]}
+    >
+       My courses details
+    </a>
+  </div>
+  <div
+    className="ml-md-auto navbar-nav"
+    onKeyDown={[Function]}
+  >
+    <span
+      className="navbar-brand"
+    >
+      Welcome 
+      !
+    </span>
+    <a
+      className="nav-link"
+      data-rb-event-key={null}
+      href="#"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      role="button"
+    >
+      Logout
+    </a>
+  </div>
+</nav>
+`;
+
+exports[`Navbar Navbar renders correctly when user is the booking manager 1`] = `
+<nav
+  className="navbar navbar-expand-md navbar-dark bg-dark"
+>
+  <button
+    aria-controls="sidebar"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+    className="navbar-toggler collapsed"
+    data-target="#sidebar"
+    data-toggle="collapse"
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="navbar-toggler-icon"
+    />
+  </button>
+  <span
+    className="navbar-brand"
+  >
+    PULSeBS Project
+  </span>
+  <div
+    className="mr-auto navbar-nav"
+    onKeyDown={[Function]}
+  >
+    <a
+      aria-current={null}
+      className="nav-link"
+      data-rb-event-key={null}
+      disabled={false}
+      href="/monitorUsage"
+      onClick={[Function]}
+    >
+       Monitor usage of the system
+    </a>
+  </div>
+  <div
+    className="ml-md-auto navbar-nav"
+    onKeyDown={[Function]}
+  >
+    <span
+      className="navbar-brand"
+    >
+      Welcome 
+      !
+    </span>
+    <a
+      className="nav-link"
+      data-rb-event-key={null}
+      href="#"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      role="button"
+    >
+      Logout
+    </a>
+  </div>
+</nav>
+`;
+
+exports[`Navbar Navbar renders correctly when user is the support officier 1`] = `
+<nav
+  className="navbar navbar-expand-md navbar-dark bg-dark"
+>
+  <button
+    aria-controls="sidebar"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+    className="navbar-toggler collapsed"
+    data-target="#sidebar"
+    data-toggle="collapse"
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="navbar-toggler-icon"
+    />
+  </button>
+  <span
+    className="navbar-brand"
+  >
+    PULSeBS Project
+  </span>
+  <div
+    className="mr-auto navbar-nav"
+    onKeyDown={[Function]}
+  />
+  <div
+    className="ml-md-auto navbar-nav"
+    onKeyDown={[Function]}
+  >
+    <span
+      className="navbar-brand"
+    >
+      Welcome 
+      !
+    </span>
+    <a
+      className="nav-link"
+      data-rb-event-key={null}
+      href="#"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      role="button"
+    >
+      Logout
+    </a>
+  </div>
+</nav>
+`;

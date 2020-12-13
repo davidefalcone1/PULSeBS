@@ -2,7 +2,6 @@ import React from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 
 const configureClassroomItem = (props) => {
-    console.log(props)
   return (
     <ListGroup.Item id = {"class-" + props.enrollment.studentId + '-' + props.enrollment.courseId}>
         <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
@@ -20,7 +19,7 @@ function CourseField(props){
         <div className="col-sm-6">
             {props.courses.map((c) => //per ogni lezione del mio corso
                 (c.courseId === props.courseId) &&
-                    <h6 id={"nameOfcourseForEnrollement_" + props.id}>
+                    <h6 id={"nameOfcourseForEnrollement_" + props.id} key={"nameOfcourseForEnrollement_" + props.id}>
                         {c.courseName}
                     </h6>
             )}
@@ -33,7 +32,7 @@ function StudentField(props){
         <div className="col-sm-6">
             {props.students.map((s) => //per ogni lezione del mio corso
                 (s.personId === props.studentId) &&
-                    <h6 id={"nameOfstudentForEnrollement_" + props.id}>
+                    <h6 id={"nameOfstudentForEnrollement_" + props.id} key={"nameOfstudentForEnrollement_" + props.id}>
                         {s.fullName}
                     </h6>
             )}

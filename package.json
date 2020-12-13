@@ -1,25 +1,38 @@
 {
-  "dependencies": {
-    "@types/jest": "^26.0.15",
-    "jest": "^26.6.3",
-    "superagent": "^6.1.0",
-    "supertest": "^6.0.1"
-  },
   "scripts": {
-    "test": "jest --coverage --runInBand --detectOpenHandles"
+    "test": "jest --coverage --runInBand --detectOpenHandles -u"
   },
   "jest": {
     "testResultsProcessor": "jest-sonar-reporter",
     "testPathIgnorePatterns": [
-      "./server/__tests__/testHelper.js",
-      "./client/"
+      "./server/__tests__/testHelper.js"
     ],
     "coveragePathIgnorePatterns": [
-      "./server/__tests__/testHelper.js",
-      "./client/"
+      "./server/__tests__/testHelper.js"
+    ],
+    "moduleNameMapper": {
+      "\\.(css|scss)$": "<rootDir>/__mocks__/styleMock.js"
+    },
+    "transformIgnorePatterns": [
+      "./client/node_modules/(?!(react-bootstrap|@babel))"
     ]
   },
   "devDependencies": {
-    "jest-sonar-reporter": "^2.0.0"
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.10",
+    "@babel/preset-react": "^7.12.10",
+    "@types/jest": "^26.0.15",
+    "babel-jest": "^26.6.3",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "jest": "^26.6.3",
+    "jest-sonar-reporter": "^2.0.0",
+    "react": "^17.0.1",
+    "react-test-renderer": "^17.0.1",
+    "superagent": "^6.1.0",
+    "supertest": "^6.0.1"
+  },
+  "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.12.10"
   }
 }

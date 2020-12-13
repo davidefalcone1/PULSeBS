@@ -33,6 +33,8 @@ async function cleanDB(){
     await db.pRun(sql);
     sql = "DELETE FROM User";
     await db.pRun(sql);
+    sql = "DELETE FROM Classroom";
+    await db.pRun(sql);
 }
 
 async function insertBooking(user, lecture) {
@@ -54,8 +56,8 @@ async function enrollStudentToCourse(student, course) {
 }
 
 async function insertStudent() {
-    let sql = 'INSERT INTO User(UserID, FullName, UserName, Password, AccessLevel)' + 
-        " VALUES('123456','Davide Falcone', 'davide.falcone@studenti.polito.it', '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S', 1)";
+    let sql = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN)' + 
+        " VALUES('123456','Davide', 'Falcone', 'davide.falcone@studenti.polito.it', 1, '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S', 'Caserta', '1996-09-05', 'abc')";
     let result = await db.pRun(sql);
     if(result)
         console.log(result);
@@ -76,7 +78,7 @@ async function insertCourseSchedule(course){
 }
 
 async function insertCourse(name, teacher){
-    let sql = 'INSERT INTO Course(CourseName, TeacherID) VALUES(?, ?)';
+    let sql = 'INSERT INTO Course(Year, Semester, CourseName, TeacherID) VALUES(2, 1, ?, ?)';
     let result = await db.pRun(sql, [name, teacher]);
     if(result)
         console.log(result);
@@ -86,7 +88,7 @@ async function insertCourse(name, teacher){
 }
 
 async function insertTeacher(){
-    let sql = "INSERT INTO User(UserID, FullName, UserName, Password, AccessLevel) VALUES('654321', 'Mario Rossi', 'mario.rossi@polito.it', '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S', 2)";
+    let sql = "INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN) VALUES('654321', 'Mario', 'Rossi', 'mario.rossi@polito.it', 2, '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S', 'Torino', '08-09-1970', 'abc')";
     let result = await db.pRun(sql);
     if(result)
         console.log(result);
