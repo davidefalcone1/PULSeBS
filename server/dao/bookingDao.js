@@ -11,7 +11,7 @@ exports.getBookableLessons = function (studentID) {
             "FROM CourseSchedule CS, StudentCourse SC " +
             "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
             "AND CS.CourseType=1 AND CS.CourseScheduleID NOT IN (" +
-            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=? AND BookStatus = 1)" + 
+            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=? AND BookStatus <> 2)" + 
             "ORDER BY TimeStart ASC";
         db.all(sql, [studentID, studentID], function (err, rows) {
             if (err) {

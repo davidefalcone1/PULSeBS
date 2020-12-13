@@ -135,7 +135,7 @@ class App extends React.Component {
     }).catch((errorObj) => { console.log(errorObj); });
 
     API.getMyWaitingBookedLessons().then((myWaitingBookedLessons) => {
-      this.setState({ waitingBookings: myWaitingBookedLessons });
+      this.setState({ myWaitingBookedLessons: myWaitingBookedLessons });
     }).catch((errorObj) => { console.log(errorObj); });
   }
   bookLesson = async (lessonId) => {
@@ -152,13 +152,9 @@ class App extends React.Component {
     API.deleteBooking(lessonId).then(() => {
       console.log("Lesson deleted.");
 
-      API.getMyBookableLessons().then((bookableLessons) => {
-        this.setState({ lessons: bookableLessons });
-      }).catch((errorObj) => { console.log(errorObj); });
+      this.updateBookableLessons();
+      this.updateMyBookedLessons();
 
-      API.getMyBookedLessons().then((myLessons) => {
-        this.setState({ myBookedLessons: myLessons });
-      }).catch((errorObj) => { console.log(errorObj); });
     }).catch((errorObj) => { console.log(errorObj); });
   }
 

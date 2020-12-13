@@ -71,7 +71,7 @@ class MyCoursesLessonsPageRender extends React.Component {
                                           <LessonHeader id = {courseLesson.scheduleId} startDate = {courseLesson.startDate} endDate = {courseLesson.endDate}
                                             isLessonRemote={courseLesson.isLessonRemote} isLessonCancelled={courseLesson.isLessonCancelled}/>
                                         </Accordion.Toggle>
-                                        <LessonsHeaderButtons id = {courseLesson.scheduleId + "buttons"} startDate = {courseLesson.startDate} endDate = {courseLesson.endDate}
+                                        <LessonsHeaderButtons id = {courseLesson.scheduleId} startDate = {courseLesson.startDate} endDate = {courseLesson.endDate}
                                             cancelLesson = {this.props.cancelLesson} changeLessonToRemote = {this.props.changeLessonToRemote} 
                                             isLessonRemote={courseLesson.isLessonRemote} isLessonCancelled={courseLesson.isLessonCancelled} activateModal = {this.activateModal}/>
                                       </div>
@@ -205,7 +205,7 @@ function LessonHeaderStatistics(props){
 function LessonsHeaderButtons(props) {
   return (
     <>
-      <div id={props.id}>
+      <div id={props.id + "buttons"}>
         {(moment().isBefore(moment(props.startDate).subtract(30, 'm'))) && !props.isLessonRemote && !props.isLessonCancelled &&
           <Button variant="warning" onClick={(event) => {
             event.preventDefault();
