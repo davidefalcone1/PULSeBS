@@ -5,7 +5,7 @@ class BookingData {
         this.scheduleId = scheduleId;
         this.studentId = studentId;
         this.status = status;
-        this.attended = attended;
+        this.attended = Boolean(parseInt(attended));
     }
 
     static fromJson(json) {

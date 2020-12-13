@@ -49,7 +49,7 @@ function EmailField(props){
 function SelectField(props){
     return(
         <div className="col-sm-3">
-            {props.booking.attended &&
+            {!props.booking.attended && (console.log(props.booking) || true) &&  
                 <Button variant="success" onClick={(event) => {
                     event.preventDefault();
                     props.setStudentAsPresent(props.booking.scheduleId, props.booking.studentId);
