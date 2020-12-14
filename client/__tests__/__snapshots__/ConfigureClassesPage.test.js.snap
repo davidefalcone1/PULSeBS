@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfigureClassesPage Renders correctly 1`] = `
+Array [
+  <br />,
+  <div
+    className="justify-content-around row"
+  >
+    <button
+      className="btn btn-primary"
+      disabled={false}
+      id="activateModalOfClasses"
+      onClick={[Function]}
+      type="button"
+    >
+      Add New
+    </button>
+    <button
+      className="btn btn-primary"
+      disabled={false}
+      id="uploadFileOfClasses"
+      onClick={[Function]}
+      type="button"
+    >
+      Upload File
+    </button>
+  </div>,
+  <ul
+    className="list-group list-group-flush"
+    onKeyDown={[Function]}
+  >
+    <div
+      className="list-group-item"
+      data-rb-event-key={null}
+      disabled={false}
+      id="classesList-header"
+      onClick={[Function]}
+    >
+      <div
+        className="d-flex w-100 pt-3 justify-content-between no-gutters"
+      >
+        <div
+          className="col-sm-6"
+        >
+          <h4>
+            Course
+          </h4>
+        </div>
+        <div
+          className="col-sm-6"
+        >
+          <h4>
+            Student
+          </h4>
+        </div>
+      </div>
+    </div>
+    <div
+      className="list-group-item"
+      data-rb-event-key={null}
+      disabled={false}
+      id="class-12345-XY123"
+      onClick={[Function]}
+    >
+      <div
+        className="d-flex w-100 pt-3 justify-content-between no-gutters"
+      >
+        <div
+          className="col-sm-6"
+        >
+          <h6
+            id="nameOfcourseForEnrollement_c-XY123-12345"
+          >
+            Software engineering 2
+          </h6>
+        </div>
+        <div
+          className="col-sm-6"
+        >
+          <h6
+            id="nameOfstudentForEnrollement_s-XY123-12345"
+          >
+            Davide Falcone
+          </h6>
+        </div>
+      </div>
+    </div>
+  </ul>,
+]
+`;
