@@ -145,7 +145,7 @@ class LessonListPageRender extends React.Component {
                         onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                       <option>Select course name</option>
                       {this.props.coursesList.map((course) =>
-                        <option>{course.courseName}</option>
+                        <option key={course.courseId}>{course.courseName}</option>
                       )}
                     </Form.Control>
                   </Form.Group>
@@ -191,7 +191,7 @@ class LessonListPageRender extends React.Component {
                           <Accordion>
                             {this.props.coursesList.map((course) => //per ogni mio corso
                               (this.isCourseSelected(course.courseName)) &&
-                              <Card>
+                              <Card key={course.courseId}>
                                 <Card.Header>
                                   <Accordion.Toggle as={Button} variant="link" eventKey = {"course-" + course.courseName}>
                                     <CourseHeader course = {course.courseName}/>

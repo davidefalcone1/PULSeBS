@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MyBookedLessonsItem Renders correctly 1`] = `
+<div
+  className="list-group-item"
+  disabled={false}
+  id="lesson-undefined"
+  onClick={[Function]}
+>
+  <div
+    className="d-flex w-100 pt-3 justify-content-between no-gutters"
+  >
+    <div
+      className="col-sm-3"
+    >
+      <p
+        id="startDateOfLesson1"
+      >
+        Tue 15-12-2020 15:56
+      </p>
+    </div>
+    <div
+      className="col-sm-3"
+    >
+      <p
+        id="endDateOfLesson1"
+      >
+        Tue 15-12-2020 16:56
+      </p>
+    </div>
+    <div
+      className="col-sm-3"
+    >
+      <p
+        id="seatsStatusOfLesson1"
+      >
+        9
+         / 
+        90
+      </p>
+    </div>
+    <div
+      className="col-sm-3"
+    >
+      <button
+        className="btn btn-danger"
+        disabled={false}
+        id="deleteFieldOfLesson1"
+        onClick={[Function]}
+        type="button"
+      >
+        DELETE
+      </button>
+    </div>
+  </div>
+</div>
+`;

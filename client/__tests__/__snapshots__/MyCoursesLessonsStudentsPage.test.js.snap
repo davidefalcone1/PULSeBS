@@ -1,0 +1,271 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MyCoursesLessonsStudentsPage Renders correctly 1`] = `
+<div
+  style={
+    Object {
+      "padding": "15px",
+    }
+  }
+>
+  <div
+    className="accordion"
+  >
+    <div
+      className="card"
+    >
+      <div
+        className="card-header"
+      >
+        <button
+          className="btn btn-link"
+          disabled={false}
+          onClick={[Function]}
+          type="button"
+        >
+          <div
+            className="d-flex w-100 pt-3 justify-content-between no-gutters"
+            id="course-Software engineering 2"
+          >
+            <h4>
+              Software engineering 2
+            </h4>
+          </div>
+        </button>
+      </div>
+      <div
+        aria-expanded={null}
+        className="collapse"
+      >
+        <div
+          className="card-body"
+        >
+          <div
+            className="accordion"
+          >
+            <div>
+              <div
+                className="row"
+              >
+                <div
+                  className="col"
+                >
+                  <h5>
+                    Statistics per week
+                  </h5>
+                  <h6>
+                    10
+                     total bookings, 
+                     
+                    2
+                     actual bookings, 
+                     
+                    3
+                     cancelled bookings, 
+                     
+                    5
+                     waiting bookings
+                     
+                  </h6>
+                </div>
+                <div
+                  className="col"
+                >
+                  <h5>
+                    Statistics per month
+                  </h5>
+                  <h6>
+                    16
+                     total bookings, 
+                     
+                    6
+                     actual bookings, 
+                     
+                    7
+                     cancelled bookings,
+                    3
+                     waiting bookings
+                  </h6>
+                </div>
+              </div>
+              <br />
+            </div>
+            <div
+              className="card"
+            >
+              <div
+                className="card-header"
+              >
+                <div
+                  className="d-flex w-100 pt-3 justify-content-between no-gutters"
+                >
+                  <button
+                    className="btn btn-link"
+                    disabled={false}
+                    onClick={[Function]}
+                    type="button"
+                  >
+                    <div
+                      id="lesson-1608044199349----1608047799349"
+                    >
+                      <h6>
+                        Lezione del 
+                        Tue 15-12-2020 15:56
+                         -- 
+                        Tue 15-12-2020 16:56
+                         
+                        <span
+                          className="badge badge-pill badge-warning"
+                        >
+                          Remote
+                        </span>
+                         
+                      </h6>
+                    </div>
+                  </button>
+                  <div
+                    id="1buttons"
+                  >
+                    <span>
+                         
+                    </span>
+                    <button
+                      className="btn btn-danger"
+                      disabled={false}
+                      id="cancelFieldOfLesson1"
+                      onClick={[Function]}
+                      type="button"
+                    >
+                      CANCEL
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div
+                aria-expanded={null}
+                className="collapse"
+              >
+                <div
+                  className="card-body"
+                >
+                  <h6>
+                    137
+                     total bookings, 
+                     
+                    100
+                     actual bookings, 
+                     
+                    4
+                     cancelled bookings, 
+                     
+                    33
+                     waiting bookings
+                  </h6>
+                  <br />
+                  <div
+                    className="list-group-item"
+                    disabled={false}
+                    id="ticketList-header"
+                    onClick={[Function]}
+                  >
+                    <div
+                      className="d-flex w-100 pt-3 justify-content-between no-gutters"
+                    >
+                      <div
+                        className="col-sm-2"
+                      >
+                        <h6>
+                          Person Id
+                        </h6>
+                      </div>
+                      <div
+                        className="col-sm-5"
+                      >
+                        <h6>
+                          Full Name
+                        </h6>
+                      </div>
+                      <div
+                        className="col-sm-5"
+                      >
+                        <h6>
+                          E-mail
+                        </h6>
+                      </div>
+                    </div>
+                  </div>
+                  <ul
+                    className="list-group list-group-flush"
+                    onKeyDown={[Function]}
+                  >
+                    <div
+                      className="list-group-item"
+                      data-rb-event-key={null}
+                      disabled={false}
+                      id="Software engineering 2-1-12345"
+                      onClick={[Function]}
+                    >
+                      <div
+                        className="list-group-item"
+                        data-rb-event-key={null}
+                        disabled={false}
+                        id="student-12345"
+                        onClick={[Function]}
+                      >
+                        <div
+                          className="d-flex w-100 pt-3 justify-content-between no-gutters"
+                        >
+                          <div
+                            className="col-sm-2"
+                          >
+                            <p
+                              id="idOfStudent_12345"
+                            >
+                              12345
+                            </p>
+                          </div>
+                          <div
+                            className="col-sm-3"
+                          >
+                            <p
+                              id="fullNameOfStudent_12345"
+                            >
+                              Davide Falcone
+                            </p>
+                          </div>
+                          <div
+                            className="col-sm-4"
+                          >
+                            <p
+                              id="emailOfStudent12345"
+                            >
+                              davide.falcone@polito.it
+                            </p>
+                          </div>
+                          <div
+                            className="col-sm-3"
+                          >
+                            <button
+                              className="btn btn-success"
+                              disabled={false}
+                              id="selectFieldOfLesson1 - 12345"
+                              onClick={[Function]}
+                              type="button"
+                            >
+                              Set as Present
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
