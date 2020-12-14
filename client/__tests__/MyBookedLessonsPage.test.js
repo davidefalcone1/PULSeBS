@@ -8,6 +8,8 @@ import LessonData from '../src/API/LessonData';
 import CourseData from '../src/API/CourseData';
 import moment from 'moment';
 
+Date.now = jest.fn(() => 1482363367071);//Avoid dynamic content on the page
+
 describe('MyBookedLessonsPage', ()=>{
     test('Renders correctly', ()=>{
         const component = renderer.create(

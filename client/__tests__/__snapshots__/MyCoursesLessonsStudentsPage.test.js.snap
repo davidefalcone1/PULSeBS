@@ -106,13 +106,13 @@ exports[`MyCoursesLessonsStudentsPage Renders correctly 1`] = `
                     type="button"
                   >
                     <div
-                      id="lesson-1608044199349----1608047799349"
+                      id="lesson-1482449767071----1482453367071"
                     >
                       <h6>
                         Lezione del 
-                        Tue 15-12-2020 15:56
+                        Fri 23-12-2016 00:36
                          -- 
-                        Tue 15-12-2020 16:56
+                        Fri 23-12-2016 01:36
                          
                         <span
                           className="badge badge-pill badge-warning"

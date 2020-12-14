@@ -8,6 +8,8 @@ import UserData from '../src/API/UserData';
 import CourseData from '../src/API/CourseData';
 import moment from 'moment';
 
+Date.now = jest.fn(() => 1482363367071);//Avoid dynamic content on the page
+
 describe('ConfigureLessonsItem', ()=>{
     test('Renders correctly', ()=>{
         const component = renderer.create(
