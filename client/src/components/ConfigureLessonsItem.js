@@ -23,7 +23,7 @@ function CourseNameField(props){
         <div className="col-sm-3">
             {props.courses.map((c) => //per ogni lezione del mio corso
                 (c.courseId === props.courseId) &&
-                    <h6 id={"nameOfcourseForLesson_" + props.id}>
+                    <h6 id={"nameOfcourseForLesson_" + props.id} key={"nameOfcourseForLesson_" + props.id}>
                         {c.courseName}
                     </h6>
             )}

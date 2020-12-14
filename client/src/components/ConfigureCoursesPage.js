@@ -128,7 +128,7 @@ class ConfigureCourses extends React.Component {
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                           <option>Select teacher</option>
                           {this.props.teachersList.map((teacher) =>
-                            <option value={teacher.personId}>{teacher.fullName}</option>
+                            <option key={teacher.personId} value={teacher.personId}>{teacher.fullName}</option>
                           )}
                         </Form.Control>
                       </Form.Group>
