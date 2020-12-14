@@ -20,7 +20,7 @@ const monitorUsagePage = (props) => {
                   <OverallStatistics courses = {props.courses}/>
                   <Accordion>
                     {props.courses.map((course) => //per ogni mio corso
-                      <Card>
+                      <Card key={course.courseId}>
                         <Card.Header>
                             <Accordion.Toggle as={Button} variant="link" eventKey = {"course-" + course.courseName}>
                               <CourseHeader course = {course.courseName}/>
@@ -32,7 +32,7 @@ const monitorUsagePage = (props) => {
                             <Accordion>
                               {props.lessons.map((lesson) => //per ogni lezione del mio corso
                                 (lesson.courseId === course.courseId) &&
-                                  <Card>
+                                  <Card key={lesson.scheduleId}>
                                     <Card.Header>
                                       <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
                                         <Accordion.Toggle as={Button} variant="link" eventKey={course.courseName + "-" + lesson.scheduleId}>

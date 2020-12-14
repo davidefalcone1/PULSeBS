@@ -120,23 +120,23 @@ class ConfigureClasses extends React.Component {
                           
                       <Form.Group>
                         <Form.Label className="control-label">Course</Form.Label>
-                        <Form.Control as="select" custom name="courseId" value = {this.state.courseId} 
+                        <Form.Control as="select" custom name="courseId" value = {this.state.courseId} key={this.state.courseId}
                             defaultValue = {this.state.courseId}
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                           <option>Select course</option>
                           {this.props.courses.map((course) =>
-                            <option value={course.courseId}>{course.courseName}</option>
+                            <option value={course.courseId} key={course.courseId}>{course.courseName}</option>
                           )}
                         </Form.Control>
                       </Form.Group>
                       <Form.Group>
                         <Form.Label className="control-label">Student</Form.Label>
-                        <Form.Control as="select" custom name="studentId" value = {this.state.studentId} 
+                        <Form.Control as="select" custom name="studentId" value = {this.state.studentId} key={this.state.studentId}
                             defaultValue = {this.state.studentId}
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                           <option>Select student</option>
                           {this.props.studentsInfos.map((s) =>
-                            <option value={s.personId}>{s.fullName}</option>
+                            <option value={s.personId} key={s.personId}>{s.fullName}</option>
                           )}
                         </Form.Control>
                       </Form.Group>

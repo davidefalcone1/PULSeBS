@@ -50,7 +50,7 @@ class MyCoursesLessonsPageRender extends React.Component {
                 <div style={{padding: "15px"}}>
                   <Accordion>
                     {this.props.teacherCourses.map((teacherCourse) => //per ogni mio corso
-                      <Card>
+                      <Card key={teacherCourse.courseId}>
                         <Card.Header>
                             <Accordion.Toggle as={Button} variant="link" eventKey = {"course-" + teacherCourse.courseName}>
                               <CourseHeader course = {teacherCourse.courseName}/>
@@ -64,7 +64,7 @@ class MyCoursesLessonsPageRender extends React.Component {
                                 cancelledBookingsAvgMonth = {teacherCourse.cancelledBookingsAvgMonth} waitingBookingsAvgMonth = {teacherCourse.waitingBookingsAvgMonth}/>
                               {this.props.myTeachedCoursesLessons.map((courseLesson) => //per ogni lezione del mio corso
                                 (courseLesson.courseId === teacherCourse.courseId) &&
-                                  <Card>
+                                  <Card key={courseLesson.courseId}>
                                     <Card.Header>
                                       <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
                                         <Accordion.Toggle as={Button} variant="link" eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>

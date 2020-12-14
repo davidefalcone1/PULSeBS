@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfigureUsersItem Renders correctly 1`] = `
+<div
+  className="list-group-item"
+  disabled={false}
+  id="user-undefined"
+  onClick={[Function]}
+>
+  <div
+    className="d-flex w-100 pt-3 justify-content-between no-gutters"
+  >
+    <div
+      className="col-sm-3"
+    >
+      <h6
+        id="idOfuser_12345"
+      >
+        12345
+      </h6>
+    </div>
+    <div
+      className="col-sm-4"
+    >
+      <h6
+        id="nameOfuser_12345"
+      >
+        Davide Falcone
+      </h6>
+    </div>
+    <div
+      className="col-sm-5"
+    >
+      <h6
+        id="emailOfuser_12345"
+      >
+        davide.falcone@polito.it
+      </h6>
+    </div>
+  </div>
+</div>
+`;

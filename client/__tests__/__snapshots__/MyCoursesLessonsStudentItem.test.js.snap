@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MyCoursesLessonsStudentItem Renders correctly 1`] = `
+<div
+  className="list-group-item"
+  disabled={false}
+  id="student-12345"
+  onClick={[Function]}
+>
+  <div
+    className="d-flex w-100 pt-3 justify-content-between no-gutters"
+  >
+    <div
+      className="col-sm-2"
+    >
+      <p
+        id="idOfStudent_12345"
+      >
+        12345
+      </p>
+    </div>
+    <div
+      className="col-sm-3"
+    >
+      <p
+        id="fullNameOfStudent_12345"
+      >
+        Davide Falcone
+      </p>
+    </div>
+    <div
+      className="col-sm-4"
+    >
+      <p
+        id="emailOfStudent12345"
+      >
+        davide.falcone@polito.it
+      </p>
+    </div>
+    <div
+      className="col-sm-3"
+    >
+      <button
+        className="btn btn-success"
+        disabled={false}
+        id="selectFieldOfLesson - 12345"
+        onClick={[Function]}
+        type="button"
+      >
+        Set as Present
+      </button>
+    </div>
+  </div>
+</div>
+`;

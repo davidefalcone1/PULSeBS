@@ -1,0 +1,239 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MonitorUsagePage Renders correctly 1`] = `
+<div
+  style={
+    Object {
+      "padding": "15px",
+    }
+  }
+>
+  <div>
+    <div
+      className="row"
+    >
+      <div
+        className="col"
+      >
+        <h5>
+          Statistics per week (Average)
+        </h5>
+        <h6>
+          10.00
+           Total bookings
+        </h6>
+        <h6>
+          2.00
+           Actual bookings
+        </h6>
+        <h6>
+          3.00
+           Cancelled bookings
+        </h6>
+        <h6>
+          5.00
+           Waiting bookings
+        </h6>
+        <h6>
+          7.00
+           Attendance
+        </h6>
+      </div>
+      <div
+        className="col"
+      >
+        <h5>
+          Statistics per month (Average)
+        </h5>
+        <h6>
+          16.00
+           Total bookings
+        </h6>
+        <h6>
+          6.00
+           Actual bookings
+        </h6>
+        <h6>
+          7.00
+           Cancelled bookings
+        </h6>
+        <h6>
+          3.00
+           Waiting bookings
+        </h6>
+        <h6>
+          5.00
+           Attendance
+        </h6>
+      </div>
+    </div>
+    <br />
+  </div>
+  <div
+    className="accordion"
+  >
+    <div
+      className="card"
+    >
+      <div
+        className="card-header"
+      >
+        <button
+          className="btn btn-link"
+          disabled={false}
+          onClick={[Function]}
+          type="button"
+        >
+          <div
+            className="d-flex w-100 pt-3 justify-content-between no-gutters"
+            id="course-Software engineering 2"
+          >
+            <h4>
+              Software engineering 2
+            </h4>
+          </div>
+        </button>
+      </div>
+      <div
+        aria-expanded={null}
+        className="collapse"
+      >
+        <div
+          className="card-body"
+        >
+          <div>
+            <div
+              className="row"
+            >
+              <div
+                className="col"
+              >
+                <h5>
+                  Statistics per week (Average)
+                </h5>
+                <h6>
+                  2
+                   Bookings
+                </h6>
+                <h6>
+                  3
+                   Cancelled bookings
+                </h6>
+                <h6>
+                  5
+                   Waiting bookings
+                </h6>
+                <h6>
+                  10
+                   Total 
+                </h6>
+                <h6>
+                  7
+                   Attendance
+                </h6>
+              </div>
+              <div
+                className="col"
+              >
+                <h5>
+                  Statistics per month (Average)
+                </h5>
+                <h6>
+                  6
+                   Bookings
+                </h6>
+                <h6>
+                  7
+                   Cancelled bookings
+                </h6>
+                <h6>
+                  3
+                   Waiting bookings
+                </h6>
+                <h6>
+                  16
+                   Total 
+                </h6>
+                <h6>
+                  5
+                   Attendance
+                </h6>
+              </div>
+            </div>
+            <br />
+          </div>
+          <div
+            className="accordion"
+          >
+            <div
+              className="card"
+            >
+              <div
+                className="card-header"
+              >
+                <div
+                  className="d-flex w-100 pt-3 justify-content-between no-gutters"
+                >
+                  <button
+                    className="btn btn-link"
+                    disabled={false}
+                    onClick={[Function]}
+                    type="button"
+                  >
+                    <div
+                      id="lesson-1599568200000----1599577200000"
+                    >
+                      <h6>
+                        Lezione del 
+                        Tue 08-09-2020 14:30
+                         -- 
+                        Tue 08-09-2020 17:00
+                         
+                        <span
+                          className="badge badge-pill badge-warning"
+                        >
+                          Remote
+                        </span>
+                         
+                      </h6>
+                    </div>
+                  </button>
+                </div>
+              </div>
+              <div
+                aria-expanded={null}
+                className="collapse"
+              >
+                <div
+                  className="card-body"
+                >
+                  <h6>
+                    100
+                     Bookings
+                  </h6>
+                  <h6>
+                    4
+                     Cancelled bookings
+                  </h6>
+                  <h6>
+                    33
+                     Waiting bookings
+                  </h6>
+                  <h6>
+                    137
+                     Total bookings
+                  </h6>
+                  <h6>
+                    0
+                     Attendance
+                  </h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

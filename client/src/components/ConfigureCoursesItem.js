@@ -29,7 +29,7 @@ function TeacherField(props){
         <div className="col-sm-6">
             {props.teachersList.map((t) => //per ogni lezione del mio corso
                 (t.personId === props.teacherId) &&
-                    <h6 id={"teacherOfcourse_" + t.personId + "-" + props.id}>
+                    <h6 key={"teacherOfcourse_" + t.personId + "-" + props.id} id={"teacherOfcourse_" + t.personId + "-" + props.id}>
                         {t.fullName}
                     </h6>
             )}

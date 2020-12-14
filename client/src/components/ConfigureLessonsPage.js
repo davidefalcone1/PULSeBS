@@ -170,7 +170,7 @@ class ConfigureLessons extends React.Component {
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                           <option>Select course</option>
                           {this.props.coursesList.map((course) =>
-                            <option value={course.courseId}>{course.courseName}</option>
+                            <option value={course.courseId} key={course.courseId}>{course.courseName}</option>
                           )}
                         </Form.Control>
                       </Form.Group>
@@ -213,7 +213,7 @@ class ConfigureLessons extends React.Component {
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                           <option>Select classroom</option>
                           {this.props.classesList.map((c) =>
-                            <option value={c.classroomName}>{c.classroomName}</option>
+                            <option value={c.classroomName} key={c.classroomName}>{c.classroomName}</option>
                           )}
                         </Form.Control>
                       </Form.Group>
