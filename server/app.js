@@ -299,13 +299,13 @@ app.post('/bookLesson', async (req, res) => {
 app.put('/editLesson', async (req, res) => {
     const scheduleId = req.body.scheduleId;
     const courseId = req.body.courseId;
-    const errorLessonStatus = req.body.errorLessonStatus;
-    const lessonType = req.body.lessonType;
+    const lessonStatus = (req.body.lessonStatus === "true");
+    const lessonType = (req.body.lessonType === "true");
     const startDate = req.body.startDate;
     const endDate = req.body.endDate;
     const classroom = req.body.classroom;
     try {
-        const result = await officerDao.editLesson(scheduleId, courseId, errorLessonStatus, lessonType, startDate, endDate, classroom);
+        const result = await officerDao.editLesson(scheduleId, courseId, lessonStatus, lessonType, startDate, endDate, classroom);
         res.status(200).json(result);
     }
     catch (err) {

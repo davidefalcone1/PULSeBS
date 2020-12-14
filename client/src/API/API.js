@@ -371,12 +371,12 @@ async function createNewUser(userId, fullName, email, password, type) {
         }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
-async function editLesson(scheduleId, courseId, errorLessonStatus, lessonType, startDate, endDate, classroom) {
+async function editLesson(scheduleId, courseId, lessonStatus, lessonType, startDate, endDate, classroom) {
     return new Promise((resolve, reject) => {
         fetch("/editLesson", {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ scheduleId, courseId, errorLessonStatus, lessonType, startDate, endDate, classroom })
+            body: JSON.stringify({ scheduleId, courseId, lessonStatus, lessonType, startDate, endDate, classroom })
         }).then((response) => {
             if (response.ok) {
                 resolve(null);

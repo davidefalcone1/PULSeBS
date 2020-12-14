@@ -587,15 +587,18 @@ exports.createNewLesson = (courseId, errorLessonStatus, lessonType, startDate, e
     });
 }
 
-exports.editLesson = (scheduleId, courseId, errorLessonStatus, lessonType, startDate, endDate, classroom) => {
+exports.editLesson = (scheduleId, courseId, lessonStatus, lessonType, startDate, endDate, classroom) => {
     return new Promise((resolve, reject) => {
+
+        lessonStatus =  !lessonStatus ? 1 : 0;
+        lessonType = !lessonType ? 1 : 0;
 
         const sql = `
         UPDATE CourseSchedule
         SET CourseID = ?, CourseStatus = ?, CourseType = ?, TimeStart = ?, TimeEnd = ?, Classroom = ?
         WHERE CourseScheduleID = ?`;
 
-        db.get(sql, [courseId, errorLessonStatus, lessonType, startDate, endDate, classroom, scheduleId], (error) => {
+        db.get(sql, [courseId, lessonStatus, lessonType, startDate, endDate, classroom, scheduleId], (error) => {
             if (error) {
                 reject(error);
                 return;

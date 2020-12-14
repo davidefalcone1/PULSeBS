@@ -105,7 +105,7 @@ class ConfigureLessons extends React.Component {
         this.props.createNewLesson(this.state.courseId, this.state.errorLessonStatus,
           this.state.lessonType, this.state.startDate, this.state.endDate, this.state.classroom);
       else if(this.state.isEditing)
-        this.props.editLesson(this.state.scheduleId, this.state.courseId, this.state.errorLessonStatus,
+        this.props.editLesson(this.state.scheduleId, this.state.courseId, this.state.lessonStatus,
           this.state.lessonType, this.state.startDate, this.state.endDate, this.state.classroom);
       
       this.setState({isCreating: false});
@@ -180,8 +180,8 @@ class ConfigureLessons extends React.Component {
                             defaultValue = {this.state.lessonStatus}
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                           <option>Select status</option>
-                          <option value={true}>Active</option>
-                          <option value={false}>Cancelled</option>
+                          <option value={false}>Active</option>
+                          <option value={true}>Cancelled</option>
                         </Form.Control>
                       </Form.Group>
                       <Form.Group>
