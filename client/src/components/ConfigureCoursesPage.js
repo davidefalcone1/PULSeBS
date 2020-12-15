@@ -225,7 +225,7 @@ class ConfigureCourses extends React.Component {
         )}
       </AuthContext.Consumer>
     );
-  };  
+  }  
 }
 
 function ListHeader() {
