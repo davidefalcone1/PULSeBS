@@ -280,6 +280,7 @@ const generateSchedule = async (schedule) => {
         }
     }
     catch (err) {
+        console.log(err);
         throw (err);
     }
 }

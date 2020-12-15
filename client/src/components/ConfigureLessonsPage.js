@@ -339,7 +339,7 @@ class ConfigureLessons extends React.Component {
         )}
       </AuthContext.Consumer>
     );
-  };  
+  } 
 }
 
 

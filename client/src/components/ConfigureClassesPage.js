@@ -233,7 +233,7 @@ class ConfigureClasses extends React.Component {
         )}
       </AuthContext.Consumer>
     );
-  };  
+  }
 }
 
 function ListHeader() {

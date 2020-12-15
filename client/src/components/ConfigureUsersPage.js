@@ -263,7 +263,7 @@ class ConfigureUser extends React.Component {
         )}
       </AuthContext.Consumer>
     );
-  };  
+  }  
 }
 
 function ListHeader() {
