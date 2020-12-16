@@ -232,7 +232,7 @@ class App extends React.Component {
     API.editLesson(scheduleId, courseId, errorLessonStatus, lessonType, startDate, endDate, classroom)
     .then(() => {
       API.getAllLessons().then((lessonsList) => {
-        this.setState({lessons: LessonsList});
+        this.setState({lessons: lessonsList});
       }).catch((errorObj) => { console.log(errorObj); });  
     })
   }
