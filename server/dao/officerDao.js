@@ -61,7 +61,7 @@ exports.getUsers = (userType) => {
 exports.getLessons = () => {
     return new Promise((resolve, reject) => {
         const sql = 'SELECT * '
-            + 'FROM CourseSchedule';
+            + 'FROM CourseSchedule ORDER BY TimeStart ASC';
         db.all(sql, [], (err, rows) => {
             if (err) {
                 reject(err);

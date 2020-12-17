@@ -78,8 +78,7 @@ class MyCoursesLessonsPageRender extends React.Component {
                                     </Card.Header>
                                     <Accordion.Collapse eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
                                       <Card.Body>
-                                        <LessonHeaderStatistics id = {courseLesson.scheduleId + "statistics"} normalBookings = {courseLesson.normalBookings}
-                                          cancelledBookings = {courseLesson.cancelledBookings} waitingBookings = {courseLesson.waitingBookings}/>
+                                        <LessonHeaderStatistics id = {courseLesson.scheduleId + "statistics"} lesson = {courseLesson}/>
                                         <StudentHeader/>
                                         <ListGroup as="ul" variant="flush">
                                           {this.props.studentsBookedToMyLessons.map((studentBooking) => //per ogni prenotazione alla lezione del mio corso
@@ -193,10 +192,12 @@ function LessonHeaderStatistics(props){
   return (
     <>
       <h6>
-          {props.normalBookings + props.cancelledBookings + props.waitingBookings} total bookings, {' '}
-          {props.normalBookings} actual bookings, {' '}
-          {props.cancelledBookings} cancelled bookings, {' '}
-          {props.waitingBookings} waiting bookings
+          {props.lesson.normalBookings + props.lesson.cancelledBookings 
+            + props.lesson.waitingBookings + props.lesson.attendanceCount} total bookings, {' '}
+          {props.lesson.normalBookings} actual bookings, {' '}
+          {props.lesson.cancelledBookings} cancelled bookings, {' '}
+          {props.lesson.waitingBookings} waiting bookings, {' '}
+          {props.lesson.attendanceCount} attendances
       </h6>
       <br/>
     </>

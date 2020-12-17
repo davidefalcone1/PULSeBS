@@ -219,7 +219,7 @@ class LessonListPageRender extends React.Component {
                       </Accordion.Collapse>
                     </Card>
                   }
-                  {this.props.waitingBookings && (console.log(this.props.waitingBookings) || true) && 
+                  {this.props.waitingBookings && 
                     <Card>
                       <Card.Header>
                         <Accordion.Toggle as={Button} variant="link" eventKey = {"pendingBookedLessons"}>

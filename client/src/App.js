@@ -174,12 +174,15 @@ class App extends React.Component {
   }
   setStudentAsPresent = (scheduleId, studentId) => {
     API.setStudentAsPresent(scheduleId, studentId).then(() => {
-      var lessonsIds = this.state.lessons.map((row) => { return row.scheduleId });
-      API.getBookedStudents(lessonsIds).then((bookingData) => {
-        this.setState({ studentsBookings: bookingData });  
-        var studentsIds = bookingData.map((row) => { return row.studentId });
-        API.getStudentsData(studentsIds).then((studentsData) => {
-          this.setState({ studentsInfos: studentsData, configurationCompleted: true });
+      API.getMyCoursesLessons().then((myCoursesLessons) => {
+        this.setState({ lessons: myCoursesLessons });
+        var lessonsIds = myCoursesLessons.map((row) => { return row.scheduleId });
+        API.getBookedStudents(lessonsIds).then((bookingData) => {
+          this.setState({ studentsBookings: bookingData });  
+          var studentsIds = bookingData.map((row) => { return row.studentId });
+          API.getStudentsData(studentsIds).then((studentsData) => {
+            this.setState({ studentsInfos: studentsData, configurationCompleted: true });
+          }).catch((errorObj) => { console.log(errorObj); });
         }).catch((errorObj) => { console.log(errorObj); });
       }).catch((errorObj) => { console.log(errorObj); });
     }).catch((errorObj) => { console.log(errorObj); });    
