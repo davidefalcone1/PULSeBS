@@ -28,7 +28,7 @@ class ConfigureClasses extends React.Component {
   }
 
   activateModal = () => {
-    this.setState({isCreating: true});
+    this.setState({isCreating: true, classRoomName: '', maxSeats: 0});
   }
   activateUploadFileModal = () => {
     this.setState({isUploading: true})

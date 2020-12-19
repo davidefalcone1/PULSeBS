@@ -29,7 +29,7 @@ class ConfigureClasses extends React.Component {
   }
 
   activateModal = () => {
-    this.setState({isCreating: true});
+    this.setState({isCreating: true, studentId: 'Select student', courseId: 'Select course'});
   }
   activateUploadFileModal = () => {
     this.setState({isUploading: true})

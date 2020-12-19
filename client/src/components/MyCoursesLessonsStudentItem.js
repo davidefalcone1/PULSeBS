@@ -9,8 +9,9 @@ function myCoursesLessonsStudentItem (props) {
                 <PersonIdField id = {props.student.personId}/>
                 <FullNameField id = {props.student.personId} fullName = {props.student.fullName}/>
                 <EmailField id = {props.student.personId} email = {props.student.email}/>
-                <SelectField id = {props.student.personId} 
-                    booking = {props.booking} setStudentAsPresent = {props.setStudentAsPresent}/>
+                <SelectField id = {props.student.personId} booking = {props.booking}
+                    setStudentAsPresent = {props.setStudentAsPresent}
+                    setStudentAsNotPresent = {props.setStudentAsNotPresent}/>
             </div>
         </ListGroup.Item>
     );
@@ -53,8 +54,16 @@ function SelectField(props){
                 <Button variant="success" onClick={(event) => {
                     event.preventDefault();
                     props.setStudentAsPresent(props.booking.scheduleId, props.booking.studentId);
-                }} id={"selectFieldOfLesson" + props.booking.scheduleId + " - " + props.booking.studentId}>
+                }} id={"setPresentOf" + props.booking.scheduleId + " - " + props.booking.studentId}>
                     Set as Present
+                </Button>
+            }
+            {props.booking.attended &&  
+                <Button variant="secondary" onClick={(event) => {
+                    event.preventDefault();
+                    props.setStudentAsNotPresent(props.booking.scheduleId, props.booking.studentId);
+                }} id={"setNotPresentOf" + props.booking.scheduleId + " - " + props.booking.studentId}>
+                    Set as NOT Present
                 </Button>
             }
         </div>

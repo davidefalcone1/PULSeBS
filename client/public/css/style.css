@@ -7,6 +7,20 @@
 .modalCreationForm {
     width: 90%;
 }
+.fitScreen {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+}
+.fill-screen {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    padding-top: 3.5rem;
+    bottom: 0;
+    text-align: center;
+}
 .main-from-nav{
     padding-top: 5rem;
     margin-left: 5px;

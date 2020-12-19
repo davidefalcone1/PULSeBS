@@ -28,7 +28,7 @@ class ConfigureUser extends React.Component {
   }
 
   activateModal = () => {
-    this.setState({isCreating: true});
+    this.setState({isCreating: true, userId: '', fullName:'', email: '', password: ''});
   }
   activateUploadFileModal = () => {
     this.setState({isUploading: true})

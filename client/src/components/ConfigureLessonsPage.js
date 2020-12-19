@@ -102,7 +102,7 @@ class ConfigureLessons extends React.Component {
     }
     else {
       if(this.state.isCreating)
-        this.props.createNewLesson(this.state.courseId, this.state.errorLessonStatus,
+        this.props.createNewLesson(this.state.courseId, this.state.lessonStatus,
           this.state.lessonType, this.state.startDate, this.state.endDate, this.state.classroom);
       else if(this.state.isEditing)
         this.props.editLesson(this.state.scheduleId, this.state.courseId, this.state.lessonStatus,
@@ -213,7 +213,7 @@ class ConfigureLessons extends React.Component {
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                           <option>Select classroom</option>
                           {this.props.classesList.map((c) =>
-                            <option value={c.classroomName} key={c.classroomName}>{c.classroomName}</option>
+                            <option value={c.classroomName} key={c.classroomName}>{c.classroomName + " - " + c.maxSeats}</option>
                           )}
                         </Form.Control>
                       </Form.Group>

@@ -11,6 +11,9 @@ import ConfigureCourses from './components/ConfigureCoursesPage';
 import ConfigureClassrooms from './components/ConfigureClassroomsPage';
 import ConfigureClasses from './components/ConfigureClassesPage';
 import MonitorUsage from './components/MonitorUsagePage';
+import GenerateContactTracing from './components/GenerateContactTracingPage';
+import StudentTutorial from './components/StudentTutorialPage';
+import TeacherTutorial from './components/TeacherTutorialPage';
 import LoginForm from './components/LoginForm'
 import { AuthContext } from './_services/AuthContext';
 
@@ -26,6 +29,7 @@ class App extends React.Component {
       isStudent: false,
       isBookingManager: false,
       isSupportOfficer: false,
+      hasDoneTutorial: true,
       loginError: false,
       configurationCompleted: false,
       lessons: [], //usata per bookableLessons, lezioni di Teacher (coursesLessons), lista totale lezioni (support officer)
@@ -37,6 +41,7 @@ class App extends React.Component {
       teachersInfos: [], //usata per lista totale teachers (support officer)
       classes: [], //usata per lista totale classi (support officer)
       enrollmentInfos: [], //usata per lista totale di iscrizione ai corsi (support officer)
+      basicSchedules: [], //usata per memorizzare le combinazioni base corso-giorno/ora (support officer)
     };
   }
 
@@ -48,7 +53,6 @@ class App extends React.Component {
       this.setState({ user: null, loginError: null, configurationCompleted: false });
     });
   }
-
   login = async (username, password) => {
     API.login(username, password)
       .then((user) => {
@@ -56,7 +60,9 @@ class App extends React.Component {
         this.setState({ user: user, loginError: false });
         if (user.accessLevel === 1) { //student
           this.setState({ isTeacher: false, isStudent: true,
-            isBookingManager: false, isSupportOfficer: false, });
+            isBookingManager: false, isSupportOfficer: false, 
+            hasDoneTutorial: user.hasDoneTutorial
+          });
           console.log("User is student");
           API.getStudentCourses().then((courseList) => {
             this.setState({ courses: courseList });
@@ -76,7 +82,9 @@ class App extends React.Component {
         }
         if (user.accessLevel === 2) { //teacher
           this.setState({ isTeacher: true, isStudent: false,
-            isBookingManager: false, isSupportOfficer: false});
+            isBookingManager: false, isSupportOfficer: false,
+            hasDoneTutorial: user.hasDoneTutorial
+          });
           console.log("User is teacher");
           API.getTeacherCourses().then((courseList) => {
             this.setState({ courses: courseList });
@@ -122,6 +130,11 @@ class App extends React.Component {
         console.log(e);
         this.setState((state) => { return { ...state, user: null, loginError: e } });
       });
+  }
+  setTutorialCompleted = () => {
+    API.setTutorialCompleted().then(() => {
+      this.setState({hasDoneTutorial: true});
+    })
   }
 
   updateBookableLessons = () => {
@@ -187,6 +200,21 @@ class App extends React.Component {
       }).catch((errorObj) => { console.log(errorObj); });
     }).catch((errorObj) => { console.log(errorObj); });    
   }
+  setStudentAsNotPresent = (scheduleId, studentId) => {
+    API.setStudentAsNotPresent(scheduleId, studentId).then(() => {
+      API.getMyCoursesLessons().then((myCoursesLessons) => {
+        this.setState({ lessons: myCoursesLessons });
+        var lessonsIds = myCoursesLessons.map((row) => { return row.scheduleId });
+        API.getBookedStudents(lessonsIds).then((bookingData) => {
+          this.setState({ studentsBookings: bookingData });  
+          var studentsIds = bookingData.map((row) => { return row.studentId });
+          API.getStudentsData(studentsIds).then((studentsData) => {
+            this.setState({ studentsInfos: studentsData, configurationCompleted: true });
+          }).catch((errorObj) => { console.log(errorObj); });
+        }).catch((errorObj) => { console.log(errorObj); });
+      }).catch((errorObj) => { console.log(errorObj); });
+    }).catch((errorObj) => { console.log(errorObj); });  
+  }
 
   createNewCourse = (courseName, teacherId) => {
     API.createNewCourse(courseName, teacherId).then(() => {
@@ -223,21 +251,60 @@ class App extends React.Component {
       }
     }).catch((errorObj) => { console.log(errorObj); }); 
   }
-  createNewLesson = (courseId, errorLessonStatus, lessonType, startDate, endDate, classroom) => {
-    API.createNewLesson(courseId, errorLessonStatus, lessonType, startDate, endDate, classroom)
+  createNewLesson = (courseId, lessonStatus, lessonType, startDate, endDate, classroom) => {
+    API.createNewLesson(courseId, lessonStatus, lessonType, startDate, endDate, classroom)
     .then(() => {
       API.getAllLessons().then((lessonsList) => {
         this.setState({lessons: lessonsList});
       }).catch((errorObj) => { console.log(errorObj); });  
     }).catch((errorObj) => { console.log(errorObj); });
   }
-  editLesson = (scheduleId, courseId, errorLessonStatus, lessonType, startDate, endDate, classroom) => {
-    API.editLesson(scheduleId, courseId, errorLessonStatus, lessonType, startDate, endDate, classroom)
+  editLesson = (scheduleId, courseId, lessonStatus, lessonType, startDate, endDate, classroom) => {
+    API.editLesson(scheduleId, courseId, lessonStatus, lessonType, startDate, endDate, classroom)
     .then(() => {
       API.getAllLessons().then((lessonsList) => {
         this.setState({lessons: lessonsList});
       }).catch((errorObj) => { console.log(errorObj); });  
     })
+  }
+  createNewCourseSchedule = (courseId, day, startTime, endTime, classroom) => {
+    API.createNewCourseSchedule(courseId, day, startTime, endTime, classroom).then(() => {
+
+      API.getAllCoursesSchedules().then((schedules) => {
+        this.setState({basicSchedules: schedules})
+      }).catch((errorObj) => { console.log(errorObj); });
+
+      API.getAllLessons().then((lessonsList) => {
+        this.setState({lessons: lessonsList});
+      }).catch((errorObj) => { console.log(errorObj); });  
+
+    }).catch((errorObj) => { console.log(errorObj); });
+  }
+  editCourseSchedule = (scheduleId, courseId, day, startTime, endTime, classroom) => {
+    API.editCourseSchedule(scheduleId, courseId, day, startTime, endTime, classroom).then(() => {
+
+      API.getAllCoursesSchedules().then((schedules) => {
+        this.setState({basicSchedules: schedules})
+      }).catch((errorObj) => { console.log(errorObj); });
+
+      API.getAllLessons().then((lessonsList) => {
+        this.setState({lessons: lessonsList});
+      }).catch((errorObj) => { console.log(errorObj); });  
+
+    }).catch((errorObj) => { console.log(errorObj); });
+  }
+  deleteCourseSchedule = (scheduleId) => {
+    API.deleteCourseSchedule(scheduleId).then(() => {
+
+      API.getAllCoursesSchedules().then((schedules) => {
+        this.setState({basicSchedules: schedules})
+      }).catch((errorObj) => { console.log(errorObj); });
+
+      API.getAllLessons().then((lessonsList) => {
+        this.setState({lessons: lessonsList});
+      }).catch((errorObj) => { console.log(errorObj); });  
+
+    }).catch((errorObj) => { console.log(errorObj); });
   }
   uploadFileClassrooms= (file) => {
     API.uploadFileClassrooms(file).then(() => {
@@ -305,6 +372,37 @@ class App extends React.Component {
 
     API.getAllEnrollments().then((enrollementsList) => {
       this.setState({enrollmentInfos: enrollementsList})
+    }).catch((errorObj) => { console.log(errorObj); });
+
+    API.getAllCoursesSchedules().then((schedules) => {
+      this.setState({basicSchedules: schedules})
+    }).catch((errorObj) => { console.log(errorObj); });
+  }
+
+  generateStudentTracing = (studentID, downloadType) => {
+    API.generateStudentTracing(studentID, downloadType)
+    .then(fileJSON => fileJSON.blob())
+    .then((file) => {   
+      const url = window.URL.createObjectURL(new Blob([file]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `studentContactTracing.${downloadType}`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    })
+  }
+  generateTeacherTracing = (teacherID, downloadType) => {
+    API.generateTeacherTracing(teacherID, downloadType)
+    .then(fileJSON => fileJSON.blob())
+    .then((file) => {   
+      const url = window.URL.createObjectURL(new Blob([file]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `teacherContactTracing.${downloadType}`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
     })
   }
 
@@ -316,6 +414,7 @@ class App extends React.Component {
       isTeacher: this.state.isTeacher,
       isBookingManager: this.state.isBookingManager,
       isSupportOfficer: this.state.isSupportOfficer,
+      hasDoneTutorial: this.state.hasDoneTutorial,
       loginUser: this.login,
       logoutUser: this.logout,
       configurationCompleted: this.state.configurationCompleted
@@ -334,18 +433,30 @@ class App extends React.Component {
               {!this.state.user ? <Redirect to='/login' /> : <MyLessonsList lessonsList={this.state.myBookedLessons}
                 waitingBookings={this.state.myWaitingBookedLessons} selectLessonFunction={this.deleteLesson} courses={this.state.courses} />}
             </Route>
+            <Route path='/studentTutorial'>
+              {!this.state.user ? <Redirect to='/login' /> : <StudentTutorial setTutorialCompleted={this.setTutorialCompleted}/>}
+            </Route>
             
             {/* TEACHER */}
             <Route path='/myCoursesLessonslist'>
               {!this.state.user ? <Redirect to='/login' /> : <MyCoursesLessonsStudents teacherCourses={this.state.courses}
                 myTeachedCoursesLessons={this.state.lessons} studentsBookedToMyLessons={this.state.studentsBookings}
                 myBookedStudentsInfos={this.state.studentsInfos} cancelLesson={this.cancelLesson}
-                changeLessonToRemote={this.changeLessonToRemote} setStudentAsPresent={this.setStudentAsPresent}/>}
+                changeLessonToRemote={this.changeLessonToRemote} setStudentAsPresent={this.setStudentAsPresent}
+                setStudentAsNotPresent={this.setStudentAsNotPresent}/>}
+            </Route>
+            <Route path='/teacherTutorial'>
+              {!this.state.user ? <Redirect to='/login' /> : <TeacherTutorial setTutorialCompleted={this.setTutorialCompleted}/>}
             </Route>
             
             {/* BOOKING MANAGER */}
             <Route path='/monitorUsage'>
-              {!this.state.user ? <Redirect to='/login' /> : <MonitorUsage lessons={this.state.lessons} courses={this.state.courses}/>}
+              {!this.state.user ? <Redirect to='/login' /> : <MonitorUsage lessons={this.state.lessons}
+                courses={this.state.courses}/>}
+            </Route>
+            <Route path='/generateContactTracing'>
+              {!this.state.user ? <Redirect to='/login' /> : <GenerateContactTracing
+                generateStudentTracing={this.generateStudentTracing} generateTeacherTracing={this.generateTeacherTracing}/>}
             </Route>
 
             {/* SUPPORT OFFICER */}
@@ -355,7 +466,10 @@ class App extends React.Component {
             </Route>
             <Route path='/configureCoursesList'>
               {!this.state.user ? <Redirect to='/login' /> : <ConfigureCourses coursesList={this.state.courses} teachersList={this.state.teachersInfos}
-                createNewCourse={this.createNewCourse} uploadFileCourses={this.uploadFileCourses}/>}
+                basicSchedules={this.state.basicSchedules} createNewCourseSchedule={this.createNewCourseSchedule}
+                editCourseSchedule={this.editCourseSchedule} deleteCourseSchedule={this.deleteCourseSchedule}
+                createNewCourse={this.createNewCourse} uploadFileCourses={this.uploadFileCourses}
+                classroomssList={this.state.classes}/>}
             </Route>
             <Route path='/configureTeachersList'>
               {!this.state.user ? <Redirect to='/login' /> : <ConfigureUsers type={"teacher"}  usersList={this.state.teachersInfos}
