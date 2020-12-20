@@ -6,6 +6,7 @@ const CourseData = require('./CourseData');
 const UserData = require('./UserData');
 const LessonsData = require('./LessonsData');
 const EnrollmentData = require('./EnrollmentData');
+const CourseBasicSchedule = require('./CourseBasicSchedule');
 const moment = require('moment');
 const bcrypt = require('bcrypt');
 
@@ -90,6 +91,21 @@ exports.getEnrollments = () => {
             }
         });
     })
+}
+
+exports.getSchedules = () => {
+    return new Promise ((resolve, reject) => {
+        const sql = 'SELECT * FROM GeneralCourseSchedule';
+        db.all(sql, [], (err, rows) => {
+            if(err){
+                reject(err);
+            }
+            else {
+                const schedules = rows.map(row => new CourseBasicSchedule(row.ID, row.CourseID, row.Day, row.StartTime, row.EndTime, row.Room));
+                resolve(schedules);
+            }
+        });
+    });
 }
 
 const checkHeaderFields = (header, fileType) => {

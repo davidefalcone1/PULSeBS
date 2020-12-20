@@ -454,6 +454,16 @@ app.get('/allEnrollments', async (req, res) => {
     }
 });
 
+app.get('/allCoursesSchedules', async (req, res) => {
+    try {
+        const schedules = await officerDao.getSchedules();
+        res.json(schedules);
+    }
+    catch (error) {
+        res.status(505).json(error)
+    }
+});
+
 app.post('/uploadFileCourses', async (req, res) => {
 
     const file = req.body.file;
