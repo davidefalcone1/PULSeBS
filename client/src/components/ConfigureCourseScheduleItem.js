@@ -55,6 +55,7 @@ function ButtonField(props){
             }} id={"editButtonFieldOflesson" + props.id}>
                 Edit
             </Button>
+            {' '}
             <Button variant="danger" onClick={(event) => {
                 event.preventDefault();
                 props.delete(props.id);
