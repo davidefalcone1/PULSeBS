@@ -284,7 +284,7 @@ class ConfigureCourses extends React.Component {
                               onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                             <option>Select classroom</option>
                             {this.props.classroomssList.map((c) =>
-                              <option value={c.classroomName} key={c.classroomName}>{c.classroomName - c.maxSeats}</option>
+                              <option value={c.classroomName} key={c.classroomName}>{c.classroomName + ' - ' + c.maxSeats}</option>
                             )}
                           </Form.Control>
                         </Form.Group>
