@@ -94,10 +94,10 @@ exports.getEnrollments = () => {
 }
 
 exports.getSchedules = () => {
-    return new Promise ((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         const sql = 'SELECT * FROM GeneralCourseSchedule';
         db.all(sql, [], (err, rows) => {
-            if(err){
+            if (err) {
                 reject(err);
             }
             else {
@@ -253,14 +253,13 @@ const adjustToISOformat = (time) => {
 
 // Generates all days of the semester in which the lecture is scheduled (e.g. all mondays from 14:00 to 15:30)
 const generateSchedule = async (schedule) => {
-    
+
     try {
         const semester = await readSemester(schedule.Code);
         if (!semester) {
             return undefined;
         }
         else {
-            console.log(schedule)
             //compute dates of lectures
             const semesterStart = semester === 1 ? moment('2020-09-28') : moment('2021-03-01');
             const semesterEnd = semester === 1 ? moment('2021-01-15') : moment('2021-06-11');
@@ -290,7 +289,6 @@ const generateSchedule = async (schedule) => {
                 selectedDates.push({ ...info, timeStart: timeStart, timeEnd: timeEnd });
                 selectedDate.add(7, 'days');
             }
-            console.log(selectedDates)
             return selectedDates;
         }
     }
@@ -302,46 +300,46 @@ const generateSchedule = async (schedule) => {
 
 // inserts all schedules read from the file sent by the front end
 exports.insertNewSchedules = async (newSchedules) => {
-    return new Promise (async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         const lecturesToInsert = [];
-        for(let i = 0; i < newSchedules.length; i++){
+        for (let i = 0; i < newSchedules.length; i++) {
             const schedule = newSchedules[i];
             const newLectures = await generateSchedule(schedule);
-            if(newLectures)
+            if (newLectures)
                 lecturesToInsert.push(...newLectures);
         }
-        if(lecturesToInsert.length === 0){
-            resolve('No nsertion, since there are no courses!');
+        if (lecturesToInsert.length === 0) {
+            resolve('No insertion, since there are no courses!');
             return;
         }
         else {
             const sql1 = 'SELECT CourseID, TimeStart FROM CourseSchedule';
             db.all(sql1, [], (err, rows) => {
-                if(err){
-                    reject (err);
+                if (err) {
+                    reject(err);
                 }
                 else {
 
                     //filter schedules excluding the ones already in the db
                     const schedulesToInsert = lecturesToInsert.filter((schedule) => {
                         return rows.find((row) => {
-                            return row.CourseID === schedule.Code && row.TimeStart === schedule.timeStart;
+                            return row.CourseID === schedule.Code && row.TimeStart.localeCompare(schedule.timeStart) === 0;
                         }) === undefined;
                     });
-                    if(schedulesToInsert.length !== 0){
+                    if (schedulesToInsert.length !== 0) {
                         const sql2 = 'INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom) ' +
-                                    'VALUES (?, 1, 1, ?, ?, 0, ?, ?)';
+                            'VALUES (?, 1, 1, ?, ?, 0, ?, ?)';
                         db.run('begin transaction');
-                        for(let i = 0; i < schedulesToInsert.length; i++){
+                        for (let i = 0; i < schedulesToInsert.length; i++) {
                             const schedule = schedulesToInsert[i];
                             db.run(sql2, [schedule.Code, schedule.timeStart, schedule.timeEnd, schedule.Seats, schedule.Room], (error) => {
-                                if(error){
+                                if (error) {
                                     reject(error);
                                 }
                                 else {
                                     resolve('Successfully inserted!');
                                 }
-                            }); 
+                            });
                         }
                         db.run('commit');
                     }
@@ -351,6 +349,54 @@ exports.insertNewSchedules = async (newSchedules) => {
                 }
             });
         }
+    });
+}
+
+exports.insertNewGeneralSchedules = (newLessons) => {
+    return new Promise((resolve, reject) => {
+        db.serialize(() => {
+            const sql1 = 'SELECT * FROM GeneralCourseSchedule';
+            db.all(sql1, [], (err, rows) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+
+                    //filter the schedules by excluding the ones aleady in the db
+                    const schedulesToInsert = newLessons.filter((schedule) => {
+                        return rows.find((row) => {
+                            const time = (schedule.Time).split('-');
+                            const startTime = time[0];
+                            return (row.CourseID === schedule.Code && row.Day.localeCompare(schedule.Day) === 0 
+                                && row.StartTime.localeCompare(startTime) === 0);
+                        }) === undefined;
+                    });
+                    if(schedulesToInsert.length !== 0){
+                        const sql2 = `INSERT INTO GeneralCourseSchedule(CourseID, Day, StartTime, EndTime, Room) 
+                                      VALUES (?, ?, ?, ?, ?)`;
+                        db.run('begin transaction');
+                        for(let i = 0; i < schedulesToInsert.length; i++){
+                            const schedule = schedulesToInsert[i];
+                            const time = (schedule.Time).split('-');
+                            const timeStart = time[0];
+                            const timeEnd = time[1];
+                            db.run(sql2, [schedule.Code, schedule.Day, timeStart, timeEnd, schedule.Room], (error) => {
+                                if(error){
+                                    reject(error);
+                                }
+                                else {
+                                    resolve('Successfully Inserted');
+                                }
+                            });
+                        }
+                        db.run('commit');
+                    }
+                    else {
+                        resolve('Successfully Inserted');
+                    }
+                }
+            });
+        });
     });
 }
 
@@ -367,20 +413,20 @@ exports.insertNewUsers = (users, usersType) => {
                     // filter the students to insert by excluding the ones already in the db
                     const alreadyInserted = rows.map(row => row.UserID);
                     const usersToInsert = users.filter((user) => {
-                        if(usersType === 1){
+                        if (usersType === 1) {
                             return !alreadyInserted.includes(user.Id);
                         }
                         else {
                             return !alreadyInserted.includes(user.Number);
-                        }  
+                        }
                     });
 
-                    if(usersToInsert.length !== 0){
+                    if (usersToInsert.length !== 0) {
                         const sql2 = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN) ' +
-                                     'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-                        
+                            'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
                         db.run("begin transaction");
-                        for(let i = 0; i < usersToInsert.length; i++){
+                        for (let i = 0; i < usersToInsert.length; i++) {
                             const user = usersToInsert[i];
                             const userID = usersType === 1 ? user.Id : user.Number;
                             const password = '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S';
@@ -406,7 +452,7 @@ exports.insertNewUsers = (users, usersType) => {
                     }
                 }
             });
-        });   
+        });
     });
 }
 
@@ -456,10 +502,10 @@ function comparer(otherArray) {
 // check the fields of room if file is provided!
 // for now they are s upposed to be Room, Seats
 exports.insertNewRooms = async (rooms) => {
-    return new Promise ((resolve, reject) => {
-         const sql1 = 'SELECT ClassroomName FROM Classroom';
-         db.all(sql1, [], (err, rows) => {
-             if (err) {
+    return new Promise((resolve, reject) => {
+        const sql1 = 'SELECT ClassroomName FROM Classroom';
+        db.all(sql1, [], (err, rows) => {
+            if (err) {
                 reject(err);
                 return;
             }
@@ -468,23 +514,23 @@ exports.insertNewRooms = async (rooms) => {
                 //filter rooms to insert by excluding the ones already in the db
                 const alreadyInserted = rows.map(row => row.ClassroomName);
                 const roomsToInsert = rooms.filter((room) => {
-                        return !alreadyInserted.includes(room.Room);
+                    return !alreadyInserted.includes(room.Room);
                 });
-                if(roomsToInsert.length !== 0){
+                if (roomsToInsert.length !== 0) {
                     const sql2 = 'INSERT INTO Classroom(ClassroomName, MaxSeats) ' +
-                                 'VALUES (?, ?)';
+                        'VALUES (?, ?)';
                     db.run("begin transaction");
-                    for(let i = 0; i < roomsToInsert.length; i++){
+                    for (let i = 0; i < roomsToInsert.length; i++) {
                         const room = roomsToInsert[i];
                         db.run(sql2, [room.Room, room.Seats], (error) => {
                             if (error) {
                                 reject(error);
                                 return;
-                    }
+                            }
                             else {
                                 resolve('Successfully inserted');
                             }
-                        });                   
+                        });
                     }
                     db.run("commit");
                 }
@@ -492,7 +538,7 @@ exports.insertNewRooms = async (rooms) => {
                     resolve('Successfully inserted');
                 }
             }
-         });
+        });
     });
 }
 
@@ -606,7 +652,7 @@ exports.createNewLesson = (courseId, errorLessonStatus, lessonType, startDate, e
 exports.editLesson = (scheduleId, courseId, lessonStatus, lessonType, startDate, endDate, classroom) => {
     return new Promise((resolve, reject) => {
 
-        lessonStatus =  !lessonStatus ? 1 : 0;
+        lessonStatus = !lessonStatus ? 1 : 0;
         lessonType = !lessonType ? 1 : 0;
 
         const sql = `

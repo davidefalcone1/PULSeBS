@@ -492,6 +492,7 @@ app.post('/uploadFileLessons', async (req, res) => {
     else {
         try {
             await officerDao.insertNewSchedules(newLessons);
+            await officerDao.insertNewGeneralSchedules(newLessons);
             res.status(200).end();
         }
         catch (err) {
