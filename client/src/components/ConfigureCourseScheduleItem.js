@@ -29,7 +29,7 @@ function DayField(props){
 }
 function StartTimeField(props){
     return(
-        <div className="col-sm-3">
+        <div className="col-sm-2">
             <p id={"sTimeOfSchedule" + props.id}>
                 {props.startTime}
             </p>
@@ -38,7 +38,7 @@ function StartTimeField(props){
 }
 function EndTimeField(props){
     return(
-        <div className="col-sm-3">
+        <div className="col-sm-2">
             <p id={"eTimeOfSchedule" + props.id}>
                 {props.endTime}
             </p>
@@ -47,7 +47,7 @@ function EndTimeField(props){
 }
 function ButtonField(props){
     return(
-        <div className="col-sm-4">
+        <div className="col-sm-3">
             <Button variant="info" onClick={(event) => {
                 event.preventDefault();
                 props.edit();
@@ -66,7 +66,7 @@ function ButtonField(props){
 }
 function ClassroomField(props){
     return(
-        <div className="col-sm-3">
+        <div className="col-sm-2">
             <h4 id={"classroomOfSchedule" + props.id}>
                 {props.classroom}
             </h4>
