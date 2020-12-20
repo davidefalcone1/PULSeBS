@@ -66,6 +66,18 @@ class ConfigureCourses extends React.Component {
       if(this.state.file !== undefined && this.state.file !== ''){
         this.setState({errorFile: false});
       }
+      if(this.state.scheduleClassroom !== 'Select classroom'){
+          this.setState({errorScheduleClassroom: false});
+      }
+      if(this.state.scheduleDay !== 'Select day'){
+          this.setState({errorScheduleDay: false});
+      }
+      if(this.state.scheduleStartTime !== ''){
+          this.setState({errorScheduleStartTime: false});
+      }
+      if(this.state.scheduleEndTime !== ''){
+          this.setState({errorScheduleEndTime: false});
+      }
     });
   }
 
@@ -99,6 +111,18 @@ class ConfigureCourses extends React.Component {
   handleSubmitSchedule = () => {
     if (!this.scheduleform.checkValidity()) {
       this.form.reportValidity();
+    }
+    else if(this.state.scheduleClassroom === 'Select classroom'){
+        this.setState({errorScheduleClassroom: true});
+    }
+    else if(this.state.scheduleDay === 'Select day'){
+        this.setState({errorScheduleDay: true});
+    }
+    else if(this.state.scheduleStartTime === ''){
+        this.setState({errorScheduleStartTime: true});
+    }
+    else if(this.state.scheduleEndTime === ''){
+        this.setState({errorScheduleEndTime: true});
     }
     else {
       if(this.state.isCreatingSchedule){
@@ -244,13 +268,13 @@ class ConfigureCourses extends React.Component {
                         <Form.Group>
                           <Form.Label className="control-label">Starting Time</Form.Label>
                           <Form.Control type="time" name="scheduleStartTime"
-                            value = {moment(this.state.scheduleStartTime).format("HH:mm")}
+                            value = {this.state.scheduleStartTime}
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
                         </Form.Group>
                         <Form.Group>
                           <Form.Label className="control-label">Ending Time</Form.Label>
                           <Form.Control type="time" name="scheduleEndTime"
-                            value = {moment(this.state.scheduleEndTime).format("HH:mm")} min={moment(this.state.scheduleStartTime).format("HH:mm")}
+                            value = {this.state.scheduleEndTime} min={moment(this.state.scheduleStartTime).format("HH:mm")}
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
                         </Form.Group>
                         <Form.Group>
