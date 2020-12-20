@@ -306,3 +306,19 @@ exports.setStudentAsPresent = function (lessonId, studentId) {
         });
     });
 }
+
+exports.setStudentAsNotPresent = (lessonID, studentID) => {
+    return new Promise ((resolve, reject) => {
+        const sql = 'UPDATE Booking ' + 
+                    'SET Attended = 0 ' + 
+                    'WHERE CourseScheduleID = ? AND StudentID = ?';
+        db.run(sql, [lessonID, studentID],  (err) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve("Student set as present");
+            }   
+        });
+    });
+}

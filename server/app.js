@@ -261,6 +261,18 @@ app.put('/setStudentAsPresent', async (req, res) => {
     }
 });
 
+app.put('/setStudentAsNotPresent', async (req, res) => {
+    const lessonID = req.body.lessonId;
+    const studentID = req.body.studentId;
+    try {
+        const result = await teacherDao.setStudentAsNotPresent(lessonID, studentID);
+        res.status(200).json(result);
+    }
+    catch (error) {
+        res.status(401).json(error);
+    }
+});
+
 // return true if lecture booked, false if student put into waiting list
 app.post('/bookLesson', async (req, res) => {
     try {
