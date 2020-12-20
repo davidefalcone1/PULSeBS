@@ -11,8 +11,8 @@ const configureCourseScheduleItem = (props) => {
             <StartTimeField id = {props.schedule.id} startTime = {props.schedule.startTime}/>
             <EndTimeField id = {props.schedule.id} endTime = {props.schedule.endTime}/>
             <ClassroomField id = {props.schedule.id} classroom = {props.classroom} />
-            <ButtonField id = {props.schedule.id} edit = {props.editCourseSchedule}
-                delete = {props.deleteCourseSchedule}/>
+            <ButtonField id = {props.schedule.id} schedule = {props.schedule}
+                edit = {props.editCourseSchedule} delete = {props.deleteCourseSchedule}/>
         </div>
     </ListGroup.Item>
   );
@@ -50,7 +50,7 @@ function ButtonField(props){
         <div className="col-sm-3">
             <Button variant="info" onClick={(event) => {
                 event.preventDefault();
-                props.edit();
+                props.edit(props.schedule);
             }} id={"editButtonFieldOflesson" + props.id}>
                 Edit
             </Button>
