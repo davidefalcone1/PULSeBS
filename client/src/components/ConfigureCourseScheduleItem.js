@@ -31,7 +31,7 @@ function StartTimeField(props){
     return(
         <div className="col-sm-3">
             <p id={"sTimeOfSchedule" + props.id}>
-                {props.startTime.format("ddd DD-MM-YYYY HH:mm").toString()}
+                {props.startTime}
             </p>
         </div>
     );
@@ -41,7 +41,7 @@ function EndTimeField(props){
     return(
         <div className="col-sm-3">
             <p id={"eTimeOfSchedule" + props.id}>
-                {props.endTime.format("ddd DD-MM-YYYY HH:mm").toString()}
+                {props.endTime}
             </p>
         </div>
     );
