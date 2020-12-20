@@ -449,13 +449,14 @@ app.post('/uploadFileCourses', async (req, res) => {
     if (!newCourses) {
         res.status(505).json('Wrong file uploaded!');
     }
-
-    try {
-        await officerDao.insertNewCourses(newCourses);
-        res.status(200).end();
-    }
-    catch (err) {
-        res.status(505).json(err);
+    else {
+        try {
+            await officerDao.insertNewCourses(newCourses);
+            res.status(200).end();
+        }
+        catch (err) {
+            res.status(505).json(err);
+        }
     }
 });
 
@@ -466,13 +467,14 @@ app.post('/uploadFileLessons', async (req, res) => {
     if (!newLessons) {
         res.status(505).json('Wrong file uploaded!');
     }
-
-    try {
-        await officerDao.insertNewSchedules(newLessons);
-        res.status(200).end();
-    }
-    catch (err) {
-        res.status(505).json(err);
+    else {
+        try {
+            await officerDao.insertNewSchedules(newLessons);
+            res.status(200).end();
+        }
+        catch (err) {
+            res.status(505).json(err);
+        }
     }
 });
 
@@ -483,15 +485,16 @@ app.post('/uploadFileStudents', async (req, res) => {
     if (!newStudents) {
         res.status(505).json('Wrong file uploaded!');
     }
-    try {
-        await officerDao.insertNewUsers(newStudents, 1);
-        res.status(200).end();
+    else {
+        try {
+            await officerDao.insertNewUsers(newStudents, 1);
+            res.status(200).end();
+        }
+        catch (err) {
+            console.log(err)
+            res.status(505).json(err);
+        }
     }
-    catch (err) {
-        console.log(err)
-        res.status(505).json(err);
-    }
-
 });
 
 app.post('/uploadFileTeachers', async (req, res) => {
@@ -501,12 +504,14 @@ app.post('/uploadFileTeachers', async (req, res) => {
     if (!newTeachers) {
         res.status(505).json('Wrong file uploaded!');
     }
-    try {
-        await officerDao.insertNewUsers(newTeachers, 2);
-        res.status(200).end();
-    }
-    catch (err) {
-        res.status(505).json(err);
+    else {
+        try {
+            await officerDao.insertNewUsers(newTeachers, 2);
+            res.status(200).end();
+        }
+        catch (err) {
+            res.status(505).json(err);
+        }
     }
 });
 
@@ -517,12 +522,14 @@ app.post('/uploadFileEnrollment', async (req, res) => {
     if (!newEnronllments) {
         res.status(505).json('Wrong file uploaded!');
     }
-    try {
-        await officerDao.insertNewEnrollments(newEnronllments);
-        res.status(200).end();
-    }
-    catch (err) {
-        res.status(505).json(err);
+    else {
+        try {
+            await officerDao.insertNewEnrollments(newEnronllments);
+            res.status(200).end();
+        }
+        catch (err) {
+            res.status(505).json(err);
+        }
     }
 });
 
@@ -533,12 +540,14 @@ app.post('/uploadFileClassroom', async (req, res) => {
     if (!newRooms) {
         res.status(505).json('Wrong file uploaded!');
     }
-    try {
-        await officerDao.insertNewRooms(newRooms);
-        res.status(200).end();
-    }
-    catch (err) {
-        res.status(505).json(err);
+    else {
+        try {
+            await officerDao.insertNewRooms(newRooms);
+            res.status(200).end();
+        }
+        catch (err) {
+            res.status(505).json(err);
+        }
     }
 });
 

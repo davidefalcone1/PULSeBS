@@ -135,7 +135,6 @@ exports.readFile = (fileContent, fileType) => {
 
     const splittedLines = fileContent.split('\r\n');
     const header = splittedLines[0].split(',');
-
     if (!checkHeaderFields(header, fileType)) {
         return false;
     }
