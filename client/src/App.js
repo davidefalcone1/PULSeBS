@@ -318,6 +318,13 @@ class App extends React.Component {
       API.getAllCourses().then((coursesList) => {
         this.setState({courses: coursesList});
       }).catch((errorObj) => { console.log(errorObj); });
+      API.getAllCoursesSchedules().then((schedules) => {
+        this.setState({basicSchedules: schedules})
+      }).catch((errorObj) => { console.log(errorObj); });
+
+      API.getAllLessons().then((lessonsList) => {
+        this.setState({lessons: lessonsList});
+      }).catch((errorObj) => { console.log(errorObj); });
     }).catch((errorObj) => { console.log(errorObj); });  
   }
   uploadFileLessons = (file) => {
