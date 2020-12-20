@@ -3,6 +3,7 @@ import ConfigureCourseScheduleItem from './ConfigureCourseScheduleItem';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/esm/Button';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Modal from 'react-bootstrap/Modal';
 import Alert from 'react-bootstrap/Alert';
 import Form from 'react-bootstrap/Form';
@@ -139,24 +140,22 @@ class ConfigureCourses extends React.Component {
                 <div style={{padding: "15px"}}>
                   <Accordion>
                     {this.props.coursesList.map((course) => //per ogni mio corso
-                      <Card key={course.courseId}>
+                      <Card key={course.courseId} style={{width: '100%'}}>
                         <Card.Header>
-                          <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
-                            <Accordion.Toggle as={Button} variant="link" eventKey = {"course-" + course.courseName}>
-                              <ConfigureCourseHeader id = {course.courseId} course = {course} 
-                                teachers = {this.props.teachersList}/>
-                            </Accordion.Toggle>
-                            <ConfigureCoursesButton id = {course.courseId} action = {this.activateNewScheduleModal}/>
-                          </div>
+                          <Accordion.Toggle as={Button} variant="link" style={{width: '100%'}}
+                            eventKey = {"course-" + course.courseName} >
+                            <ConfigureCourseHeader id = {course.courseId} course = {course} 
+                              teachers = {this.props.teachersList}/>
+                          </Accordion.Toggle>
                         </Card.Header>
                         <Accordion.Collapse eventKey={"course-" + course.courseName}>
                           <Card.Body>
                           <ListGroup as="ul" variant="flush">
-                            <ListScheduleHeader />
+                            <ListScheduleHeader id = {course.courseId} action = {this.activateNewScheduleModal}/>
                             {this.props.basicSchedules.map((schedule) => 
                               (course.courseId === schedule.courseId) &&
                               <ConfigureCourseScheduleItem key = {schedule.id + "-" + schedule.courseId}
-                                schedule = {schedule} editCourseSchedule={this.props.activateEditScheduleModal}
+                                schedule = {schedule} editCourseSchedule={this.activateEditScheduleModal}
                                 deleteCourseSchedule = {this.props.deleteCourseSchedule}/>
                             )}
                           </ListGroup>
@@ -383,21 +382,29 @@ class ConfigureCourses extends React.Component {
   }  
 }
 
-function ListScheduleHeader() {
+function ListScheduleHeader(props) {
   return(
     <ListGroup.Item id = {"coursesList-header"}>
         <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
           <div className="col-sm-3">
             <h5>Day</h5>
           </div>
-          <div className="col-sm-3">
+          <div className="col-sm-2">
             <h5>Start time</h5>
           </div>
-          <div className="col-sm-3">
+          <div className="col-sm-2">
             <h5>End time</h5>
           </div>
+          <div className="col-sm-2">
+            <h5>Classroom</h5>
+          </div>
           <div className="col-sm-3">
-            <h5>{' '}</h5>
+            <Button variant="primary" onClick={(event) => {
+                event.preventDefault();
+                props.action(props.id);
+            }} id={"buttonFieldOflesson" + props.id}>
+                Create New Schedule
+            </Button>
           </div>
         </div>
     </ListGroup.Item>
@@ -406,35 +413,24 @@ function ListScheduleHeader() {
 function ConfigureCourseHeader(props){
   return(
     <>
-      <div id={"courseHeader" + props.id} className="justify.content-between">
-        <h4 id={"nameOfcourse_" + props.id} style={{display:"inline"}} className="col-sm-6">
-          {props.course.courseName}
-        </h4>
-        {' -- '}
-        {props.teachers.map((t) => //per ogni lezione del mio corso
-          (t.personId === props.course.teacherId) &&
-            <h4 key={"teacherOfcourse_" + t.personId + "-" + props.id} className="col-sm-6"
-              id={"teacherOfcourse_" + t.personId + "-" + props.id} style={{display:"inline"}}>
-              {'  ' + t.fullName}
-            </h4>
-        )}
-      </div>
+      <Row id={"courseHeader" + props.id}>
+        <Col className="text-left">
+          <h4 id={"nameOfcourse_" + props.id} style={{display:"inline"}} className="col-sm-6">
+            {props.course.courseName}
+          </h4>
+        </Col>
+        <Col className="text-left">
+          {props.teachers.map((t) => //per ogni lezione del mio corso
+            (t.personId === props.course.teacherId) &&
+              <h4 key={"teacherOfcourse_" + t.personId + "-" + props.id} className="col-sm-6"
+                id={"teacherOfcourse_" + t.personId + "-" + props.id} style={{display:"inline"}}>
+                {'  ' + t.fullName}
+              </h4>
+          )}
+        </Col>
+      </Row>
     </>
   );
-}
-function ConfigureCoursesButton(props){
-  return(
-    <>
-      <div id={"scheduleButtons" + props.id}>
-          <Button variant="primary" onClick={(event) => {
-              event.preventDefault();
-              props.action(props.id);
-          }} id={"buttonFieldOflesson" + props.id}>
-              Create New Schedule
-          </Button>
-      </div>
-    </>
-);
 }
 function NoItemsImage(props){
   return(

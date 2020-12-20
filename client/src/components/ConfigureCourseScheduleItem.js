@@ -10,6 +10,7 @@ const configureCourseScheduleItem = (props) => {
             <DayField id = {props.schedule.id} day = {props.schedule.day}/>
             <StartTimeField id = {props.schedule.id} startTime = {props.schedule.startTime}/>
             <EndTimeField id = {props.schedule.id} endTime = {props.schedule.endTime}/>
+            <ClassroomField id = {props.schedule.id} classroom = {props.classroom} />
             <ButtonField id = {props.schedule.id} edit = {props.editCourseSchedule}
                 delete = {props.deleteCourseSchedule}/>
         </div>
@@ -26,7 +27,6 @@ function DayField(props){
         </div>
     );
 }
-
 function StartTimeField(props){
     return(
         <div className="col-sm-3">
@@ -36,7 +36,6 @@ function StartTimeField(props){
         </div>
     );
 }
-
 function EndTimeField(props){
     return(
         <div className="col-sm-3">
@@ -62,6 +61,15 @@ function ButtonField(props){
             }} id={"deleteButtonFieldOflesson" + props.id}>
                 Delete
             </Button>
+        </div>
+    );
+}
+function ClassroomField(props){
+    return(
+        <div className="col-sm-3">
+            <h4 id={"classroomOfSchedule" + props.id}>
+                {props.classroom}
+            </h4>
         </div>
     );
 }
