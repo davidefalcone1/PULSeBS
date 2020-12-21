@@ -609,7 +609,7 @@ app.delete('/deleteCourseSchedule/:deletedSchedule', async (req, res) => {
     
 });
 
-app.post('/createScheduleSchedule', async (req, res) => {
+app.post('/createCourseSchedule', async (req, res) => {
     console.log('ue')
     const newSchedule = req.body;
     console.log(newSchedule)
