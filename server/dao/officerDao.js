@@ -717,17 +717,6 @@ exports.updateAllSchedules = (scheduleId, newData) => {
                                      WHERE CourseScheduleID = ?`;
 
                         db.run('begin transaction');
-                        /*for (let i = 0; i < selected.length; i++) {
-                            const schedule = selected[i];
-                            const newSchedule = computeNewSchedule(schedule.TimeStart, schedule.TimeEnd, newData.day, newData.startTime, newData.endTime);
-                            db.run(sql, [newData.courseId, newSchedule.start, newSchedule.end, newData.classroom, schedule.CourseScheduleID], (error) => {
-                                if (error) {
-                                    reject(error);
-                                    return;
-                                }
-
-                            });
-                        }*/
                         
                         selected.forEach((schedule) => {
                             const newSchedule = computeNewSchedule(schedule.TimeStart, schedule.TimeEnd, newData.day, newData.startTime, newData.endTime)
@@ -738,7 +727,9 @@ exports.updateAllSchedules = (scheduleId, newData) => {
                                 }
                             });
                         });
+
                         db.run('commit');
+                        
                         editGeneralSchedule(scheduleId, newData)
                             .then(() => {
                                 resolve('Successfully updated');
