@@ -588,17 +588,25 @@ app.post('/createNewEnrollment', async (req, res) => {
 
 app.put('/editCourseSchedule', async (req, res) => {
     const {scheduleId, ...newData} = req.body;
-    console.log(newData)
-    await officerDao.updateAllSchedules(scheduleId, newData);
-    res.status(200).end();
-    /*
     try{
-        await officerDao.editGeneralSchedule(scheduleId, newData);
-
+        await officerDao.updateAllSchedules(scheduleId, newData);
+        res.status(200).end();
     }
-    catch(err){
-        res.status(505).json(err);
-    }*/
+    catch(error){
+        
+    }
+});
+
+app.delete('/deleteCourseSchedule/:deletedSchedule', async (req, res) => {
+    const deletedId =req.params.deletedSchedule;
+    try{
+        await officerDao.deleteSchedules(deletedId);
+        res.status(200).end();
+    }
+    catch(error){
+        res.status(505).json(error);
+    }
+    
 });
 
 app.post('/logout', (req, res) => {

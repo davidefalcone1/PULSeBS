@@ -682,13 +682,13 @@ const editGeneralSchedule = (generalScheduleId, newData) => {
         const sql = `UPDATE GeneralCourseSchedule 
                      SET CourseID = ?, Day = ?, StartTime = ?, EndTime = ?, Room = ? 
                      WHERE ID = ?`;
-       
+
         let start = newData.startTime.substring(0, 5);
         let end = newData.endTime.substring(0, 5);
-        if(start.startsWith('0')){
+        if (start.startsWith('0')) {
             start = start.substring(1);
         }
-        if(end.startsWith('0')){
+        if (end.startsWith('0')) {
             end = end.substring(1);
         }
         db.run(sql, [newData.courseId, newData.day, start, end, newData.classroom, generalScheduleId], (err) => {
@@ -715,25 +715,20 @@ exports.updateAllSchedules = (scheduleId, newData) => {
                         const sql = `UPDATE CourseSchedule
                                      SET CourseID = ?, TimeStart = ?, TimeEnd = ?, Classroom = ?
                                      WHERE CourseScheduleID = ?`;
-                        
+
                         db.run('begin transaction');
-                        for (let i = 0; i < selected.length; i++) {
+                        /*for (let i = 0; i < selected.length; i++) {
                             const schedule = selected[i];
                             const newSchedule = computeNewSchedule(schedule.TimeStart, schedule.TimeEnd, newData.day, newData.startTime, newData.endTime);
-                            console.log(newData.courseId) 
-                            console.log(newSchedule.start)
-                            console.log(newSchedule.end) 
-                            console.log(newData.classroom)
-                            
                             db.run(sql, [newData.courseId, newSchedule.start, newSchedule.end, newData.classroom, schedule.CourseScheduleID], (error) => {
                                 if (error) {
                                     reject(error);
                                     return;
                                 }
-                                
+
                             });
-                        }
-                        /*
+                        }*/
+                        
                         selected.forEach((schedule) => {
                             const newSchedule = computeNewSchedule(schedule.TimeStart, schedule.TimeEnd, newData.day, newData.startTime, newData.endTime)
                             db.run(sql, [newData.courseId, newSchedule.start, newSchedule.end, newData.classroom, schedule.CourseScheduleID], (error) => {
@@ -742,7 +737,7 @@ exports.updateAllSchedules = (scheduleId, newData) => {
                                     return;
                                 }
                             });
-                        });*/
+                        });
                         db.run('commit');
                         editGeneralSchedule(scheduleId, newData)
                             .then(() => {
@@ -796,7 +791,7 @@ const selectSchedulesToUpdate = (oldData) => {
                         return false;
                     }
 
-                    //check the start and end  time
+                    //check the start and end time
                     const start = moment(row.TimeStart).format('H:mm');
                     const end = moment(row.TimeEnd).format('H:mm');
                     const oldStart = oldData.startTime;
@@ -843,4 +838,45 @@ const computeNewSchedule = (oldStart, oldEnd, newDay, newStartTime, newEndTime) 
         end: newEnd
     };
     return newSchedule;
+}
+
+exports.deleteSchedules = (scheduleId) => {
+    return new Promise((resolve, reject) => {
+        readScheduleData(scheduleId)
+            .then((oldData) => {
+                selectSchedulesToUpdate(oldData)
+                    .then((selected) => {
+                        const sql = 'DELETE FROM CourseSchedule WHERE CourseScheduleID = ?';
+                        db.run('begin transaction');
+                        selected.forEach((schedule) => {
+                            db.run(sql, [schedule.CourseScheduleID], (err) => {
+                                if (err) {
+                                    reject(err);
+                                    return;
+                                }
+                            });
+                        });
+                        db.run('commit');
+                        deleteGeneralSchedule(scheduleId)
+                            .then(() => resolve('Successfully deleted'))
+                            .catch(err3 => reject(err3));
+                    })
+                    .catch(err2 => reject(err2))
+            })
+            .catch(err1 => reject(err1))
+    });
+}
+
+const deleteGeneralSchedule = (scheduleId) => {
+    return new Promise((resolve, reject) => {
+        const sql = 'DELETE FROM GeneralCourseSchedule WHERE ID = ?';
+        db.run(sql, [scheduleId], (err) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve('successfully deleted');
+            }
+        });
+    });
 }
