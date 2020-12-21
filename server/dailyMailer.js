@@ -12,6 +12,7 @@ exports.setDailyMail = async () => {
             for(let i = 0; i < professors.length; i++){
                 const{email, ...info} = professors[i];
                 info.notificationType = 2;
+                console.log(info)
                 await emailAPI.sendNotification(email, info);
             }
         }

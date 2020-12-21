@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const db = require('./db');
 
 
 /* the info object needs the following properties:
@@ -42,7 +43,7 @@ const createMessage = (info) => {
             has been <b>CONFIRMED<b>.</p>`;
             break;
         case 2:
-            if(!info.course || !info.date || !info.start || !info.end || !info.numStudents){
+            if(!info.course || !info.date || !info.start || !info.end || info.numStudents === undefined){
                 return undefined;
             }
             emailFields.subject = 'NUMBER OF STUDENTS FOR NEXT LECTURE';
