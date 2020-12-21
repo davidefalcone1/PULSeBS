@@ -260,7 +260,7 @@ class ConfigureCourses extends React.Component {
                             <option>Select day</option>
                             <option value="Mon">Monday</option>
                             <option value="Tue">Tuesday</option>
-                            <option value="Wed">Wednsday</option>
+                            <option value="Wed">Wednesday</option>
                             <option value="Thu">Thursday</option>
                             <option value="Fri">Friday</option>
                           </Form.Control>

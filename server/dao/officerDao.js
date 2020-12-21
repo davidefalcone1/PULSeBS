@@ -717,11 +717,11 @@ exports.updateAllSchedules = (scheduleId, newData) => {
                                      WHERE CourseScheduleID = ?`;
 
                         db.run('begin transaction');
-                        
+
                         selected.forEach((schedule) => {
                             const newSchedule = computeNewSchedule(schedule.TimeStart, schedule.TimeEnd, newData.day, newData.startTime, newData.endTime)
                             db.run(sql, [newData.courseId, newSchedule.start, newSchedule.end, newData.classroom, schedule.CourseScheduleID], (error) => {
-                                if(error){
+                                if (error) {
                                     reject(error);
                                     return;
                                 }
@@ -729,7 +729,7 @@ exports.updateAllSchedules = (scheduleId, newData) => {
                         });
 
                         db.run('commit');
-                        
+
                         editGeneralSchedule(scheduleId, newData)
                             .then(() => {
                                 resolve('Successfully updated');
@@ -867,6 +867,85 @@ const deleteGeneralSchedule = (scheduleId) => {
             }
             else {
                 resolve('successfully deleted');
+            }
+        });
+    });
+}
+
+exports.createNewSchedule = (newSchedule) => {
+    return new Promise((resolve, reject) => {
+        generateFutureSchedules(newSchedule)
+            .then((schedules) => {
+                readClassroomSeats(newSchedule.classroom)
+                    .then((seats) => {
+                        const sql = 'INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom) ' +
+                                    'VALUES (?, 1, 1, ?, ?, 0, ?, ?)';
+                        db.run('begin transaction');
+                        schedules.forEach((schedule) => {
+                            console.log(schedule)
+                            db.run(sql, [newSchedule.courseId, schedule.startTime, schedule.endTime, seats, newSchedule.classroom], (error) => {
+                                if (error) {
+                                    reject(error);
+                                    return;
+                                }
+                            });
+                        });
+                        db.run('commit');
+                        insertNewGeneralSchedules([newSchedule])
+                            .then(() => resolve('successfully inserted'))
+                            .catch(err3 => reject(err3));
+                    })
+                    .catch(err2 => reject(err2));
+            })
+            .catch(err1 => reject(err1));
+    });
+}
+
+const generateFutureSchedules = (schedule) => {
+    return new Promise((resolve, reject) => {
+        readSemester(schedule.courseId)
+            .then((semester) => {
+                if (!semester) {
+                    reject(undefined);
+                }
+                else {
+                    //compute dates of lectures
+                    const semesterStart = semester === 1 ? moment('2020-09-28') : moment('2021-03-01');
+                    const semesterEnd = semester === 1 ? moment('2021-01-15') : moment('2021-06-11');
+        
+                    //go to the correct day of week
+                    while (semesterStart.format('ddd').localeCompare(schedule.day) !== 0) {
+                        semesterStart.add(1, 'days');
+                    }
+        
+                    const selectedDates = [];
+                    const selectedDate = semesterStart;
+        
+                    //select all weeks days in the semester
+                    while (selectedDate.isSameOrBefore(semesterEnd)) {
+                        if(selectedDate.isAfter(moment(), 'days')){
+                            const timeStart = `${selectedDate.format('YYYY-MM-DD')}T${schedule.startTime}`;
+                            const timeEnd = `${selectedDate.format('YYYY-MM-DD')}T${schedule.endTime}`;
+                            selectedDates.push({timeStart: timeStart, timeEnd: timeEnd });
+                        }
+                        selectedDate.add(7, 'days');
+                    }
+                    resolve(selectedDates);
+                }
+            })
+            .catch(err1 => reject(err1));
+    });
+}
+
+const readClassroomSeats = (classroom) => {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT MaxSeats FROM Classroom Where ClassroomName = ?';
+        db.get(sql, [classroom], (err, row) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(row.MaxSeats);
             }
         });
     });

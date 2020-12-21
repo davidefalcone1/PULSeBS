@@ -458,7 +458,7 @@ async function editCourseSchedule(scheduleId, courseId, day, startTime, endTime,
 }
 async function createNewCourseSchedule(courseId, day, startTime, endTime, classroom) {
     return new Promise((resolve, reject) => {
-        fetch("/createNewLesson", {
+        fetch("/createNewSchedule", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ courseId, day, startTime, endTime, classroom })
