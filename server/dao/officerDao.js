@@ -297,7 +297,6 @@ const generateSchedule = async (schedule) => {
         }
     }
     catch (err) {
-        console.log(err);
         throw (err);
     }
 }
@@ -787,8 +786,6 @@ const selectSchedulesToUpdate = (oldData) => {
                     const end = moment(row.TimeEnd).format('H:mm');
                     const oldStart = oldData.startTime;
                     const oldEnd = oldData.endTime;
-                    console.log(oldStart)
-                    console.log(start)
                     if (start.localeCompare(oldStart) !== 0 || end.localeCompare(oldEnd) !== 0) {
                         return false;
                     }
@@ -876,14 +873,17 @@ exports.createNewSchedule = (newSchedule) => {
     return new Promise((resolve, reject) => {
         generateFutureSchedules(newSchedule)
             .then((schedules) => {
+                if (schedules.length === 0) {
+                    resolve('Nothing inserted');
+                    return;
+                }
                 readClassroomSeats(newSchedule.classroom)
                     .then((seats) => {
                         const sql = 'INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom) ' +
-                                    'VALUES (?, 1, 1, ?, ?, 0, ?, ?)';
+                            'VALUES (?, 1, 1, ?, ?, 0, ?, ?)';
                         db.run('begin transaction');
                         schedules.forEach((schedule) => {
-                            console.log(schedule)
-                            db.run(sql, [newSchedule.courseId, schedule.startTime, schedule.endTime, seats, newSchedule.classroom], (error) => {
+                            db.run(sql, [newSchedule.courseId, schedule.timeStart, schedule.timeEnd, seats, newSchedule.classroom], (error) => {
                                 if (error) {
                                     reject(error);
                                     return;
@@ -891,7 +891,7 @@ exports.createNewSchedule = (newSchedule) => {
                             });
                         });
                         db.run('commit');
-                        insertNewGeneralSchedules([newSchedule])
+                        insertNewGeneralSchedule(newSchedule)
                             .then(() => resolve('successfully inserted'))
                             .catch(err3 => reject(err3));
                     })
@@ -912,21 +912,21 @@ const generateFutureSchedules = (schedule) => {
                     //compute dates of lectures
                     const semesterStart = semester === 1 ? moment('2020-09-28') : moment('2021-03-01');
                     const semesterEnd = semester === 1 ? moment('2021-01-15') : moment('2021-06-11');
-        
+
                     //go to the correct day of week
                     while (semesterStart.format('ddd').localeCompare(schedule.day) !== 0) {
                         semesterStart.add(1, 'days');
                     }
-        
+
                     const selectedDates = [];
                     const selectedDate = semesterStart;
-        
+
                     //select all weeks days in the semester
                     while (selectedDate.isSameOrBefore(semesterEnd)) {
-                        if(selectedDate.isAfter(moment(), 'days')){
+                        if (selectedDate.isAfter(moment(), 'days')) {
                             const timeStart = `${selectedDate.format('YYYY-MM-DD')}T${schedule.startTime}`;
                             const timeEnd = `${selectedDate.format('YYYY-MM-DD')}T${schedule.endTime}`;
-                            selectedDates.push({timeStart: timeStart, timeEnd: timeEnd });
+                            selectedDates.push({ timeStart: timeStart, timeEnd: timeEnd });
                         }
                         selectedDate.add(7, 'days');
                     }
@@ -946,6 +946,29 @@ const readClassroomSeats = (classroom) => {
             }
             else {
                 resolve(row.MaxSeats);
+            }
+        });
+    });
+}
+
+const insertNewGeneralSchedule = (newSchedule) => {
+    return new Promise((resolve, reject) => {
+        const sql = 'INSERT INTO GeneralCourseSchedule(CourseID, Day, StartTime, EndTime, Room) ' +
+                    'VALUES (?, ?, ?, ?, ?)';
+        let start = newSchedule.startTime.substring(0, 5);
+        let end = newSchedule.endTime.substring(0, 5);
+        if (start.startsWith('0')) {
+            start = start.substring(1);
+        }
+        if (end.startsWith('0')) {
+            end = end.substring(1);
+        }
+        db.run(sql, [newSchedule.courseId, newSchedule.day, start, end, newSchedule.classroom], (err) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve('successfully inserted');
             }
         });
     });

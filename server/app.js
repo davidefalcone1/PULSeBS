@@ -610,15 +610,14 @@ app.delete('/deleteCourseSchedule/:deletedSchedule', async (req, res) => {
 });
 
 app.post('/createCourseSchedule', async (req, res) => {
-    console.log('ue')
+    
     const newSchedule = req.body;
-    console.log(newSchedule)
-    console.log('ue')
     try{
         await officerDao.createNewSchedule(newSchedule);
         res.status(200).end();
     }
     catch(error){
+        console.log(error)
         res.status(505).json(error);
     }
 });
