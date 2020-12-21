@@ -154,7 +154,7 @@ class ConfigureLessons extends React.Component {
                   }
                 </ListGroup>
 
-                <Modal show={this.state.isCreating || this.state.isEditing} animation={false} scrollable={true}>
+                <Modal show={this.state.isCreating || this.state.isEditing} animation={false} scrollable={true} backdrop={'static'}>
                   <Modal.Header>
                     <Modal.Title>{this.state.isCreating ? 'Create new lesson' : 'Edit lesson'}</Modal.Title>
                   </Modal.Header>
@@ -277,7 +277,7 @@ class ConfigureLessons extends React.Component {
                   </Modal.Footer>
                 </Modal>
               
-                <Modal show={this.state.isUploading} animation={false} scrollable={true}>
+                <Modal show={this.state.isUploading} animation={false} scrollable={true} backdrop={'static'}>
                   <Modal.Header>
                     <Modal.Title>Upload file</Modal.Title>
                   </Modal.Header>

@@ -121,7 +121,7 @@ class ConfigureUser extends React.Component {
                     }
                 </ListGroup>
 
-                <Modal show={this.state.isCreating} animation={false} scrollable={true}>
+                <Modal show={this.state.isCreating} animation={false} scrollable={true} backdrop={'static'}>
                   <Modal.Header>
                     <Modal.Title>Create new {this.props.type}</Modal.Title>
                   </Modal.Header>
@@ -199,7 +199,7 @@ class ConfigureUser extends React.Component {
                   </Modal.Footer>
                 </Modal>
 
-                <Modal show={this.state.isUploading} animation={false} scrollable={true}>
+                <Modal show={this.state.isUploading} animation={false} scrollable={true} backdrop={'static'}>
                   <Modal.Header>
                     <Modal.Title>Upload {this.props.type} file</Modal.Title>
                   </Modal.Header>

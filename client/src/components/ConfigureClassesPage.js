@@ -108,7 +108,7 @@ class ConfigureClasses extends React.Component {
                             courses = {this.props.courses}/>)}
                 </ListGroup>
 
-                <Modal show={this.state.isCreating} animation={false} scrollable={true}>
+                <Modal show={this.state.isCreating} animation={false} scrollable={true} backdrop={'static'}>
                   <Modal.Header>
                     <Modal.Title>Create new enrollment data</Modal.Title>
                   </Modal.Header>
@@ -170,7 +170,7 @@ class ConfigureClasses extends React.Component {
                   </Modal.Footer>
                 </Modal>
 
-                <Modal show={this.state.isUploading} animation={false} scrollable={true}>
+                <Modal show={this.state.isUploading} animation={false} scrollable={true} backdrop={'static'}>
                   <Modal.Header>
                     <Modal.Title>Upload file</Modal.Title>
                   </Modal.Header>

@@ -111,7 +111,7 @@ class MyCoursesLessonsPageRender extends React.Component {
                 }
         
                 {this.state.showModal &&
-                  <Modal show={this.state.showModal} animation={false}>
+                  <Modal show={this.state.showModal} animation={false} backdrop={'static'}>
                     <Modal.Header>
                       <Modal.Title>Operation response</Modal.Title>
                     </Modal.Header>

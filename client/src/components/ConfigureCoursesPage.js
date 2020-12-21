@@ -189,7 +189,7 @@ class ConfigureCourses extends React.Component {
                     )}
                   </Accordion>  
 
-                  <Modal show={this.state.isCreating} animation={false} scrollable={true}>
+                  <Modal show={this.state.isCreating} animation={false} scrollable={true} backdrop={'static'}>
                     <Modal.Header>
                       <Modal.Title>Create new course</Modal.Title>
                     </Modal.Header>
@@ -244,7 +244,7 @@ class ConfigureCourses extends React.Component {
                           </>}
                     </Modal.Footer>
                   </Modal>
-                  <Modal show={this.state.isCreatingSchedule || this.state.isEditingSchedule} animation={false} scrollable={true}>
+                  <Modal show={this.state.isCreatingSchedule || this.state.isEditingSchedule} animation={false} scrollable={true} backdrop={'static'}>
                     <Modal.Header>
                       <Modal.Title>{this.state.isCreatingSchedule ? "Create new schedule" : "Edit schedule"}</Modal.Title>
                     </Modal.Header>
@@ -339,7 +339,7 @@ class ConfigureCourses extends React.Component {
                     </Modal.Footer>
                   </Modal>
                   
-                  <Modal show={this.state.isUploading} animation={false} scrollable={true}>
+                  <Modal show={this.state.isUploading} animation={false} scrollable={true} backdrop={'static'}>
                   <Modal.Header>
                     <Modal.Title>Upload file</Modal.Title>
                   </Modal.Header>
