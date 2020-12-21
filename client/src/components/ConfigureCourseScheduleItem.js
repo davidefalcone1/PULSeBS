@@ -10,7 +10,7 @@ const configureCourseScheduleItem = (props) => {
             <DayField id = {props.schedule.id} day = {props.schedule.day}/>
             <StartTimeField id = {props.schedule.id} startTime = {props.schedule.startTime}/>
             <EndTimeField id = {props.schedule.id} endTime = {props.schedule.endTime}/>
-            <ClassroomField id = {props.schedule.id} classroom = {props.classroom} />
+            <ClassroomField id = {props.schedule.id} classroom = {props.schedule.classroom} />
             <ButtonField id = {props.schedule.id} schedule = {props.schedule}
                 edit = {props.editCourseSchedule} delete = {props.deleteCourseSchedule}/>
         </div>
