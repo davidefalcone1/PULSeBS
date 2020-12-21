@@ -586,6 +586,21 @@ app.post('/createNewEnrollment', async (req, res) => {
     }
 });
 
+app.put('/editCourseSchedule', async (req, res) => {
+    const {scheduleId, ...newData} = req.body;
+    console.log(newData)
+    await officerDao.updateAllSchedules(scheduleId, newData);
+    res.status(200).end();
+    /*
+    try{
+        await officerDao.editGeneralSchedule(scheduleId, newData);
+
+    }
+    catch(err){
+        res.status(505).json(err);
+    }*/
+});
+
 app.post('/logout', (req, res) => {
     res.clearCookie('token').end();
 });

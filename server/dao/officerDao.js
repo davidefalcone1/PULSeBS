@@ -101,7 +101,11 @@ exports.getSchedules = () => {
                 reject(err);
             }
             else {
-                const schedules = rows.map(row => new CourseBasicSchedule(row.ID, row.CourseID, row.Day, row.StartTime, row.EndTime, row.Room));
+                const schedules = rows.map((row) => {
+                    const startTime = adjustToISOformat(row.StartTime);
+                    const endTime = adjustToISOformat(row.EndTime)
+                    return new CourseBasicSchedule(row.ID, row.CourseID, row.Day, startTime, endTime, row.Room)
+                });
                 resolve(schedules);
             }
         });
@@ -367,21 +371,21 @@ exports.insertNewGeneralSchedules = (newLessons) => {
                         return rows.find((row) => {
                             const time = (schedule.Time).split('-');
                             const startTime = time[0];
-                            return (row.CourseID === schedule.Code && row.Day.localeCompare(schedule.Day) === 0 
+                            return (row.CourseID === schedule.Code && row.Day.localeCompare(schedule.Day) === 0
                                 && row.StartTime.localeCompare(startTime) === 0);
                         }) === undefined;
                     });
-                    if(schedulesToInsert.length !== 0){
+                    if (schedulesToInsert.length !== 0) {
                         const sql2 = `INSERT INTO GeneralCourseSchedule(CourseID, Day, StartTime, EndTime, Room) 
                                       VALUES (?, ?, ?, ?, ?)`;
                         db.run('begin transaction');
-                        for(let i = 0; i < schedulesToInsert.length; i++){
+                        for (let i = 0; i < schedulesToInsert.length; i++) {
                             const schedule = schedulesToInsert[i];
                             const time = (schedule.Time).split('-');
                             const timeStart = time[0];
                             const timeEnd = time[1];
                             db.run(sql2, [schedule.Code, schedule.Day, timeStart, timeEnd, schedule.Room], (error) => {
-                                if(error){
+                                if (error) {
                                     reject(error);
                                 }
                                 else {
@@ -503,41 +507,43 @@ function comparer(otherArray) {
 // for now they are s upposed to be Room, Seats
 exports.insertNewRooms = async (rooms) => {
     return new Promise((resolve, reject) => {
-        const sql1 = 'SELECT ClassroomName FROM Classroom';
-        db.all(sql1, [], (err, rows) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            else {
-
-                //filter rooms to insert by excluding the ones already in the db
-                const alreadyInserted = rows.map(row => row.ClassroomName);
-                const roomsToInsert = rooms.filter((room) => {
-                    return !alreadyInserted.includes(room.Room);
-                });
-                if (roomsToInsert.length !== 0) {
-                    const sql2 = 'INSERT INTO Classroom(ClassroomName, MaxSeats) ' +
-                        'VALUES (?, ?)';
-                    db.run("begin transaction");
-                    for (let i = 0; i < roomsToInsert.length; i++) {
-                        const room = roomsToInsert[i];
-                        db.run(sql2, [room.Room, room.Seats], (error) => {
-                            if (error) {
-                                reject(error);
-                                return;
-                            }
-                            else {
-                                resolve('Successfully inserted');
-                            }
-                        });
-                    }
-                    db.run("commit");
+        db.serialize(() => {
+            const sql1 = 'SELECT ClassroomName FROM Classroom';
+            db.all(sql1, [], (err, rows) => {
+                if (err) {
+                    reject(err);
+                    return;
                 }
                 else {
-                    resolve('Successfully inserted');
+
+                    //filter rooms to insert by excluding the ones already in the db
+                    const alreadyInserted = rows.map(row => row.ClassroomName);
+                    const roomsToInsert = rooms.filter((room) => {
+                        return !alreadyInserted.includes(room.Room);
+                    });
+                    if (roomsToInsert.length !== 0) {
+                        const sql2 = 'INSERT INTO Classroom(ClassroomName, MaxSeats) ' +
+                            'VALUES (?, ?)';
+                        db.run("begin transaction");
+                        for (let i = 0; i < roomsToInsert.length; i++) {
+                            const room = roomsToInsert[i];
+                            db.run(sql2, [room.Room, room.Seats], (error) => {
+                                if (error) {
+                                    reject(error);
+                                    return;
+                                }
+                                else {
+                                    resolve('Successfully inserted');
+                                }
+                            });
+                        }
+                        db.run("commit");
+                    }
+                    else {
+                        resolve('Successfully inserted');
+                    }
                 }
-            }
+            });
         });
     });
 }
@@ -668,4 +674,173 @@ exports.editLesson = (scheduleId, courseId, lessonStatus, lessonType, startDate,
             resolve('Lesson updated');
         });
     });
+}
+
+const editGeneralSchedule = (generalScheduleId, newData) => {
+
+    return new Promise((resolve, reject) => {
+        const sql = `UPDATE GeneralCourseSchedule 
+                     SET CourseID = ?, Day = ?, StartTime = ?, EndTime = ?, Room = ? 
+                     WHERE ID = ?`;
+       
+        let start = newData.startTime.substring(0, 5);
+        let end = newData.endTime.substring(0, 5);
+        if(start.startsWith('0')){
+            start = start.substring(1);
+        }
+        if(end.startsWith('0')){
+            end = end.substring(1);
+        }
+        db.run(sql, [newData.courseId, newData.day, start, end, newData.classroom, generalScheduleId], (err) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve('Success');
+            }
+        })
+    });
+}
+
+exports.updateAllSchedules = (scheduleId, newData) => {
+    return new Promise((resolve, reject) => {
+        readScheduleData(scheduleId)
+            .then((oldData) => {
+                selectSchedulesToUpdate(oldData)
+                    .then((selected) => {
+                        if (selected.length === 0) {
+                            resolve('Nothing updated');
+                            return;
+                        }
+                        const sql = `UPDATE CourseSchedule
+                                     SET CourseID = ?, TimeStart = ?, TimeEnd = ?, Classroom = ?
+                                     WHERE CourseScheduleID = ?`;
+                        
+                        db.run('begin transaction');
+                        for (let i = 0; i < selected.length; i++) {
+                            const schedule = selected[i];
+                            const newSchedule = computeNewSchedule(schedule.TimeStart, schedule.TimeEnd, newData.day, newData.startTime, newData.endTime);
+                            console.log(newData.courseId) 
+                            console.log(newSchedule.start)
+                            console.log(newSchedule.end) 
+                            console.log(newData.classroom)
+                            
+                            db.run(sql, [newData.courseId, newSchedule.start, newSchedule.end, newData.classroom, schedule.CourseScheduleID], (error) => {
+                                if (error) {
+                                    reject(error);
+                                    return;
+                                }
+                                
+                            });
+                        }
+                        /*
+                        selected.forEach((schedule) => {
+                            const newSchedule = computeNewSchedule(schedule.TimeStart, schedule.TimeEnd, newData.day, newData.startTime, newData.endTime)
+                            db.run(sql, [newData.courseId, newSchedule.start, newSchedule.end, newData.classroom, schedule.CourseScheduleID], (error) => {
+                                if(error){
+                                    reject(error);
+                                    return;
+                                }
+                            });
+                        });*/
+                        db.run('commit');
+                        editGeneralSchedule(scheduleId, newData)
+                            .then(() => {
+                                resolve('Successfully updated');
+                            })
+                            .catch(err3 => reject(err3));
+
+                    })
+                    .catch(err2 => reject(err2));
+            })
+            .catch(err1 => reject(err1));
+    });
+}
+
+const readScheduleData = (scheduleId) => {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT * FROM GeneralCourseSchedule WHERE ID = ?`;
+        db.get(sql, [scheduleId], (err, row) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(new CourseBasicSchedule(row.ID, row.CourseID, row.Day, row.StartTime, row.EndTime, row.Room));
+            }
+        });
+    });
+}
+
+const selectSchedulesToUpdate = (oldData) => {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT CourseScheduleID, TimeStart, TimeEnd 
+                     FROM CourseSchedule 
+                     WHERE CourseID = ?`;
+
+        db.all(sql, [oldData.courseId], (error, rows) => {
+            if (error) {
+                reject(error);
+            }
+            else {
+                //select only schedules in the right day and startTime and EndTime
+                const selected = rows.filter((row) => {
+                    const day = moment(row.TimeStart).format('ddd');
+                    //check if it is the right day of week
+                    if (day.localeCompare(oldData.day) !== 0) {
+                        return false;
+                    }
+
+                    //check if the date is before now (useless to update)
+                    const date = moment(row.TimeStart);
+                    if (date.isSameOrBefore(moment(), 'day')) {
+                        return false;
+                    }
+
+                    //check the start and end  time
+                    const start = moment(row.TimeStart).format('H:mm');
+                    const end = moment(row.TimeEnd).format('H:mm');
+                    const oldStart = oldData.startTime;
+                    const oldEnd = oldData.endTime;
+                    console.log(oldStart)
+                    console.log(start)
+                    if (start.localeCompare(oldStart) !== 0 || end.localeCompare(oldEnd) !== 0) {
+                        return false;
+                    }
+
+                    return true;
+                });
+                resolve(selected);
+            }
+        });
+    });
+}
+
+const computeNewSchedule = (oldStart, oldEnd, newDay, newStartTime, newEndTime) => {
+    let newDayNum;
+    switch (newDay) {
+        case 'Mon':
+            newDayNum = 1;
+            break;
+        case 'Tue':
+            newDayNum = 2;
+            break;
+        case 'Wed':
+            newDayNum = 3;
+            break;
+        case 'Thu':
+            newDayNum = 4;
+            break;
+        case 'Fri':
+            newDayNum = 5;
+            break;
+    }
+    const oldStartNum = moment(oldStart).format('d');
+    const difference = newDayNum - oldStartNum;
+    const newStart = `${moment(oldStart).add(difference, 'days').format('YYYY-MM-DD')}T${newStartTime}`;
+    const newEnd = `${moment(oldEnd).add(difference, 'days').format('YYYY-MM-DD')}T${newEndTime}`;
+    const newSchedule = {
+        start: newStart,
+        end: newEnd
+    };
+    return newSchedule;
 }
