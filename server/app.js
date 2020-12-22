@@ -169,6 +169,33 @@ app.get('/lessonsStatistics', async (req, res) => {
 });
 
 
+//booking manager
+
+app.post('/generateStudentTracing', async (req, res) => {
+    const studentID = req.body.studentID;
+    const downloadType = req.body.downloadType;
+    try {
+        const file = await bookingDao.generateStudentTracing(studentID, downloadType.toLowerCase());
+        res.download(file);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
+    }
+});
+
+app.post('/generateTeacherTracing', async (req, res) => {
+    const teacherID = req.body.teacherID;
+    const downloadType = req.body.downloadType;
+    try {
+        const file = await bookingDao.generateTeacherTracing(teacherID, downloadType.toLowerCase());
+        res.download(file);
+    }
+    catch (err) {
+        res.status(400).json(err.message);
+    }
+});
+
+
 
 //Teacher APIs
 app.get('/teacherCourses', async (req, res) => {
@@ -587,36 +614,36 @@ app.post('/createNewEnrollment', async (req, res) => {
 });
 
 app.put('/editCourseSchedule', async (req, res) => {
-    const {scheduleId, ...newData} = req.body;
-    try{
+    const { scheduleId, ...newData } = req.body;
+    try {
         await officerDao.updateAllSchedules(scheduleId, newData);
         res.status(200).end();
     }
-    catch(error){
-        
+    catch (error) {
+
     }
 });
 
 app.delete('/deleteCourseSchedule/:deletedSchedule', async (req, res) => {
-    const deletedId =req.params.deletedSchedule;
-    try{
+    const deletedId = req.params.deletedSchedule;
+    try {
         await officerDao.deleteSchedules(deletedId);
         res.status(200).end();
     }
-    catch(error){
+    catch (error) {
         res.status(505).json(error);
     }
-    
+
 });
 
 app.post('/createCourseSchedule', async (req, res) => {
-    
+
     const newSchedule = req.body;
-    try{
+    try {
         await officerDao.createNewSchedule(newSchedule);
         res.status(200).end();
     }
-    catch(error){
+    catch (error) {
         console.log(error)
         res.status(505).json(error);
     }

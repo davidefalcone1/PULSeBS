@@ -3,6 +3,8 @@ const db = require('../db');
 const LessonData = require('./LessonsData.js');
 const CourseData = require('./CourseData.js');
 const moment = require('moment');
+const path = require('path');
+const { jsPDF } = require("jspdf");
 
 exports.getBookableLessons = function (studentID) {
     return new Promise((resolve, reject) => {
@@ -11,7 +13,7 @@ exports.getBookableLessons = function (studentID) {
             "FROM CourseSchedule CS, StudentCourse SC " +
             "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
             "AND CS.CourseType=1 AND CS.CourseScheduleID NOT IN (" +
-            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=? AND BookStatus <> 2)" + 
+            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=? AND BookStatus <> 2)" +
             "ORDER BY TimeStart ASC";
         db.all(sql, [studentID, studentID], function (err, rows) {
             if (err) {
@@ -19,7 +21,7 @@ exports.getBookableLessons = function (studentID) {
             }
             const availableLessons = rows.filter(row => checkStart(row.TimeStart))
                 .map((row) => new LessonData(row.CourseScheduleID, row.CourseID,
-                    row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, 
+                    row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat,
                     row.CourseStatus, row.CourseType, row.Classroom));
             resolve(availableLessons);
         });
@@ -33,7 +35,7 @@ exports.getBookedLessons = function (studentID) {
             "FROM CourseSchedule CS, StudentCourse SC " +
             "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
             "AND CS.CourseType=1 AND CS.CourseScheduleID IN (" +
-            "SELECT CourseScheduleID FROM Booking WHERE StudentID=? AND BookStatus = 1)" + 
+            "SELECT CourseScheduleID FROM Booking WHERE StudentID=? AND BookStatus = 1)" +
             "ORDER BY TimeStart ASC";
         db.all(sql, [studentID, studentID], function (err, rows) {
             if (err) {
@@ -43,7 +45,7 @@ exports.getBookedLessons = function (studentID) {
             const myLessons = rows.filter(row => checkStart(row.TimeStart))
                 .map((row) =>
                     new LessonData(row.CourseScheduleID, row.CourseID,
-                        row.TimeStart, row.TimeEnd, row.OccupiedSeat, 
+                        row.TimeStart, row.TimeEnd, row.OccupiedSeat,
                         row.MaxSeat, row.CourseStatus, row.CourseType, row.Classroom));
             resolve(myLessons);
         });
@@ -57,7 +59,7 @@ exports.getPendingWaitingBookings = function (studentID) {
             "FROM CourseSchedule CS, StudentCourse SC " +
             "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
             "AND CS.CourseType=1 AND CS.CourseScheduleID IN (" +
-            "SELECT CourseScheduleID FROM Booking WHERE StudentID=? AND BookStatus = 3)" + 
+            "SELECT CourseScheduleID FROM Booking WHERE StudentID=? AND BookStatus = 3)" +
             "ORDER BY TimeStart ASC";
         db.all(sql, [studentID, studentID], function (err, rows) {
             if (err) {
@@ -66,7 +68,7 @@ exports.getPendingWaitingBookings = function (studentID) {
             const myLessons = rows.filter(row => checkStart(row.TimeStart))
                 .map((row) =>
                     new LessonData(row.CourseScheduleID, row.CourseID,
-                        row.TimeStart, row.TimeEnd, row.OccupiedSeat, 
+                        row.TimeStart, row.TimeEnd, row.OccupiedSeat,
                         row.MaxSeat, row.CourseStatus, row.CourseType));
             resolve(myLessons);
         });
@@ -204,13 +206,13 @@ exports.deleteBooking = (lessonID, studentID) => {
                    SET BookStatus = 2 
                    WHERE CourseScheduleID = ? AND StudentID = ?`;
 
-        db.run(sql, [lessonID, studentID], function(err) {
+        db.run(sql, [lessonID, studentID], function (err) {
             if (err) {
                 reject(err);
                 return;
             }
-            else {  
-                if(this.changes === 0){
+            else {
+                if (this.changes === 0) {
                     reject('NO BOOKING');
                     return;
                 }
@@ -295,6 +297,65 @@ exports.getLectureDataById = (lectureID) => {
             });
         }
     });
+}
+
+exports.generateStudentTracing = function (studentID, downloadType) {
+    return new Promise((resolve, reject) => {
+        let fileLocation;
+        switch (downloadType) {
+            case 'pdf':
+                fileLocation = path.resolve(__dirname, '../files').concat('\\studentTracing.pdf');
+                break;
+            case 'csv':
+                fileLocation = path.resolve(__dirname, '../files').concat('\\studentTracing.csv');
+                break;
+            default:
+                reject('File type is incorrect!')
+        }
+
+
+        const sql = `SELECT * FROM Course`;
+        db.all(sql, function (err, rows) {
+            if (err) {
+                reject();
+                return;
+            }
+            const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape" });
+            doc.table(1, 1, rows, [
+                "CourseID",
+                "Year",
+                "Semester",
+                "CourseName",
+                "TeacherID"
+            ], { autoSize: true });
+            //doc.text("Hello world!", 10, 10);
+            doc.save(fileLocation); // will save the file in the current working directory
+            resolve(fileLocation);
+        });
+    });
+}
+
+exports.generateTeacherTracing = function (studentID, downloadType) {
+    return new Promise((resolve, reject) => {
+        const sql =
+            "SELECT C.CourseId, CourseName, TeacherId FROM Course C, StudentCourse SC WHERE C.CourseId = SC.CourseId AND SC.StudentID = ?";
+        db.all(sql, [studentID], function (err, rows) {
+            if (err) {
+                reject();
+            }
+            const myCourses = rows.map((row) => new CourseData(row.CourseID, row.CourseName,
+                row.TeacherId));
+            resolve(myCourses);
+        });
+    });
+}
+
+const generatePDF = (data) => {
+
+}
+
+const generateCSV = (data) => {
+
 }
 
 const checkStart = (startDate) => {
