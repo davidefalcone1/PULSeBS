@@ -1,5 +1,6 @@
 "use strict";
 jest.setMock("../db", require("../__mocks__/db.mock"));
+const EnrollmentData = require("../dao/EnrollmentData");
 const db = require("../db");
 
 async function initDB() {
@@ -29,6 +30,8 @@ async function cleanDB(){
     await db.pRun(sql);
     sql = "DELETE FROM CourseSchedule";
     await db.pRun(sql);
+    sql = "DELETE FROM GeneralCourseSchedule";
+    await db.pRun(sql);
     sql = "DELETE FROM Course";
     await db.pRun(sql);
     sql = "DELETE FROM User";
@@ -49,10 +52,13 @@ async function insertBooking(user, lecture) {
 }
 
 async function enrollStudentToCourse(student, course) {
-    const sql = 'INSERT INTO StudentCourse(CourseID, StudentID) VALUES(?, ?)';
+    let sql = 'INSERT INTO StudentCourse(CourseID, StudentID) VALUES(?, ?)';
     let result = await db.pRun(sql, [course, student]);
     if(result)
         console.log(result);
+    sql = "SELECT * FROM StudentCourse";
+    result = await db.pGet(sql);
+    return new EnrollmentData(result.CourseID, result.StudentID);
 }
 
 async function insertStudent() {
@@ -72,9 +78,20 @@ async function insertCourseSchedule(course){
     let result = await db.pRun(sql, [course]);
     if(result)
         console.log(result);
-    sql = 'SELECT CourseScheduleID FROM CourseSchedule';
+    sql = 'SELECT * FROM CourseSchedule';
     result = await db.pAll(sql);
     return result[result.length-1].CourseScheduleID;
+}
+
+async function insertGeneralCourseSchedule(course){
+    let sql = "INSERT INTO GeneralCourseSchedule(CourseID, Day, StartTime, EndTime, Room)" +
+        " VALUES(?, DATE('now', '+1 day', 'localtime'), TIME('now', 'localtime'), TIME('now', '+1 hours', 'localtime'), 'A1')";
+    let result = await db.pRun(sql, [course]);
+    if(result)
+        console.log(result);
+    sql = 'SELECT * FROM GeneralCourseSchedule';
+    result = await db.pAll(sql);
+    return result[result.length-1].ID;
 }
 
 async function insertCourse(name, teacher){
@@ -108,4 +125,12 @@ async function getLectureFromBooking(booking){
     const result = await db.pGet(sql, [booking]);
     return result.CourseScheduleID;
 }
-module.exports = {initDB, cleanDB, insertStudent, insertTeacher, insertCourse, insertCourseSchedule, insertBooking, enrollStudentToCourse, getUserEmail, getLectureFromBooking};
+
+async function insertClassroom(){
+    let sql = "INSERT INTO Classroom(ClassroomName, MaxSeats) VALUES('A1', 80)";
+    let result = await db.pRun(sql);
+    sql = 'SELECT * FROM Classroom';
+    result = await db.pGet(sql);
+    return result.ID;
+}
+module.exports = {initDB, cleanDB, insertStudent, insertGeneralCourseSchedule, insertTeacher, insertCourse, insertCourseSchedule, insertBooking, enrollStudentToCourse, getUserEmail, getLectureFromBooking, insertClassroom};
