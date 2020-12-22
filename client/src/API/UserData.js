@@ -1,10 +1,11 @@
 class UserData{
-    constructor(id, personId, fullName, email) {
+    constructor(id, personId, fullName, email, hasDoneTutorial) {
         if (id) 
             this.id = id;
         this.personId = personId;
         this.fullName = fullName;
         this.email = email;
+        this.hasDoneTutorial = hasDoneTutorial;
     }
 
     static fromJson(json){

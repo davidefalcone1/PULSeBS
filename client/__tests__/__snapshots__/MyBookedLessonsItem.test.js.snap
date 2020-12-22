@@ -16,7 +16,7 @@ exports[`MyBookedLessonsItem Renders correctly 1`] = `
       <p
         id="startDateOfLesson1"
       >
-        Tue 15-12-2020 15:56
+        Fri 23-12-2016 00:36
       </p>
     </div>
     <div
@@ -25,7 +25,7 @@ exports[`MyBookedLessonsItem Renders correctly 1`] = `
       <p
         id="endDateOfLesson1"
       >
-        Tue 15-12-2020 16:56
+        Fri 23-12-2016 01:36
       </p>
     </div>
     <div

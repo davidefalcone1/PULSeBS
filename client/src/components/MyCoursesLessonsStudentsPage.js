@@ -20,7 +20,8 @@ const myCoursesLessonsStudentsPage = (props) => {
       myBookedStudentsInfos={props.myBookedStudentsInfos}
       cancelLesson={props.cancelLesson}
       changeLessonToRemote={props.changeLessonToRemote}
-      setStudentAsPresent={props.setStudentAsPresent} />
+      setStudentAsPresent={props.setStudentAsPresent}
+      setStudentAsNotPresent={props.setStudentAsNotPresent}/>
   );
 }
 
@@ -78,8 +79,7 @@ class MyCoursesLessonsPageRender extends React.Component {
                                     </Card.Header>
                                     <Accordion.Collapse eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>
                                       <Card.Body>
-                                        <LessonHeaderStatistics id = {courseLesson.scheduleId + "statistics"} normalBookings = {courseLesson.normalBookings}
-                                          cancelledBookings = {courseLesson.cancelledBookings} waitingBookings = {courseLesson.waitingBookings}/>
+                                        <LessonHeaderStatistics id = {courseLesson.scheduleId + "statistics"} lesson = {courseLesson}/>
                                         <StudentHeader/>
                                         <ListGroup as="ul" variant="flush">
                                           {this.props.studentsBookedToMyLessons.map((studentBooking) => //per ogni prenotazione alla lezione del mio corso
@@ -87,9 +87,8 @@ class MyCoursesLessonsPageRender extends React.Component {
                                             <ListGroup.Item key = {studentBooking.studentId} id = {teacherCourse.courseName + "-" + courseLesson.scheduleId + "-" + studentBooking.studentId}>
                                               {this.props.myBookedStudentsInfos.map((student) => //trova e mostra i dati dello studente
                                               (studentBooking.studentId === student.personId) &&
-                                                <MyCourseLessonsStudentItem key = {student.personId} student = {student} 
-                                                  booking = {studentBooking}
-                                                  setStudentAsPresent = {this.props.setStudentAsPresent}/> 
+                                                <MyCourseLessonsStudentItem key = {student.personId} student = {student} booking = {studentBooking}
+                                                  setStudentAsPresent = {this.props.setStudentAsPresent} setStudentAsNotPresent = {this.props.setStudentAsNotPresent}/> 
                                               )}
                                             </ListGroup.Item>  
                                           )}
@@ -112,7 +111,7 @@ class MyCoursesLessonsPageRender extends React.Component {
                 }
         
                 {this.state.showModal &&
-                  <Modal show={this.state.showModal} animation={false}>
+                  <Modal show={this.state.showModal} animation={false} backdrop={'static'}>
                     <Modal.Header>
                       <Modal.Title>Operation response</Modal.Title>
                     </Modal.Header>
@@ -179,7 +178,7 @@ function LessonHeader(props) {
     <>
       <div id={"lesson-" + props.startDate + "----" + props.endDate}>
         <h6>
-          Lezione del {props.startDate.format("ddd DD-MM-YYYY HH:mm").toString()} -- {props.endDate.format("ddd DD-MM-YYYY HH:mm").toString()}
+          Lesson of {props.startDate.format("ddd DD-MM-YYYY HH:mm").toString()} -- {props.endDate.format("ddd DD-MM-YYYY HH:mm").toString()}
           {' '}
           {props.isLessonRemote && !props.isLessonCancelled && <Badge pill variant="warning">Remote</Badge>}
           {props.isLessonCancelled && <Badge pill variant="secondary">Cancelled</Badge>}
@@ -193,10 +192,12 @@ function LessonHeaderStatistics(props){
   return (
     <>
       <h6>
-          {props.normalBookings + props.cancelledBookings + props.waitingBookings} total bookings, {' '}
-          {props.normalBookings} actual bookings, {' '}
-          {props.cancelledBookings} cancelled bookings, {' '}
-          {props.waitingBookings} waiting bookings
+          {props.lesson.normalBookings + props.lesson.cancelledBookings 
+            + props.lesson.waitingBookings + props.lesson.attendanceCount} total bookings, {' '}
+          {props.lesson.normalBookings} actual bookings, {' '}
+          {props.lesson.cancelledBookings} cancelled bookings, {' '}
+          {props.lesson.waitingBookings} waiting bookings, {' '}
+          {props.lesson.attendanceCount} attendances
       </h6>
       <br/>
     </>

@@ -102,13 +102,13 @@ class ConfigureLessons extends React.Component {
     }
     else {
       if(this.state.isCreating)
-        this.props.createNewLesson(this.state.courseId, this.state.errorLessonStatus,
+        this.props.createNewLesson(this.state.courseId, this.state.lessonStatus,
           this.state.lessonType, this.state.startDate, this.state.endDate, this.state.classroom);
       else if(this.state.isEditing)
-        this.props.editLesson(this.state.scheduleId, this.state.courseId, this.state.errorLessonStatus,
+        this.props.editLesson(this.state.scheduleId, this.state.courseId, this.state.lessonStatus,
           this.state.lessonType, this.state.startDate, this.state.endDate, this.state.classroom);
       
-      this.setState({isCreating: false});
+      this.setState({isCreating: false,isEditing: false});
     }
   }
   handleSubmitFile = () => {
@@ -154,7 +154,7 @@ class ConfigureLessons extends React.Component {
                   }
                 </ListGroup>
 
-                <Modal show={this.state.isCreating || this.state.isEditing} animation={false} scrollable={true}>
+                <Modal show={this.state.isCreating || this.state.isEditing} animation={false} scrollable={true} backdrop={'static'}>
                   <Modal.Header>
                     <Modal.Title>{this.state.isCreating ? 'Create new lesson' : 'Edit lesson'}</Modal.Title>
                   </Modal.Header>
@@ -180,8 +180,8 @@ class ConfigureLessons extends React.Component {
                             defaultValue = {this.state.lessonStatus}
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                           <option>Select status</option>
-                          <option value={true}>Active</option>
-                          <option value={false}>Cancelled</option>
+                          <option value={false}>Active</option>
+                          <option value={true}>Cancelled</option>
                         </Form.Control>
                       </Form.Group>
                       <Form.Group>
@@ -213,7 +213,7 @@ class ConfigureLessons extends React.Component {
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}>
                           <option>Select classroom</option>
                           {this.props.classesList.map((c) =>
-                            <option value={c.classroomName} key={c.classroomName}>{c.classroomName}</option>
+                            <option value={c.classroomName} key={c.classroomName}>{c.classroomName + " - " + c.maxSeats}</option>
                           )}
                         </Form.Control>
                       </Form.Group>
@@ -277,7 +277,7 @@ class ConfigureLessons extends React.Component {
                   </Modal.Footer>
                 </Modal>
               
-                <Modal show={this.state.isUploading} animation={false} scrollable={true}>
+                <Modal show={this.state.isUploading} animation={false} scrollable={true} backdrop={'static'}>
                   <Modal.Header>
                     <Modal.Title>Upload file</Modal.Title>
                   </Modal.Header>
@@ -339,7 +339,7 @@ class ConfigureLessons extends React.Component {
         )}
       </AuthContext.Consumer>
     );
-  };  
+  } 
 }
 
 

@@ -16,24 +16,34 @@ const navbar = (props) => {
 
                     {context.user &&
                         <Nav className="mr-auto">
-                            {context.isStudent && <>
-                                <Nav.Link as={NavLink} to="/myBookableLessonsList"> Book a lesson!</Nav.Link> 
-                                <Nav.Link as={NavLink} to="/myBookedLessonslist"> My booked lessons</Nav.Link>
-                            </>}
-                            {context.isTeacher && <>
-                                <Nav.Link as={NavLink} to="/myCoursesLessonslist"> My courses details</Nav.Link>
-                            </>}
-                            {context.isBookingManager && <>
-                                <Nav.Link as={NavLink} to="/monitorUsage"> Monitor usage of the system</Nav.Link>
-                            </>}
-                            {context.isSupportOfficer && <>
-                                <Nav.Link as={NavLink} to="/configureStudentsList"> Students</Nav.Link>
-                                <Nav.Link as={NavLink} to="/configureCoursesList"> Courses</Nav.Link>
-                                <Nav.Link as={NavLink} to="/configureTeachersList"> Teachers</Nav.Link>
-                                <Nav.Link as={NavLink} to="/configureLessonsList"> Lessons</Nav.Link>
-                                <Nav.Link as={NavLink} to="/configureClassesList"> Classes</Nav.Link>
-                                <Nav.Link as={NavLink} to="/configureClassroomsList"> Classrooms</Nav.Link>
-                            </>}
+                            {context.hasDoneTutorial && 
+                            <>
+                                {context.isStudent && <>
+                                    <Nav.Link as={NavLink} to="/myBookableLessonsList"> Book a lesson!</Nav.Link> 
+                                    <Nav.Link as={NavLink} to="/myBookedLessonslist"> My booked lessons</Nav.Link>
+                                </>}
+                                {context.isTeacher && <>
+                                    <Nav.Link as={NavLink} to="/myCoursesLessonslist"> My courses details</Nav.Link>
+                                </>}
+                                {context.isBookingManager && <>
+                                    <Nav.Link as={NavLink} to="/monitorUsage"> Monitor usage of the system</Nav.Link>
+                                    <Nav.Link as={NavLink} to="/generateContactTracing"> Generate contact tracing</Nav.Link>
+                                </>}
+                                {context.isSupportOfficer && <>
+                                    <Nav.Link as={NavLink} to="/configureStudentsList"> Students</Nav.Link>
+                                    <Nav.Link as={NavLink} to="/configureCoursesList"> Courses</Nav.Link>
+                                    <Nav.Link as={NavLink} to="/configureTeachersList"> Teachers</Nav.Link>
+                                    <Nav.Link as={NavLink} to="/configureLessonsList"> Lessons</Nav.Link>
+                                    <Nav.Link as={NavLink} to="/configureClassesList"> Classes</Nav.Link>
+                                    <Nav.Link as={NavLink} to="/configureClassroomsList"> Classrooms</Nav.Link>
+                                </>}
+                            </>}   
+                            {!context.hasDoneTutorial && 
+                            <>
+                                <Navbar.Brand>
+                                    | Tap on the image to go to the next tutorial image! |
+                                </Navbar.Brand> 
+                            </>}                         
                         </Nav>
                     }
                     

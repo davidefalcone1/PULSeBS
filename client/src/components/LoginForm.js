@@ -77,10 +77,23 @@ class LoginForm extends React.Component {
                                 </div>
                             </Fragment>
                         }
-                        {context.configurationCompleted && context.isStudent && <Redirect to="myBookableLessonsList"/> }
-                        {context.configurationCompleted && context.isTeacher && <Redirect to="myCoursesLessonslist"/> }
-                        {context.configurationCompleted && context.isBookingManager && <Redirect to="monitorUsage"/> }
-                        {context.configurationCompleted && context.isSupportOfficer && <Redirect to="configureStudentsList"/> }
+                        {context.configurationCompleted && 
+                        <>
+                            {context.hasDoneTutorial && 
+                            <>
+                                {context.isStudent && <Redirect to="/myBookableLessonsList"/> }
+                                {context.isTeacher && <Redirect to="/myCoursesLessonslist"/> }
+                            </>}
+                            {!context.hasDoneTutorial && 
+                            <>
+                                {context.isStudent && <Redirect to="/studentTutorial"/> }
+                                {context.isTeacher && <Redirect to="/teacherTutorial"/> }
+                            </>}
+
+                            {context.isBookingManager && <Redirect to="/monitorUsage"/> }
+                            {context.isSupportOfficer && <Redirect to="/configureStudentsList"/> }
+                        </>
+                        }
                     </>
                 )}
             </AuthContext.Consumer>

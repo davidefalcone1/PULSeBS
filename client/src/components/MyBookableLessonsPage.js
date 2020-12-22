@@ -225,7 +225,7 @@ class LessonListPageRender extends React.Component {
               </div>
             }
             {context.user && this.props.lessonsList && this.state.bookingCompleted &&
-              <Modal show={this.state.bookingCompleted} animation={false}>
+              <Modal show={this.state.bookingCompleted} animation={false} backdrop={'static'}>
                 <Modal.Header>
                   <Modal.Title>Booking response</Modal.Title>
                 </Modal.Header>

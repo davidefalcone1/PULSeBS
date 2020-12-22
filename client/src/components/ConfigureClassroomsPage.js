@@ -28,7 +28,7 @@ class ConfigureClasses extends React.Component {
   }
 
   activateModal = () => {
-    this.setState({isCreating: true});
+    this.setState({isCreating: true, classRoomName: '', maxSeats: 0});
   }
   activateUploadFileModal = () => {
     this.setState({isUploading: true})
@@ -104,7 +104,7 @@ class ConfigureClasses extends React.Component {
                         <ConfigureClassroomItem key = {c.classId} class = {c}/>)}
                 </ListGroup>
 
-                <Modal show={this.state.isCreating} animation={false} scrollable={true}>
+                <Modal show={this.state.isCreating} animation={false} scrollable={true} backdrop={'static'}>
                   <Modal.Header>
                     <Modal.Title>Create new class</Modal.Title>
                   </Modal.Header>
@@ -156,7 +156,7 @@ class ConfigureClasses extends React.Component {
                   </Modal.Footer>
                 </Modal>
 
-                <Modal show={this.state.isUploading} animation={false} scrollable={true}>
+                <Modal show={this.state.isUploading} animation={false} scrollable={true} backdrop={'static'}>
                   <Modal.Header>
                     <Modal.Title>Upload file</Modal.Title>
                   </Modal.Header>
@@ -219,7 +219,7 @@ class ConfigureClasses extends React.Component {
         )}
       </AuthContext.Consumer>
     );
-  };  
+  } 
 }
 
 function ListHeader() {

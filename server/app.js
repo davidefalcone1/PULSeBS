@@ -261,6 +261,18 @@ app.put('/setStudentAsPresent', async (req, res) => {
     }
 });
 
+app.put('/setStudentAsNotPresent', async (req, res) => {
+    const lessonID = req.body.lessonId;
+    const studentID = req.body.studentId;
+    try {
+        const result = await teacherDao.setStudentAsNotPresent(lessonID, studentID);
+        res.status(200).json(result);
+    }
+    catch (error) {
+        res.status(401).json(error);
+    }
+});
+
 // return true if lecture booked, false if student put into waiting list
 app.post('/bookLesson', async (req, res) => {
     try {
@@ -299,13 +311,13 @@ app.post('/bookLesson', async (req, res) => {
 app.put('/editLesson', async (req, res) => {
     const scheduleId = req.body.scheduleId;
     const courseId = req.body.courseId;
-    const errorLessonStatus = req.body.errorLessonStatus;
-    const lessonType = req.body.lessonType;
+    const lessonStatus = (req.body.lessonStatus === "true");
+    const lessonType = (req.body.lessonType === "true");
     const startDate = req.body.startDate;
     const endDate = req.body.endDate;
     const classroom = req.body.classroom;
     try {
-        const result = await officerDao.editLesson(scheduleId, courseId, errorLessonStatus, lessonType, startDate, endDate, classroom);
+        const result = await officerDao.editLesson(scheduleId, courseId, lessonStatus, lessonType, startDate, endDate, classroom);
         res.status(200).json(result);
     }
     catch (err) {
@@ -442,6 +454,16 @@ app.get('/allEnrollments', async (req, res) => {
     }
 });
 
+app.get('/allCoursesSchedules', async (req, res) => {
+    try {
+        const schedules = await officerDao.getSchedules();
+        res.json(schedules);
+    }
+    catch (error) {
+        res.status(505).json(error)
+    }
+});
+
 app.post('/uploadFileCourses', async (req, res) => {
 
     const file = req.body.file;
@@ -449,13 +471,14 @@ app.post('/uploadFileCourses', async (req, res) => {
     if (!newCourses) {
         res.status(505).json('Wrong file uploaded!');
     }
-
-    try {
-        await officerDao.insertNewCourses(newCourses);
-        res.status(200).end();
-    }
-    catch (err) {
-        res.status(505).json(err);
+    else {
+        try {
+            await officerDao.insertNewCourses(newCourses);
+            res.status(200).end();
+        }
+        catch (err) {
+            res.status(505).json(err);
+        }
     }
 });
 
@@ -466,13 +489,15 @@ app.post('/uploadFileLessons', async (req, res) => {
     if (!newLessons) {
         res.status(505).json('Wrong file uploaded!');
     }
-
-    try {
-        await officerDao.insertNewSchedules(newLessons);
-        res.status(200).end();
-    }
-    catch (err) {
-        res.status(505).json(err);
+    else {
+        try {
+            await officerDao.insertNewSchedules(newLessons);
+            await officerDao.insertNewGeneralSchedules(newLessons);
+            res.status(200).end();
+        }
+        catch (err) {
+            res.status(505).json(err);
+        }
     }
 });
 
@@ -483,15 +508,16 @@ app.post('/uploadFileStudents', async (req, res) => {
     if (!newStudents) {
         res.status(505).json('Wrong file uploaded!');
     }
-    try {
-        await officerDao.insertNewUsers(newStudents, 1);
-        res.status(200).end();
+    else {
+        try {
+            await officerDao.insertNewUsers(newStudents, 1);
+            res.status(200).end();
+        }
+        catch (err) {
+            console.log(err)
+            res.status(505).json(err);
+        }
     }
-    catch (err) {
-        console.log(err)
-        res.status(505).json(err);
-    }
-
 });
 
 app.post('/uploadFileTeachers', async (req, res) => {
@@ -501,12 +527,14 @@ app.post('/uploadFileTeachers', async (req, res) => {
     if (!newTeachers) {
         res.status(505).json('Wrong file uploaded!');
     }
-    try {
-        await officerDao.insertNewUsers(newTeachers, 2);
-        res.status(200).end();
-    }
-    catch (err) {
-        res.status(505).json(err);
+    else {
+        try {
+            await officerDao.insertNewUsers(newTeachers, 2);
+            res.status(200).end();
+        }
+        catch (err) {
+            res.status(505).json(err);
+        }
     }
 });
 
@@ -517,12 +545,14 @@ app.post('/uploadFileEnrollment', async (req, res) => {
     if (!newEnronllments) {
         res.status(505).json('Wrong file uploaded!');
     }
-    try {
-        await officerDao.insertNewEnrollments(newEnronllments);
-        res.status(200).end();
-    }
-    catch (err) {
-        res.status(505).json(err);
+    else {
+        try {
+            await officerDao.insertNewEnrollments(newEnronllments);
+            res.status(200).end();
+        }
+        catch (err) {
+            res.status(505).json(err);
+        }
     }
 });
 
@@ -533,12 +563,14 @@ app.post('/uploadFileClassroom', async (req, res) => {
     if (!newRooms) {
         res.status(505).json('Wrong file uploaded!');
     }
-    try {
-        await officerDao.insertNewRooms(newRooms);
-        res.status(200).end();
-    }
-    catch (err) {
-        res.status(505).json(err);
+    else {
+        try {
+            await officerDao.insertNewRooms(newRooms);
+            res.status(200).end();
+        }
+        catch (err) {
+            res.status(505).json(err);
+        }
     }
 });
 
@@ -551,6 +583,42 @@ app.post('/createNewEnrollment', async (req, res) => {
     catch (err) {
         console.log(err)
         res.status(505).json(err);
+    }
+});
+
+app.put('/editCourseSchedule', async (req, res) => {
+    const {scheduleId, ...newData} = req.body;
+    try{
+        await officerDao.updateAllSchedules(scheduleId, newData);
+        res.status(200).end();
+    }
+    catch(error){
+        
+    }
+});
+
+app.delete('/deleteCourseSchedule/:deletedSchedule', async (req, res) => {
+    const deletedId =req.params.deletedSchedule;
+    try{
+        await officerDao.deleteSchedules(deletedId);
+        res.status(200).end();
+    }
+    catch(error){
+        res.status(505).json(error);
+    }
+    
+});
+
+app.post('/createCourseSchedule', async (req, res) => {
+    
+    const newSchedule = req.body;
+    try{
+        await officerDao.createNewSchedule(newSchedule);
+        res.status(200).end();
+    }
+    catch(error){
+        console.log(error)
+        res.status(505).json(error);
     }
 });
 

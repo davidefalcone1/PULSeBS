@@ -428,7 +428,7 @@ describe('/makeLessonRemote/:courseScheduleId', () => {
 
 describe('/cancelLesson/:courseScheduleId', () => {
     const url = '/cancelLesson/';
-    let userCookie, lecture;
+    let userCookie,lecture;
     beforeEach(async () => {
         await testHelper.initDB();
         const teacher = await testHelper.insertTeacher();

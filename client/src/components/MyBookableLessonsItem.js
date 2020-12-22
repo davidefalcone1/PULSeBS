@@ -59,7 +59,7 @@ function SelectField(props){
                     props.updateModalMessage("Sorry, there was an error!\n" + errorObj);
                 });
             }} id={"selectFieldOfLesson" + props.id}>
-                SELECT
+                BOOK
             </Button>
         </div>
     );

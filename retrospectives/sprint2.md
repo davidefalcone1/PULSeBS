@@ -1,4 +1,4 @@
-# Sprint 1
+# Sprint 2
 ## Process 
 ### Macro statistics
 | Stories committed | Stories Done |

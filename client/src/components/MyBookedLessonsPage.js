@@ -219,7 +219,7 @@ class LessonListPageRender extends React.Component {
                       </Accordion.Collapse>
                     </Card>
                   }
-                  {this.props.waitingBookings && (console.log(this.props.waitingBookings) || true) && 
+                  {this.props.waitingBookings && 
                     <Card>
                       <Card.Header>
                         <Accordion.Toggle as={Button} variant="link" eventKey = {"pendingBookedLessons"}>
@@ -305,7 +305,7 @@ class LessonListPageRender extends React.Component {
               </div>
             }
             {context.user && this.props.lessonsList && this.state.bookingCompleted &&
-              <Modal show={this.state.bookingCompleted} animation={false}>
+              <Modal show={this.state.bookingCompleted} animation={false} backdrop={'static'}>
                 <Modal.Header>
                   <Modal.Title>Booking response</Modal.Title>
                 </Modal.Header>
