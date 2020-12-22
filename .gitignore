@@ -106,3 +106,5 @@ dist
 .scannerwork
 
 test-report.xml
+
+.vscode
