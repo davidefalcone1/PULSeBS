@@ -787,7 +787,7 @@ function getLessonsStatistics() {
 }
 
 //booking manager
-function generateStudentTracing(studentID, downloadType){
+function generateStudentTracing(studentID, downloadType) {
     return new Promise((resolve, reject) => {
         fetch("/generateStudentTracing", {
             method: 'POST',
@@ -804,9 +804,9 @@ function generateStudentTracing(studentID, downloadType){
         }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) });
     });
 }
-function generateTeacherTracing(teacherID, downloadType){
+function generateTeacherTracing(teacherID, downloadType) {
     return new Promise((resolve, reject) => {
-        fetch("/generateStudentTracing", {
+        fetch("/generateTeacherTracing", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ teacherID, downloadType })
@@ -814,7 +814,7 @@ function generateTeacherTracing(teacherID, downloadType){
             const fileJSON = await response.json();
             if (response.ok) {
                 resolve(fileJSON);
-            } 
+            }
             else {
                 reject();
             }
@@ -823,7 +823,7 @@ function generateTeacherTracing(teacherID, downloadType){
 }
 
 //common
-async function setTutorialCompleted(){
+async function setTutorialCompleted() {
     return new Promise((resolve, reject) => {
         fetch("/setStudentAsPresent", {
             method: 'PUT'
