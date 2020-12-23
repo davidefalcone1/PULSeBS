@@ -296,7 +296,7 @@ class ConfigureLessons extends React.Component {
                                 return new Promise((resolve, reject) => {
                                   reader.onload=event=>resolve(event.target.result)
                                   reader.onerror = error => reject(error)
-                                  reader.readAsText(file)
+                                  reader.readAsText(file, 'ISO-8859-1')
                                 })
                             }
                             

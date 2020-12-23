@@ -70,13 +70,14 @@ const createMessage = (info) => {
             so you are now booked and can attend the lecture</p>`;
             break;
         case 5:
-            if(!info.course || !info.oldDate || !info.oldStart || !info.oldEnd || !info.newDate || !info.newStart || !info.newEnd){
+            if(!info.course || !info.oldDate || !info.oldStart || !info.oldEnd || !info.oldRoom 
+                || !info.newDate || !info.newStart || !info.newEnd || !info.newRoom){
                 return undefined;
             }
             emailFields.subject = 'LECTURE RESCHEDULED';
             emailFields.html = `<p>Your lecture of ${info.course}, scheduled 
-            for ${info.oldDate} from ${info.oldStart} to ${info.oldEnd} has been <b>RESCHEDULED</b> 
-            for ${info.newDate} from ${info.newStart} to ${info.newEnd}</p>`;
+            for ${info.oldDate} from ${info.oldStart} to ${info.oldEnd} in room ${info.oldRoom} has been <b>RESCHEDULED</b> 
+            for ${info.newDate} from ${info.newStart} to ${info.newEnd} in room ${info.newRoom}</p>`;
             break;
         default:
             return undefined;
