@@ -678,7 +678,6 @@ exports.editLesson = (scheduleId, courseId, lessonStatus, lessonType, startDate,
         UPDATE CourseSchedule
         SET CourseID = ?, CourseStatus = ?, CourseType = ?, TimeStart = ?, TimeEnd = ?, Classroom = ?
         WHERE CourseScheduleID = ?`;
-        console.log(startDate);
         if(moment(startDate).isSameOrBefore(moment(), 'days') || moment(endDate).isSameOrBefore(moment(), 'days') 
             || !moment(startDate).isSame(moment(endDate), 'days')){
                 reject('wrong data');
@@ -836,13 +835,12 @@ const selectSchedulesToUpdate = (oldData) => {
                     if (day.localeCompare(oldData.day) !== 0) {
                         return false;
                     }
-
                     //check if the date is before now (useless to update)
                     const date = moment(row.TimeStart);
                     if (date.isSameOrBefore(moment(), 'day')) {
                         return false;
                     }
-
+                    
                     //check the start and end time
                     const start = moment(row.TimeStart).format('H:mm');
                     const end = moment(row.TimeEnd).format('H:mm');
@@ -851,7 +849,7 @@ const selectSchedulesToUpdate = (oldData) => {
                     if (start.localeCompare(oldStart) !== 0 || end.localeCompare(oldEnd) !== 0) {
                         return false;
                     }
-
+                    
                     return true;
                 });
                 resolve(selected);
