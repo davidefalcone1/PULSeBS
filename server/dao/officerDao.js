@@ -573,7 +573,7 @@ exports.createEnrollment = (enrollment) => {
             }
             else {
                 if (row) {
-                    resolve('ALready existing!');
+                    resolve('Already existing!');
                 }
                 else {
                     db.run(sql2, [enrollment.courseId, enrollment.studentId], (err) => {
@@ -642,7 +642,7 @@ exports.createNewUser = (userId, fullName, email, password, type) => {
                 reject(err);
                 return;
             }
-            db.get(sql, [userId, fullName, email, type, hash], (error) => {
+            db.run(sql, [userId, fullName, email, type, hash], (error) => {
                 if (error) {
                     reject(error);
                     return;

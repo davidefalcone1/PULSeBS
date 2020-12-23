@@ -3,6 +3,8 @@ const db = require('../db');
 const LessonData = require('./LessonsData.js');
 const CourseData = require('./CourseData.js');
 const moment = require('moment');
+const path = require('path');
+const { jsPDF } = require("jspdf");
 
 exports.getBookableLessons = function (studentID) {
     return new Promise((resolve, reject) => {
@@ -11,7 +13,7 @@ exports.getBookableLessons = function (studentID) {
             "FROM CourseSchedule CS, StudentCourse SC " +
             "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
             "AND CS.CourseType=1 AND CS.CourseScheduleID NOT IN (" +
-            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=? AND BookStatus <> 2)" + 
+            "SELECT CourseScheduleID FROM Booking B WHERE StudentID=? AND BookStatus <> 2)" +
             "ORDER BY TimeStart ASC";
         db.all(sql, [studentID, studentID], function (err, rows) {
             if (err) {
@@ -19,7 +21,7 @@ exports.getBookableLessons = function (studentID) {
             }
             const availableLessons = rows.filter(row => checkStart(row.TimeStart))
                 .map((row) => new LessonData(row.CourseScheduleID, row.CourseID,
-                    row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat, 
+                    row.TimeStart, row.TimeEnd, row.OccupiedSeat, row.MaxSeat,
                     row.CourseStatus, row.CourseType, row.Classroom));
             resolve(availableLessons);
         });
@@ -33,7 +35,7 @@ exports.getBookedLessons = function (studentID) {
             "FROM CourseSchedule CS, StudentCourse SC " +
             "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
             "AND CS.CourseType=1 AND CS.CourseScheduleID IN (" +
-            "SELECT CourseScheduleID FROM Booking WHERE StudentID=? AND BookStatus = 1)" + 
+            "SELECT CourseScheduleID FROM Booking WHERE StudentID=? AND BookStatus = 1)" +
             "ORDER BY TimeStart ASC";
         db.all(sql, [studentID, studentID], function (err, rows) {
             if (err) {
@@ -43,7 +45,7 @@ exports.getBookedLessons = function (studentID) {
             const myLessons = rows.filter(row => checkStart(row.TimeStart))
                 .map((row) =>
                     new LessonData(row.CourseScheduleID, row.CourseID,
-                        row.TimeStart, row.TimeEnd, row.OccupiedSeat, 
+                        row.TimeStart, row.TimeEnd, row.OccupiedSeat,
                         row.MaxSeat, row.CourseStatus, row.CourseType, row.Classroom));
             resolve(myLessons);
         });
@@ -57,7 +59,7 @@ exports.getPendingWaitingBookings = function (studentID) {
             "FROM CourseSchedule CS, StudentCourse SC " +
             "WHERE CS.CourseID=SC.CourseID AND SC.StudentID=? AND CourseStatus=true " +
             "AND CS.CourseType=1 AND CS.CourseScheduleID IN (" +
-            "SELECT CourseScheduleID FROM Booking WHERE StudentID=? AND BookStatus = 3)" + 
+            "SELECT CourseScheduleID FROM Booking WHERE StudentID=? AND BookStatus = 3)" +
             "ORDER BY TimeStart ASC";
         db.all(sql, [studentID, studentID], function (err, rows) {
             if (err) {
@@ -66,7 +68,7 @@ exports.getPendingWaitingBookings = function (studentID) {
             const myLessons = rows.filter(row => checkStart(row.TimeStart))
                 .map((row) =>
                     new LessonData(row.CourseScheduleID, row.CourseID,
-                        row.TimeStart, row.TimeEnd, row.OccupiedSeat, 
+                        row.TimeStart, row.TimeEnd, row.OccupiedSeat,
                         row.MaxSeat, row.CourseStatus, row.CourseType));
             resolve(myLessons);
         });
@@ -204,13 +206,13 @@ exports.deleteBooking = (lessonID, studentID) => {
                    SET BookStatus = 2 
                    WHERE CourseScheduleID = ? AND StudentID = ?`;
 
-        db.run(sql, [lessonID, studentID], function(err) {
+        db.run(sql, [lessonID, studentID], function (err) {
             if (err) {
                 reject(err);
                 return;
             }
-            else {  
-                if(this.changes === 0){
+            else {
+                if (this.changes === 0) {
                     reject('NO BOOKING');
                     return;
                 }
@@ -295,6 +297,81 @@ exports.getLectureDataById = (lectureID) => {
             });
         }
     });
+}
+
+exports.generateStudentTracing = function (studentID, downloadType) {
+    return new Promise((resolve, reject) => {
+        let fileLocation;
+        switch (downloadType) {
+            case 'pdf':
+                fileLocation = path.resolve(__dirname, '../files').concat('\\studentTracing.pdf');
+                break;
+            case 'csv':
+                fileLocation = path.resolve(__dirname, '../files').concat('\\studentTracing.csv');
+                break;
+            default:
+                reject('File type is incorrect!')
+        }
+
+        const sql = `
+		SELECT Course.CourseName, CourseSchedule.TimeStart, Booking.StudentID, User.Name, User.Surname, User.UserName,User.City,user.Birthday,user.SSN
+        FROM CourseSchedule JOIN Booking
+        ON CourseSchedule.CourseScheduleID = Booking.CourseScheduleID JOIN User
+        ON Booking.StudentID = User.UserID JOIN Course
+        ON CourseSchedule.CourseID = Course.CourseID
+        WHERE Attended != 0 AND Booking.CourseScheduleID IN
+        (SELECT Booking.CourseScheduleID FROM Booking WHERE StudentID = ? AND Attended =1)`;
+        db.all(sql, [studentID], function (err, rows) {
+            if (err) {
+                reject();
+                return;
+            }
+            const contactList = rows.filter(function (el) { return el.StudentID !== studentID });
+            const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape", format: 'a3' });
+
+            doc.setTextColor(0, 0, 0);
+            doc.text(3, 10, `All possible contacts for the student with ID:`);
+            doc.setTextColor(255, 0, 0);
+            doc.text(113, 10, `${studentID}`);
+            doc.setTextColor(0, 0, 0);
+            doc.table(5, 25, contactList, [
+                "CourseName",
+                "TimeStart",
+                "StudentID",
+                "Name",
+                "Surname",
+                "UserName",
+                "City",
+                "Birthday",
+                "SSN"
+            ], { autoSize: true });
+            doc.save(fileLocation);
+            resolve(fileLocation);
+        });
+    });
+}
+
+exports.generateTeacherTracing = function (studentID, downloadType) {
+    return new Promise((resolve, reject) => {
+        const sql =
+            "SELECT C.CourseId, CourseName, TeacherId FROM Course C, StudentCourse SC WHERE C.CourseId = SC.CourseId AND SC.StudentID = ?";
+        db.all(sql, [studentID], function (err, rows) {
+            if (err) {
+                reject();
+            }
+            const myCourses = rows.map((row) => new CourseData(row.CourseID, row.CourseName,
+                row.TeacherId));
+            resolve(myCourses);
+        });
+    });
+}
+
+const generatePDF = (data) => {
+
+}
+
+const generateCSV = (data) => {
+
 }
 
 const checkStart = (startDate) => {
