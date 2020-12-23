@@ -1,68 +1,578 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testExecutions version="1">
-  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\server.test.js">
-    <testCase name="/users/authenticate username is undefined" duration="115"/>
-    <testCase name="/users/authenticate password is undefined" duration="16"/>
-    <testCase name="/users/authenticate user does not exist" duration="22"/>
-    <testCase name="/users/authenticate invalid password" duration="333"/>
-    <testCase name="/users/authenticate login successful" duration="340"/>
-    <testCase name="/logout logout" duration="14"/>
-    <testCase name="/deleteBooking/:lessonID lesson exists" duration="171"/>
-    <testCase name="/deleteBooking/:lessonID lesson does not exists" duration="136"/>
-    <testCase name="/myBookableLessons " duration="1664"/>
-    <testCase name="/myBookedLessons lesson booked" duration="1766"/>
-    <testCase name="/myBookedLessons lesson not booked" duration="1542"/>
-    <testCase name="/studentCourses not enrolled" duration="15"/>
-    <testCase name="/studentCourses enrolled" duration="131"/>
-    <testCase name="/myBookableLessons not bookable" duration="14"/>
-    <testCase name="/myBookableLessons bookable" duration="128"/>
-    <testCase name="/myBookedLessons not booked" duration="32"/>
-    <testCase name="/myBookedLessons booked" duration="151"/>
-    <testCase name="/teacherCourses no courses for teacher" duration="31"/>
-    <testCase name="/teacherCourses there is a course taught by the professor" duration="153"/>
-    <testCase name="/myCoursesLessons no lecture" duration="17"/>
-    <testCase name="/myCoursesLessons there is a  lecture" duration="101"/>
-    <testCase name="/bookedStudents no students booked" duration="15"/>
-    <testCase name="/bookedStudents there is a booked student" duration="116"/>
-    <testCase name="/studentsData no students" duration="14"/>
-    <testCase name="/studentsData there is a student" duration="15"/>
-    <testCase name="/makeLessonRemote/:courseScheduleId lecture does not exist" duration="1232"/>
-    <testCase name="/makeLessonRemote/:courseScheduleId lecture exist" duration="1397"/>
-    <testCase name="/cancelLesson/:courseScheduleId lecture does not exist" duration="1242"/>
-    <testCase name="/user user is authenticated" duration="730"/>
-    <testCase name="/user user not authenticated" duration="712"/>
-    <testCase name="/bookLesson lecture exists" duration="1941"/>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\server\__tests__\server.test.js">
   </file>
-  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\bookingDao.test.js">
-    <testCase name="deleteBooking booking exists" duration="1643"/>
-    <testCase name="deleteBooking booking does not exist" duration="1330"/>
-    <testCase name="bookLesson the lesson exists and can be booked" duration="1578"/>
-    <testCase name="bookLesson the lesson does not exist and can&apos;t be booked" duration="1207"/>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\server\__tests__\officerDao.test.js">
+    <testCase name="getClassrooms There is a classroom" duration="82"/>
+    <testCase name="getCourses There is a course" duration="71"/>
+    <testCase name="getUsers There is a user" duration="53"/>
+    <testCase name="getLessons There is a lesson" duration="81"/>
+    <testCase name="getEnrollments There is an enrollment" duration="89"/>
+    <testCase name="getSchedules There is a schedule" duration="63"/>
+    <testCase name="insertNewRooms New rooms inserted" duration="28"/>
+    <testCase name="insertNewRooms Existing rooms inserted" duration="27">
+      <failure message="Error: SQLITE_ERROR: cannot commit - no transaction is active"><![CDATA[Error: SQLITE_ERROR: cannot commit - no transaction is active]]></failure>
+      <failure message="Error: expect.assertions(2)"><![CDATA[Error: expect.assertions(2)
+
+Expected two assertions to be called but received one assertion call.
+    at Object.<anonymous> (C:\Users\39351\Documents\GitHub\PULSeBS\server\__tests__\officerDao.test.js:127:16)
+    at Object.asyncJestTest (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\jasmineAsyncInstall.js:106:37)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:45:12
+    at new Promise (<anonymous>)
+    at mapper (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:28:19)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:75:41]]></failure>
+    </testCase>
+    <testCase name="createEnrollment Existing enrollment inserted" duration="37">
+      <failure message="Error: SQLITE_CONSTRAINT: FOREIGN KEY constraint failed"><![CDATA[Error: SQLITE_CONSTRAINT: FOREIGN KEY constraint failed]]></failure>
+      <failure message="Error: SQLITE_CONSTRAINT: NOT NULL constraint failed: StudentCourse.CourseID"><![CDATA[Error: SQLITE_CONSTRAINT: NOT NULL constraint failed: StudentCourse.CourseID]]></failure>
+      <failure message="Error: SQLITE_ERROR: cannot start a transaction within a transaction"><![CDATA[Error: SQLITE_ERROR: cannot start a transaction within a transaction]]></failure>
+      <failure message="Error: expect.assertions(1)"><![CDATA[Error: expect.assertions(1)
+
+Expected one assertion to be called but received zero assertion calls.
+    at call (C:\Users\39351\Documents\GitHub\PULSeBS\server\__tests__\officerDao.test.js:152:16)
+    at tryCatch (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\regenerator-runtime\runtime.js:63:40)
+    at Generator._invoke (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\regenerator-runtime\runtime.js:293:22)
+    at Generator.next (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\regenerator-runtime\runtime.js:118:21)
+    at asyncGeneratorStep (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\@babel\runtime\helpers\asyncToGenerator.js:3:16)
+    at _next (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\@babel\runtime\helpers\asyncToGenerator.js:25:9)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\@babel\runtime\helpers\asyncToGenerator.js:32:7
+    at new Promise (<anonymous>)
+    at Object.<anonymous> (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\@babel\runtime\helpers\asyncToGenerator.js:21:12)
+    at Object.asyncJestTest (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\jasmineAsyncInstall.js:106:37)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:45:12
+    at new Promise (<anonymous>)
+    at mapper (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:28:19)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:75:41]]></failure>
+    </testCase>
+    <testCase name="createEnrollment New enrollment inserted" duration="86">
+      <failure message="Error: SQLITE_CONSTRAINT: FOREIGN KEY constraint failed"><![CDATA[Error: SQLITE_CONSTRAINT: FOREIGN KEY constraint failed]]></failure>
+      <failure message="Error: expect.assertions(1)"><![CDATA[Error: expect.assertions(1)
+
+Expected one assertion to be called but received two assertion calls.
+    at call (C:\Users\39351\Documents\GitHub\PULSeBS\server\__tests__\officerDao.test.js:161:16)
+    at tryCatch (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\regenerator-runtime\runtime.js:63:40)
+    at Generator._invoke (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\regenerator-runtime\runtime.js:293:22)
+    at Generator.next (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\regenerator-runtime\runtime.js:118:21)
+    at asyncGeneratorStep (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\@babel\runtime\helpers\asyncToGenerator.js:3:16)
+    at _next (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\@babel\runtime\helpers\asyncToGenerator.js:25:9)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\@babel\runtime\helpers\asyncToGenerator.js:32:7
+    at new Promise (<anonymous>)
+    at Object.<anonymous> (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\@babel\runtime\helpers\asyncToGenerator.js:21:12)
+    at Object.asyncJestTest (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\jasmineAsyncInstall.js:106:37)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:45:12
+    at new Promise (<anonymous>)
+    at mapper (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:28:19)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:75:41]]></failure>
+    </testCase>
+    <testCase name="createNewClassroom New classroom inserted" duration="35"/>
+    <testCase name="createNewEnrollment New enrollment inserted" duration="82"/>
+    <testCase name="createNewUser New user inserted" duration="139"/>
   </file>
-  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\userDao.test.js">
-    <testCase name="getUser user exists" duration="369"/>
-    <testCase name="getUser user doesn&apos;t exists" duration="113"/>
-    <testCase name="checkPassword password ok" duration="317"/>
-    <testCase name="checkPassword password wrong" duration="319"/>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\server\__tests__\bookingDao.test.js">
   </file>
-  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\teacherDao.test.js">
-    <testCase name="getBookedStudents No students booked" duration="3"/>
-    <testCase name="getBookedStudents One student is booked" duration="108"/>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\Navbar.test.js">
+    <testCase name="Navbar Navbar renders correctly when user is a student" duration="63">
+      <failure message="Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()"><![CDATA[Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()
+
+Snapshot name: `Navbar Navbar renders correctly when user is a student 1`
+
+[38;2;128;0;128m[48;2;255;215;255m- Snapshot  - 19
+[38;2;0;95;95m[48;2;215;255;255m+ Received  +  4
+
+@@ -22,30 +22,15 @@
+    </span>
+    <div
+      className="mr-auto navbar-nav"
+      onKeyDown={[Function]}
+    >
+[38;2;128;0;128m[48;2;255;215;255m-     <a
+[38;2;128;0;128m[48;2;255;215;255m-       aria-current={null}
+[38;2;128;0;128m[48;2;255;215;255m-       className="nav-link"
+[38;2;128;0;128m[48;2;255;215;255m-       data-rb-event-key={null}
+[38;2;128;0;128m[48;2;255;215;255m-       disabled={false}
+[38;2;128;0;128m[48;2;255;215;255m-       href="/myBookableLessonsList"
+[38;2;128;0;128m[48;2;255;215;255m-       onClick={[Function]}
+[38;2;128;0;128m[48;2;255;215;255m-     >
+[38;2;128;0;128m[48;2;255;215;255m-        Book a lesson!
+[38;2;128;0;128m[48;2;255;215;255m-     </a>
+[38;2;128;0;128m[48;2;255;215;255m-     <a
+[38;2;128;0;128m[48;2;255;215;255m-       aria-current={null}
+[38;2;128;0;128m[48;2;255;215;255m-       className="nav-link"
+[38;2;128;0;128m[48;2;255;215;255m-       data-rb-event-key={null}
+[38;2;128;0;128m[48;2;255;215;255m-       disabled={false}
+[38;2;128;0;128m[48;2;255;215;255m-       href="/myBookedLessonslist"
+[38;2;128;0;128m[48;2;255;215;255m-       onClick={[Function]}
+[38;2;0;95;95m[48;2;215;255;255m+     <span
+[38;2;0;95;95m[48;2;215;255;255m+       className="navbar-brand"
+      >
+[38;2;128;0;128m[48;2;255;215;255m-        My booked lessons
+[38;2;128;0;128m[48;2;255;215;255m-     </a>
+[38;2;0;95;95m[48;2;215;255;255m+       | Tap on the image to go to the next tutorial image! |
+[38;2;0;95;95m[48;2;215;255;255m+     </span>
+    </div>
+    <div
+      className="ml-md-auto navbar-nav"
+      onKeyDown={[Function]}
+    >
+    at Object.<anonymous> (C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\Navbar.test.js:18:22)
+    at Object.asyncJestTest (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\jasmineAsyncInstall.js:106:37)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:45:12
+    at new Promise (<anonymous>)
+    at mapper (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:28:19)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:75:41]]></failure>
+    </testCase>
+    <testCase name="Navbar Navbar renders correctly when user is a teacher" duration="9">
+      <failure message="Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()"><![CDATA[Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()
+
+Snapshot name: `Navbar Navbar renders correctly when user is a teacher 1`
+
+[38;2;128;0;128m[48;2;255;215;255m- Snapshot  - 9
+[38;2;0;95;95m[48;2;215;255;255m+ Received  + 4
+
+@@ -22,20 +22,15 @@
+    </span>
+    <div
+      className="mr-auto navbar-nav"
+      onKeyDown={[Function]}
+    >
+[38;2;128;0;128m[48;2;255;215;255m-     <a
+[38;2;128;0;128m[48;2;255;215;255m-       aria-current={null}
+[38;2;128;0;128m[48;2;255;215;255m-       className="nav-link"
+[38;2;128;0;128m[48;2;255;215;255m-       data-rb-event-key={null}
+[38;2;128;0;128m[48;2;255;215;255m-       disabled={false}
+[38;2;128;0;128m[48;2;255;215;255m-       href="/myCoursesLessonslist"
+[38;2;128;0;128m[48;2;255;215;255m-       onClick={[Function]}
+[38;2;0;95;95m[48;2;215;255;255m+     <span
+[38;2;0;95;95m[48;2;215;255;255m+       className="navbar-brand"
+      >
+[38;2;128;0;128m[48;2;255;215;255m-        My courses details
+[38;2;128;0;128m[48;2;255;215;255m-     </a>
+[38;2;0;95;95m[48;2;215;255;255m+       | Tap on the image to go to the next tutorial image! |
+[38;2;0;95;95m[48;2;215;255;255m+     </span>
+    </div>
+    <div
+      className="ml-md-auto navbar-nav"
+      onKeyDown={[Function]}
+    >
+    at Object.<anonymous> (C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\Navbar.test.js:29:22)
+    at Object.asyncJestTest (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\jasmineAsyncInstall.js:106:37)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:45:12
+    at new Promise (<anonymous>)
+    at mapper (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:28:19)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:75:41]]></failure>
+    </testCase>
+    <testCase name="Navbar Navbar renders correctly when user is the booking manager" duration="7">
+      <failure message="Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()"><![CDATA[Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()
+
+Snapshot name: `Navbar Navbar renders correctly when user is the booking manager 1`
+
+[38;2;128;0;128m[48;2;255;215;255m- Snapshot  - 9
+[38;2;0;95;95m[48;2;215;255;255m+ Received  + 4
+
+@@ -22,20 +22,15 @@
+    </span>
+    <div
+      className="mr-auto navbar-nav"
+      onKeyDown={[Function]}
+    >
+[38;2;128;0;128m[48;2;255;215;255m-     <a
+[38;2;128;0;128m[48;2;255;215;255m-       aria-current={null}
+[38;2;128;0;128m[48;2;255;215;255m-       className="nav-link"
+[38;2;128;0;128m[48;2;255;215;255m-       data-rb-event-key={null}
+[38;2;128;0;128m[48;2;255;215;255m-       disabled={false}
+[38;2;128;0;128m[48;2;255;215;255m-       href="/monitorUsage"
+[38;2;128;0;128m[48;2;255;215;255m-       onClick={[Function]}
+[38;2;0;95;95m[48;2;215;255;255m+     <span
+[38;2;0;95;95m[48;2;215;255;255m+       className="navbar-brand"
+      >
+[38;2;128;0;128m[48;2;255;215;255m-        Monitor usage of the system
+[38;2;128;0;128m[48;2;255;215;255m-     </a>
+[38;2;0;95;95m[48;2;215;255;255m+       | Tap on the image to go to the next tutorial image! |
+[38;2;0;95;95m[48;2;215;255;255m+     </span>
+    </div>
+    <div
+      className="ml-md-auto navbar-nav"
+      onKeyDown={[Function]}
+    >
+    at Object.<anonymous> (C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\Navbar.test.js:40:22)
+    at Object.asyncJestTest (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\jasmineAsyncInstall.js:106:37)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:45:12
+    at new Promise (<anonymous>)
+    at mapper (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:28:19)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:75:41]]></failure>
+    </testCase>
+    <testCase name="Navbar Navbar renders correctly when user is the support officier" duration="7">
+      <failure message="Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()"><![CDATA[Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()
+
+Snapshot name: `Navbar Navbar renders correctly when user is the support officier 1`
+
+[38;2;128;0;128m[48;2;255;215;255m- Snapshot  - 1
+[38;2;0;95;95m[48;2;215;255;255m+ Received  + 7
+
+@@ -21,11 +21,17 @@
+      PULSeBS Project
+    </span>
+    <div
+      className="mr-auto navbar-nav"
+      onKeyDown={[Function]}
+[38;2;128;0;128m[48;2;255;215;255m-   />
+[38;2;0;95;95m[48;2;215;255;255m+   >
+[38;2;0;95;95m[48;2;215;255;255m+     <span
+[38;2;0;95;95m[48;2;215;255;255m+       className="navbar-brand"
+[38;2;0;95;95m[48;2;215;255;255m+     >
+[38;2;0;95;95m[48;2;215;255;255m+       | Tap on the image to go to the next tutorial image! |
+[38;2;0;95;95m[48;2;215;255;255m+     </span>
+[38;2;0;95;95m[48;2;215;255;255m+   </div>
+    <div
+      className="ml-md-auto navbar-nav"
+      onKeyDown={[Function]}
+    >
+      <span
+    at Object.<anonymous> (C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\Navbar.test.js:51:22)
+    at Object.asyncJestTest (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\jasmineAsyncInstall.js:106:37)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:45:12
+    at new Promise (<anonymous>)
+    at mapper (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:28:19)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:75:41]]></failure>
+    </testCase>
   </file>
-  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\emailDao.test.js">
-    <testCase name="getProfessorsToNotify no lectures tomorrow" duration="605"/>
-    <testCase name="getProfessorsToNotify there is a lecture tomorrow" duration="790"/>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\server\__tests__\userDao.test.js">
+    <testCase name="getUser user exists" duration="45"/>
+    <testCase name="getUser user doesn&apos;t exists" duration="23"/>
+    <testCase name="checkPassword password ok" duration="329"/>
+    <testCase name="checkPassword password wrong" duration="300"/>
   </file>
-  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\LessonsData.test.js">
-    <testCase name="LessonsData costructor test works" duration="3"/>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\MyCoursesLessonsStudentsPage.test.js">
+    <testCase name="MyCoursesLessonsStudentsPage Renders correctly" duration="26">
+      <failure message="Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()"><![CDATA[Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()
+
+Snapshot name: `MyCoursesLessonsStudentsPage Renders correctly 1`
+
+[38;2;128;0;128m[48;2;255;215;255m- Snapshot  - 3
+[38;2;0;95;95m[48;2;215;255;255m+ Received  + 7
+
+@@ -104,11 +104,11 @@
+                    >
+                      <div
+                        id="lesson-1482449767071----1482453367071"
+                      >
+                        <h6>
+[38;2;128;0;128m[48;2;255;215;255m-                         Lezione del 
+[38;2;0;95;95m[48;2;215;255;255m+                         Lesson of 
+                          Fri 23-12-2016 00:36
+                           -- 
+                          Fri 23-12-2016 01:36
+                           
+                          <span
+@@ -154,11 +154,14 @@
+                       
+                      4
+                       cancelled bookings, 
+                       
+                      33
+[38;2;128;0;128m[48;2;255;215;255m-                      waiting bookings
+[38;2;0;95;95m[48;2;215;255;255m+                      waiting bookings, 
+[38;2;0;95;95m[48;2;215;255;255m+                      
+[38;2;0;95;95m[48;2;215;255;255m+                     0
+[38;2;0;95;95m[48;2;215;255;255m+                      attendances
+                    </h6>
+                    <br />
+                    <div
+                      className="list-group-item"
+                      disabled={false}
+@@ -243,16 +246,17 @@
+                              className="col-sm-3"
+                            >
+                              <button
+                                className="btn btn-success"
+                                disabled={false}
+[38;2;128;0;128m[48;2;255;215;255m-                               id="selectFieldOfLesson1 - 12345"
+[38;2;0;95;95m[48;2;215;255;255m+                               id="setPresentOf1 - 12345"
+                                onClick={[Function]}
+                                type="button"
+                              >
+                                Set as Present
+                              </button>
+[38;2;0;95;95m[48;2;215;255;255m+                             0
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ul>
+    at Object.<anonymous> (C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\MyCoursesLessonsStudentsPage.test.js:24:22)
+    at Object.asyncJestTest (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\jasmineAsyncInstall.js:106:37)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:45:12
+    at new Promise (<anonymous>)
+    at mapper (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:28:19)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:75:41]]></failure>
+    </testCase>
   </file>
-  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\User.test.js">
-    <testCase name="User costructor test works" duration="2"/>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\server\__tests__\teacherDao.test.js">
+    <testCase name="getBookedStudents No students booked" duration="5"/>
+    <testCase name="getBookedStudents One student is booked" duration="9"/>
   </file>
-  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\CourseData.test.js">
-    <testCase name="CourseData costructor test works" duration="2"/>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\ConfigureLessonsPage.test.js">
+    <testCase name="ConfigureLessonsPage Renders correctly" duration="37"/>
   </file>
-  <file path="D:\8-Software Engineering II\Project\PULSeBS\server\__tests__\BookingData.test.js">
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\server\__tests__\emailDao.test.js">
+    <testCase name="getProfessorsToNotify no lectures tomorrow" duration="52"/>
+    <testCase name="getProfessorsToNotify there is a lecture tomorrow" duration="67"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\MyBookableLessonsPage.test.js">
+    <testCase name="MyBookableLessonsPage Renders correctly" duration="25">
+      <failure message="Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()"><![CDATA[Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()
+
+Snapshot name: `MyBookableLessonsPage Renders correctly 1`
+
+[38;2;128;0;128m[48;2;255;215;255m- Snapshot  - 1
+[38;2;0;95;95m[48;2;215;255;255m+ Received  + 1
+
+@@ -245,11 +245,11 @@
+                      disabled={false}
+                      id="selectFieldOfLesson1"
+                      onClick={[Function]}
+                      type="button"
+                    >
+[38;2;128;0;128m[48;2;255;215;255m-                     SELECT
+[38;2;0;95;95m[48;2;215;255;255m+                     BOOK
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </ul>
+    at Object.<anonymous> (C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\MyBookableLessonsPage.test.js:23:22)
+    at Object.asyncJestTest (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\jasmineAsyncInstall.js:106:37)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:45:12
+    at new Promise (<anonymous>)
+    at mapper (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:28:19)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:75:41]]></failure>
+    </testCase>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\MyBookedLessonsPage.test.js">
+    <testCase name="MyBookedLessonsPage Renders correctly" duration="12"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\ConfigureLessonsItem.test.js">
+    <testCase name="ConfigureLessonsItem Renders correctly" duration="10"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\MonitorUsagePage.test.js">
+    <testCase name="MonitorUsagePage Renders correctly" duration="9"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\MyBookableLessonsItem.test.js">
+    <testCase name="MyBookableLessonsItem Renders correctly" duration="7">
+      <failure message="Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()"><![CDATA[Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()
+
+Snapshot name: `MyBookableLessonsItem Renders correctly 1`
+
+[38;2;128;0;128m[48;2;255;215;255m- Snapshot  - 1
+[38;2;0;95;95m[48;2;215;255;255m+ Received  + 1
+
+@@ -44,10 +44,10 @@
+          disabled={false}
+          id="selectFieldOfLesson1"
+          onClick={[Function]}
+          type="button"
+        >
+[38;2;128;0;128m[48;2;255;215;255m-         SELECT
+[38;2;0;95;95m[48;2;215;255;255m+         BOOK
+        </button>
+      </div>
+    </div>
+  </div>
+    at Object.<anonymous> (C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\MyBookableLessonsItem.test.js:22:22)
+    at Object.asyncJestTest (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\jasmineAsyncInstall.js:106:37)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:45:12
+    at new Promise (<anonymous>)
+    at mapper (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:28:19)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:75:41]]></failure>
+    </testCase>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\ConfigureClassesPage.test.js">
+    <testCase name="ConfigureClassesPage Renders correctly" duration="12"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\MyBookedLessonsItem.test.js">
+    <testCase name="MyBookedLessonsItem Renders correctly" duration="6"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\ConfigureCoursesPage.test.js">
+    <testCase name="ConfigureCoursesPage Renders correctly" duration="6">
+      <failure message="Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()"><![CDATA[Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()
+
+Snapshot name: `ConfigureCoursesPage Renders correctly 1`
+
+[38;2;128;0;128m[48;2;255;215;255m- Snapshot  - 83
+[38;2;0;95;95m[48;2;215;255;255m+ Received  +  8
+
+[38;2;128;0;128m[48;2;255;215;255m- Array [
+[38;2;128;0;128m[48;2;255;215;255m-   <br />,
+[38;2;128;0;128m[48;2;255;215;255m-   <div
+[38;2;128;0;128m[48;2;255;215;255m-     className="justify-content-around row"
+[38;2;128;0;128m[48;2;255;215;255m-   >
+[38;2;128;0;128m[48;2;255;215;255m-     <button
+[38;2;128;0;128m[48;2;255;215;255m-       className="btn btn-primary"
+[38;2;128;0;128m[48;2;255;215;255m-       disabled={false}
+[38;2;128;0;128m[48;2;255;215;255m-       id="activateModalOfCourses"
+[38;2;128;0;128m[48;2;255;215;255m-       onClick={[Function]}
+[38;2;128;0;128m[48;2;255;215;255m-       type="button"
+[38;2;128;0;128m[48;2;255;215;255m-     >
+[38;2;128;0;128m[48;2;255;215;255m-       Add New
+[38;2;128;0;128m[48;2;255;215;255m-     </button>
+[38;2;128;0;128m[48;2;255;215;255m-     <button
+[38;2;128;0;128m[48;2;255;215;255m-       className="btn btn-primary"
+[38;2;128;0;128m[48;2;255;215;255m-       disabled={false}
+[38;2;128;0;128m[48;2;255;215;255m-       id="uploadFileOfCourses"
+[38;2;128;0;128m[48;2;255;215;255m-       onClick={[Function]}
+[38;2;128;0;128m[48;2;255;215;255m-       type="button"
+[38;2;128;0;128m[48;2;255;215;255m-     >
+[38;2;128;0;128m[48;2;255;215;255m-       Upload File
+[38;2;128;0;128m[48;2;255;215;255m-     </button>
+[38;2;128;0;128m[48;2;255;215;255m-   </div>,
+[38;2;128;0;128m[48;2;255;215;255m-   <ul
+[38;2;128;0;128m[48;2;255;215;255m-     className="list-group list-group-flush"
+[38;2;128;0;128m[48;2;255;215;255m-     onKeyDown={[Function]}
+[38;2;128;0;128m[48;2;255;215;255m-   >
+[38;2;128;0;128m[48;2;255;215;255m-     <div
+[38;2;128;0;128m[48;2;255;215;255m-       className="list-group-item"
+[38;2;128;0;128m[48;2;255;215;255m-       data-rb-event-key={null}
+[38;2;128;0;128m[48;2;255;215;255m-       disabled={false}
+[38;2;128;0;128m[48;2;255;215;255m-       id="coursesList-header"
+[38;2;128;0;128m[48;2;255;215;255m-       onClick={[Function]}
+[38;2;128;0;128m[48;2;255;215;255m-     >
+[38;2;128;0;128m[48;2;255;215;255m-       <div
+[38;2;128;0;128m[48;2;255;215;255m-         className="d-flex w-100 pt-3 justify-content-between no-gutters"
+[38;2;128;0;128m[48;2;255;215;255m-       >
+[38;2;128;0;128m[48;2;255;215;255m-         <div
+[38;2;128;0;128m[48;2;255;215;255m-           className="col-sm-6"
+[38;2;128;0;128m[48;2;255;215;255m-         >
+[38;2;128;0;128m[48;2;255;215;255m-           <h4>
+[38;2;128;0;128m[48;2;255;215;255m-             Course Name
+[38;2;128;0;128m[48;2;255;215;255m-           </h4>
+[38;2;128;0;128m[48;2;255;215;255m-         </div>
+  <div
+[38;2;128;0;128m[48;2;255;215;255m-           className="col-sm-6"
+[38;2;128;0;128m[48;2;255;215;255m-         >
+[38;2;128;0;128m[48;2;255;215;255m-           <h4>
+[38;2;128;0;128m[48;2;255;215;255m-             Teacher
+[38;2;128;0;128m[48;2;255;215;255m-           </h4>
+[38;2;128;0;128m[48;2;255;215;255m-         </div>
+[38;2;128;0;128m[48;2;255;215;255m-       </div>
+[38;2;128;0;128m[48;2;255;215;255m-     </div>
+[38;2;128;0;128m[48;2;255;215;255m-     <div
+[38;2;128;0;128m[48;2;255;215;255m-       className="list-group-item"
+[38;2;128;0;128m[48;2;255;215;255m-       data-rb-event-key={null}
+[38;2;128;0;128m[48;2;255;215;255m-       disabled={false}
+[38;2;128;0;128m[48;2;255;215;255m-       id="course-XY123"
+[38;2;128;0;128m[48;2;255;215;255m-       onClick={[Function]}
+[38;2;128;0;128m[48;2;255;215;255m-     >
+[38;2;128;0;128m[48;2;255;215;255m-       <div
+[38;2;128;0;128m[48;2;255;215;255m-         className="d-flex w-100 pt-3 justify-content-between no-gutters"
+[38;2;128;0;128m[48;2;255;215;255m-       >
+[38;2;128;0;128m[48;2;255;215;255m-         <div
+[38;2;128;0;128m[48;2;255;215;255m-           className="col-sm-6"
+[38;2;128;0;128m[48;2;255;215;255m-         >
+[38;2;128;0;128m[48;2;255;215;255m-           <h6
+[38;2;128;0;128m[48;2;255;215;255m-             id="nameOfcourse_XY123"
+[38;2;128;0;128m[48;2;255;215;255m-           >
+[38;2;128;0;128m[48;2;255;215;255m-             Software engineering 2
+[38;2;128;0;128m[48;2;255;215;255m-           </h6>
+[38;2;128;0;128m[48;2;255;215;255m-         </div>
+[38;2;128;0;128m[48;2;255;215;255m-         <div
+[38;2;128;0;128m[48;2;255;215;255m-           className="col-sm-6"
+[38;2;0;95;95m[48;2;215;255;255m+   className="col-sm-12 pt-3"
+  >
+[38;2;128;0;128m[48;2;255;215;255m-           <h6
+[38;2;128;0;128m[48;2;255;215;255m-             id="teacherOfcourse_654321-XY123"
+[38;2;128;0;128m[48;2;255;215;255m-           >
+[38;2;128;0;128m[48;2;255;215;255m-             Mario Rossi
+[38;2;128;0;128m[48;2;255;215;255m-           </h6>
+[38;2;0;95;95m[48;2;215;255;255m+   <img
+[38;2;0;95;95m[48;2;215;255;255m+     alt=""
+[38;2;0;95;95m[48;2;215;255;255m+     className="img-button"
+[38;2;0;95;95m[48;2;215;255;255m+     height="600"
+[38;2;0;95;95m[48;2;215;255;255m+     src="./images/no_data_image.png"
+[38;2;0;95;95m[48;2;215;255;255m+     width="800"
+[38;2;0;95;95m[48;2;215;255;255m+   />
+  </div>
+[38;2;128;0;128m[48;2;255;215;255m-       </div>
+[38;2;128;0;128m[48;2;255;215;255m-     </div>
+[38;2;128;0;128m[48;2;255;215;255m-   </ul>,
+[38;2;128;0;128m[48;2;255;215;255m- ]
+    at Object.<anonymous> (C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\ConfigureCoursesPage.test.js:19:22)
+    at Object.asyncJestTest (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\jasmineAsyncInstall.js:106:37)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:45:12
+    at new Promise (<anonymous>)
+    at mapper (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:28:19)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:75:41]]></failure>
+    </testCase>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\MyCoursesLessonsStudentItem.test.js">
+    <testCase name="MyCoursesLessonsStudentItem Renders correctly" duration="6">
+      <failure message="Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()"><![CDATA[Error: expect([38;2;0;95;95m[48;2;215;255;255mreceived).toMatchSnapshot()
+
+Snapshot name: `MyCoursesLessonsStudentItem Renders correctly 1`
+
+[38;2;128;0;128m[48;2;255;215;255m- Snapshot  - 1
+[38;2;0;95;95m[48;2;215;255;255m+ Received  + 2
+
+@@ -38,14 +38,15 @@
+        className="col-sm-3"
+      >
+        <button
+          className="btn btn-success"
+          disabled={false}
+[38;2;128;0;128m[48;2;255;215;255m-         id="selectFieldOfLesson - 12345"
+[38;2;0;95;95m[48;2;215;255;255m+         id="setPresentOf - 12345"
+          onClick={[Function]}
+          type="button"
+        >
+          Set as Present
+        </button>
+[38;2;0;95;95m[48;2;215;255;255m+       0
+      </div>
+    </div>
+  </div>
+    at Object.<anonymous> (C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\MyCoursesLessonsStudentItem.test.js:19:22)
+    at Object.asyncJestTest (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\jasmineAsyncInstall.js:106:37)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:45:12
+    at new Promise (<anonymous>)
+    at mapper (C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:28:19)
+    at C:\Users\39351\Documents\GitHub\PULSeBS\node_modules\jest-jasmine2\build\queueRunner.js:75:41]]></failure>
+    </testCase>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\ConfigureCoursesItem.test.js">
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\ConfigureClassesItem.test.js">
+    <testCase name="ConfigureClassesItem Renders correctly" duration="5"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\ConfigureUsersPage.test.js">
+    <testCase name="ConfigureUsersPage Renders correctly" duration="14"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\ConfigureClassroomsPage.test.js">
+    <testCase name="ConfigureClassroomsPage Renders correctly" duration="12"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\ConfigureUsersItem.test.js">
+    <testCase name="ConfigureUsersItem Renders correctly" duration="4"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\ConfigureClassroomsItem.test.js">
+    <testCase name="ConfigureClassroomsItem Renders correctly" duration="6"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\client\__tests__\LoginForm.test.js">
+    <testCase name="LoginForm Renders correctly" duration="9"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\server\__tests__\LessonsData.test.js">
+    <testCase name="LessonsData costructor test works" duration="2"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\server\__tests__\User.test.js">
+    <testCase name="User costructor test works" duration="3"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\server\__tests__\CourseBasicSchedule.test.js">
+    <testCase name="CourseBasicSchedule costructor test works" duration="7"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\server\__tests__\BookingData.test.js">
     <testCase name="BookingData costructor test works" duration="2"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\server\__tests__\CourseData.test.js">
+    <testCase name="CourseData costructor test works" duration="1"/>
+  </file>
+  <file path="C:\Users\39351\Documents\GitHub\PULSeBS\server\__tests__\ClassroomData.test.js">
+    <testCase name="ClassroomData costructor test works" duration="2"/>
   </file>
 </testExecutions>
