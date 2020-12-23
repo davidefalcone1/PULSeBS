@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "test": "jest --coverage --runInBand --detectOpenHandles --updateSnapshot"
+    "test": "jest --coverage --runInBand --detectOpenHandles"
   },
   "jest": {
     "testResultsProcessor": "jest-sonar-reporter",
