@@ -44,7 +44,7 @@ Task estimation error ratio: 60/58.5 = 1.02
 | 10 | 10 |
 
 Automated unit tests: 46 (unit) + 21 (snapshot)  
-Coverage(measured only on back end): 35%  
+Coverage: 35%  
 
 ### Code review
 | Hours estimated | Hours spent |
