@@ -313,23 +313,39 @@ exports.generateStudentTracing = function (studentID, downloadType) {
                 reject('File type is incorrect!')
         }
 
-
-        const sql = `SELECT * FROM Course`;
-        db.all(sql, function (err, rows) {
+        const sql = `
+		SELECT Course.CourseName, CourseSchedule.TimeStart, Booking.StudentID, User.Name, User.Surname, User.UserName,User.City,user.Birthday,user.SSN
+        FROM CourseSchedule JOIN Booking
+        ON CourseSchedule.CourseScheduleID = Booking.CourseScheduleID JOIN User
+        ON Booking.StudentID = User.UserID JOIN Course
+        ON CourseSchedule.CourseID = Course.CourseID
+        WHERE Attended != 0 AND Booking.CourseScheduleID IN
+        (SELECT Booking.CourseScheduleID FROM Booking WHERE StudentID = ? AND Attended =1)`;
+        db.all(sql, [studentID], function (err, rows) {
             if (err) {
                 reject();
                 return;
             }
-            const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape" });
-            doc.table(1, 1, rows, [
-                "CourseID",
-                "Year",
-                "Semester",
+            const contactList = rows.filter(function (el) { return el.StudentID !== studentID });
+            const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape", format: 'a3' });
+
+            doc.setTextColor(0, 0, 0);
+            doc.text(3, 10, `All possible contacts for the student with ID:`);
+            doc.setTextColor(255, 0, 0);
+            doc.text(113, 10, `${studentID}`);
+            doc.setTextColor(0, 0, 0);
+            doc.table(5, 25, contactList, [
                 "CourseName",
-                "TeacherID"
+                "TimeStart",
+                "StudentID",
+                "Name",
+                "Surname",
+                "UserName",
+                "City",
+                "Birthday",
+                "SSN"
             ], { autoSize: true });
-            //doc.text("Hello world!", 10, 10);
-            doc.save(fileLocation); // will save the file in the current working directory
+            doc.save(fileLocation);
             resolve(fileLocation);
         });
     });
