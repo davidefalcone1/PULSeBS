@@ -1,7 +1,0 @@
-organization=se2-group2
-projectKey=PULSeBS
-serverUrl=https://sonarcloud.io
-serverVersion=8.0.0.14515
-dashboardUrl=https://sonarcloud.io/dashboard?id=PULSeBS
-ceTaskId=AXXdFSZo9RW8_RoqjnqK
-ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AXXdFSZo9RW8_RoqjnqK
