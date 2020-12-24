@@ -810,9 +810,8 @@ function generateTeacherTracing(teacherID, downloadType) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ teacherID, downloadType })
         }).then(async (response) => {
-            const fileJSON = await response.json();
             if (response.ok) {
-                resolve(fileJSON);
+                resolve(response);
             }
             else {
                 reject();

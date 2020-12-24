@@ -189,8 +189,9 @@ app.post('/generateTeacherTracing', async (req, res) => {
     const teacherID = req.body.teacherID;
     const downloadType = req.body.downloadType;
     try {
-        const file = await bookingDao.generateTeacherTracing(teacherID, downloadType.toLowerCase());
-        res.download(file);
+        const fileName = await bookingDao.generateTeacherTracing(teacherID, downloadType.toLowerCase());
+        const options = { root: path.join(__dirname, 'files'), dotfiles: 'deny', headers: { 'x-timestamp': Date.now(), 'x-sent': true } }
+        res.sendFile(fileName, options);
     }
     catch (err) {
         res.status(400).json(err.message);

@@ -16,7 +16,7 @@ class GenerateContactTracing extends React.Component{
         super(props);
         this.props = props;
         this.state = {
-            studentID: '', teacherID: '',
+            studentID: '0', teacherID: '0',
             studentFormat: 'Select format', teacherFormat: 'Select format',
             errorStudent: false, errorTeacher: false,
             errorStudentFormat: false, errorTeacherFormat: false
@@ -60,7 +60,7 @@ class GenerateContactTracing extends React.Component{
         else if(this.state.teacherID === ''){
             this.setState({errorTeacher: true});
         }
-        else if(this.state.teacherFormat !== 'Select format'){
+        else if(this.state.teacherFormat === 'Select format'){
             this.setState({errorTeacherFormat: true});
         }
         else {
