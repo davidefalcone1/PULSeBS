@@ -823,7 +823,7 @@ function generateTeacherTracing(teacherID, downloadType) {
 //common
 async function setTutorialCompleted() {
     return new Promise((resolve, reject) => {
-        fetch("/setStudentAsPresent", {
+        fetch("/setTutorialCompleted", {
             method: 'PUT'
         }).then((response) => {
             if (response.ok) {

@@ -51,7 +51,7 @@ app.post('/users/authenticate', async (req, res) => {
                 // AUTHENTICATION SUCCESS
                 const token = jsonwebtoken.sign({ user: user.userID }, jwtSecret, { expiresIn: expireTime });
                 res.cookie('token', token, { httpOnly: true, sameSite: true, maxAge: 1000 * expireTime });
-                res.status(200).json({ id: user.userID, username: user.username, fullname: user.fullName, accessLevel: user.accessLevel });
+                res.status(200).json({ id: user.userID, username: user.username, fullname: user.fullName, accessLevel: user.accessLevel, hasDoneTutorial: user.hasDoneTutorial });
             }
         }
 
@@ -146,6 +146,15 @@ app.get('/myWaitingBookedLessons', async (req, res) => {
     }
 });
 
+app.put('/setTutorialCompleted', async (req, res) => {
+    try {
+        const result = await userDao.setTutorialCompleted(req.user.user);
+        res.status(200).end();
+    }
+    catch (err) {
+        res.status(401).json(err.message);
+    }
+});
 
 
 //statistics
