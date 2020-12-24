@@ -231,9 +231,8 @@ exports.insertNewCourses = async (courses) => {
                         db.run("commit");
                     }
                     else {
-
                         //nothing to insert
-                        resolve('Succesfully inserted');
+                        resolve('Successfully inserted');
                     }
                 }
             });
@@ -271,7 +270,6 @@ const adjustToISOformat = (time) => {
 
 // Generates all days of the semester in which the lecture is scheduled (e.g. all mondays from 14:00 to 15:30)
 const generateSchedule = async (schedule) => {
-
     try {
         const semester = await readSemester(schedule.Code);
         if (!semester) {
@@ -324,7 +322,7 @@ exports.insertNewSchedules = async (newSchedules) => {
             const newLectures = await generateSchedule(schedule);
             if (newLectures)
                 lecturesToInsert.push(...newLectures);
-        }
+            }
         if (lecturesToInsert.length === 0) {
             resolve('No insertion, since there are no courses!');
             return;
@@ -1014,7 +1012,6 @@ const generateFutureSchedules = (schedule) => {
 
                     const selectedDates = [];
                     const selectedDate = semesterStart;
-
                     //select all weeks days in the semester
                     while (selectedDate.isSameOrBefore(semesterEnd)) {
                         if (selectedDate.isAfter(moment(), 'days')) {
