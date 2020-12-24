@@ -11,6 +11,7 @@ const dailyMailer = require('./dailyMailer');
 const teacherDao = require('./dao/teacherDao');
 const emailDao = require('./dao/emailDao');
 const officerDao = require('./dao/officerDao');
+const path = require('path');
 
 const jwtSecret = '123456789';
 const expireTime = 900; //seconds
@@ -175,8 +176,9 @@ app.post('/generateStudentTracing', async (req, res) => {
     const studentID = req.body.studentID;
     const downloadType = req.body.downloadType;
     try {
-        const file = await bookingDao.generateStudentTracing(studentID, downloadType.toLowerCase());
-        res.download(file);
+        const fileName = await bookingDao.generateStudentTracing(studentID, downloadType.toLowerCase());
+        const options = { root: path.join(__dirname, 'files'), dotfiles: 'deny', headers: { 'x-timestamp': Date.now(), 'x-sent': true } }
+        res.sendFile(fileName, options);
     }
     catch (err) {
         res.status(400).json(err.message);
