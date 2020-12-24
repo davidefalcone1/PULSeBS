@@ -309,7 +309,7 @@ describe('updateAllSchedules', ()=>{
     });
     test('Nothing updated', async (done)=>{
         expect.assertions(1);
-        const newGeneralSchedule = new CourseBasicSchedule(generalScheduleId, course, 'Tue', '14:30', '17:00');
+        const newGeneralSchedule = new CourseBasicSchedule(generalScheduleId, course, 'Tue', '14:30', '17:00', 'A1');
         try {
             const result = await officerDao.updateAllSchedules(generalScheduleId, newGeneralSchedule);
             expect(result).toBe('Nothing updated');
@@ -356,6 +356,45 @@ describe('deleteSchedules', ()=>{
         }
     });
 });
+
+describe('createNewSchedule', ()=>{
+    let course;
+    afterEach(async()=>{
+        await testHelper.cleanDB();
+    });
+    beforeEach(async()=>{
+        const teacher = await testHelper.insertTeacher();
+        course = await testHelper.insertCourse('Software engineering 2', teacher, 2);
+        await testHelper.insertClassroom();
+    });
+    test('Nothing inserted', async (done)=>{
+        expect.assertions(1);
+        Date.now = jest.fn(() => new Date('2021-06-14')); // 2 Semester is over
+        const newGeneralSchedule = new CourseBasicSchedule(1, course, 'Tue', '14:30', '17:00', 'A1');
+        try {
+            const result = await officerDao.createNewSchedule(newGeneralSchedule);
+            expect(result).toBe('Nothing inserted');
+            done();
+        } catch (error) {
+            done(error);
+        }
+    });
+
+    test('Successfully inserted', async (done)=>{
+        expect.assertions(1);
+        Date.now = jest.fn(() => new Date()); 
+        const newGeneralSchedule = new CourseBasicSchedule(1, course, 'Tue', '14:30', '17:00', 'A1');
+        try {
+            const result = await officerDao.createNewSchedule(newGeneralSchedule);
+            expect(result).toBe('successfully inserted');
+            done();
+        } catch (error) {
+            done(error);
+        }
+    });
+});
+
+
 
 
 

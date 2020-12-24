@@ -111,9 +111,16 @@ async function insertGeneralCourseSchedule(course, day, startTime, endTime){
     return result[result.length-1].ID;
 }
 
-async function insertCourse(name, teacher){
-    let sql = 'INSERT INTO Course(Year, Semester, CourseName, TeacherID) VALUES(2, 1, ?, ?)';
-    let result = await db.pRun(sql, [name, teacher]);
+async function insertCourse(name, teacher, semester){
+    let sql , result;
+    if(semester){
+        sql = 'INSERT INTO Course(Year, Semester, CourseName, TeacherID) VALUES(2, ?, ?, ?)';
+        result = await db.pRun(sql, [semester, name, teacher]);
+    }
+    else{
+        sql = 'INSERT INTO Course(Year, Semester, CourseName, TeacherID) VALUES(2, 1, ?, ?)';
+        result = await db.pRun(sql, [name, teacher]);
+    }
     if(result)
         console.log(result);
     sql = 'SELECT CourseID FROM Course';
