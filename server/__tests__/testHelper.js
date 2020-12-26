@@ -133,4 +133,14 @@ async function insertClassroom(){
     result = await db.pGet(sql);
     return result.ID;
 }
-module.exports = {initDB, cleanDB, insertStudent, insertGeneralCourseSchedule, insertTeacher, insertCourse, insertCourseSchedule, insertBooking, enrollStudentToCourse, getUserEmail, getLectureFromBooking, insertClassroom};
+
+async function modifyBookingasPending(user,lecture) {
+    let sql= "UPDATE Booking SET BookStatus = 3 WHERE StudentID=? AND CourseScheduleID=?";
+    let result = await db.pRun(sql,[user,lecture]);
+    if(result)
+        console.log(result);
+    sql = "SELECT BookID FROM Booking"
+    result = await db.pAll(sql);
+    return result[result.length-1].BookID;
+}
+module.exports = {initDB, cleanDB, insertStudent, insertGeneralCourseSchedule, insertTeacher, insertCourse, insertCourseSchedule, insertBooking, enrollStudentToCourse, getUserEmail, getLectureFromBooking, insertClassroom,modifyBookingasPending};

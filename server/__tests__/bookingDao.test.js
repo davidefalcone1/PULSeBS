@@ -8,6 +8,95 @@ const bookingDao = require('../dao/bookingDao');
 
 const db = require("../db");
 
+describe("getBookableLessons", () => {
+    let student,lecture;
+    beforeEach(async () => {
+        await testHelper.initDB();
+        student = await testHelper.insertStudent();
+        const teacher = await testHelper.insertTeacher();
+        const course = await testHelper.insertCourse('Software engineering 2', teacher);
+        lecture = await testHelper.insertCourseSchedule(course);
+        await testHelper.enrollStudentToCourse(student, course);
+    });
+    afterEach(async () => {
+        await testHelper.cleanDB();
+    });
+    test('The bookable lesson figures', ()=>{
+        expect.assertions(1);
+        bookingDao.getBookableLessons(student).then((lessons)=>{
+            const lessonsIDs=lessons.map(lessons=>lessons.CourseScheduleID);
+            expect(lessonsIDs).toContain(lecture);
+        });
+    });
+});
+
+describe("getBookedLessons", () => {
+    let booking,student;
+    beforeEach(async () => {
+        await testHelper.initDB();
+        student = await testHelper.insertStudent();
+        const teacher = await testHelper.insertTeacher();
+        const course = await testHelper.insertCourse('Software engineering 2', teacher);
+        const lecture = await testHelper.insertCourseSchedule(course);
+        await testHelper.enrollStudentToCourse(student, course);
+        booking = await testHelper.insertBooking(student, lecture);
+    });
+    afterEach(async () => {
+        await testHelper.cleanDB();
+    });
+    test('The booked lesson figures', ()=>{
+        expect.assertions(1);
+        bookingDao.getBookedLessons(student).then((lessons)=>{
+            const lessonsIDs=lessons.map(lessons=>lessons.CourseScheduleID);
+            expect(lessonsIDs).toContain(lecture);
+        });
+    });
+});
+ 
+describe("getPendingWaitingBookings", ()=>{
+    let booking,student;
+    beforeEach(async () => {
+        await testHelper.initDB();
+        student = await testHelper.insertStudent();
+        const teacher = await testHelper.insertTeacher();
+        const course = await testHelper.insertCourse('Software engineering 2', teacher);
+        const lecture = await testHelper.insertCourseSchedule(course);
+        await testHelper.enrollStudentToCourse(student, course);
+        booking = await testHelper.insertBooking(student, lecture);
+        await testHelper.modifyBookingasPending(student,lecture);
+    });
+    afterEach(async () => {
+        await testHelper.cleanDB();
+    });
+    test("the lesson specified is pending", async () => {
+        expect.assertions(1);
+        bookingDao.getPendingWaitingBookings(student).then((bookings)=>{
+            const bookingsIDs=bookings.map(bookings=>bookings.BookID);
+            expect(bookingsIDs).toContain(booking); })
+    });
+});
+
+describe("getStudentCourses", ()=>{
+    let student;
+    beforeEach(async () => {
+        await testHelper.initDB();
+        student = await testHelper.insertStudent();
+        const teacher = await testHelper.insertTeacher();
+        const course = await testHelper.insertCourse('Software engineering 2', teacher);
+        await testHelper.enrollStudentToCourse(student, course);
+    });
+    afterEach(async () => {
+        await testHelper.cleanDB();
+    });
+    test('The inserted course figures', ()=>{
+        expect.assertions(1);
+        bookingDao.getStudentCourses(student).then((courses)=>{
+            const courseIDs=courses.map(courses=>courses.CourseID);
+            expect(courseIDs).toContain(course);
+        });
+    });
+});
+
 describe("deleteBooking", () => {
     let booking, student;
     beforeEach(async () => {
@@ -55,69 +144,23 @@ describe("bookLesson", () => {
     });
 });
 
-describe("getBookedLessons", () => {
-    let booking,student;
+describe("getLectureDataById", ()=>{
+    let lecture;
     beforeEach(async () => {
         await testHelper.initDB();
-        student = await testHelper.insertStudent();
-        const teacher = await testHelper.insertTeacher();
-        const course = await testHelper.insertCourse('Software engineering 2', teacher);
-        const lecture = await testHelper.insertCourseSchedule(course);
-        await testHelper.enrollStudentToCourse(student, course);
-        booking = await testHelper.insertBooking(student, lecture);
-    });
-    afterEach(async () => {
-        await testHelper.cleanDB();
-    });
-    test('The booked lesson figures', ()=>{
-        expect.assertions(1);
-        bookingDao.getBookedLessons(student).then((lessons)=>{
-            const lessonsIDs=lessons.map(lessons=>lessons.CourseScheduleID);
-            expect(lessonsIDs).toContain(lecture);
-        });
-    });
-});
-
-describe("getStudentCourses", ()=>{
-    let student;
-    beforeEach(async () => {
-        await testHelper.initDB();
-        student = await testHelper.insertStudent();
-        const teacher = await testHelper.insertTeacher();
-        const course = await testHelper.insertCourse('Software engineering 2', teacher);
-        await testHelper.enrollStudentToCourse(student, course);
-    });
-    afterEach(async () => {
-        await testHelper.cleanDB();
-    });
-    test('The inserted course figures', ()=>{
-        expect.assertions(1);
-        bookingDao.getStudentCourses(student).then((courses)=>{
-            const courseIDs=courses.map(courses=>courses.CourseID);
-            expect(courseIDs).toContain(course);
-        });
-    });
-});
-
-describe("getBookableLessons", () => {
-    let student,lecture;
-    beforeEach(async () => {
-        await testHelper.initDB();
-        student = await testHelper.insertStudent();
+        const user = await testHelper.insertStudent();
         const teacher = await testHelper.insertTeacher();
         const course = await testHelper.insertCourse('Software engineering 2', teacher);
         lecture = await testHelper.insertCourseSchedule(course);
-        await testHelper.enrollStudentToCourse(student, course);
     });
     afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test('The bookable lesson figures', ()=>{
+    test("The data of the lecture are the ones expected", ()=>{
         expect.assertions(1);
-        bookingDao.getBookableLessons(student).then((lessons)=>{
-            const lessonsIDs=lessons.map(lessons=>lessons.CourseScheduleID);
-            expect(lessonsIDs).toContain(lecture);
+        bookingDao.getLectureDataById(lecture).then((row)=>{
+            const courseName= row.map(row => row.CourseName);
+            expect(courseName).toEqual('Software engineering 2');
         });
     });
 });
- 
