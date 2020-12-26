@@ -14,7 +14,8 @@ const createUser = function (row) {
     const username = row.UserName;
     const passwordHash = row.Password;
     const accessLevel = row.AccessLevel;
-    return new User(userID, fullName, username, passwordHash, accessLevel);
+    const hasDoneTutorial = row.Tutorial;
+    return new User(userID, fullName, username, passwordHash, accessLevel, hasDoneTutorial);
 }
 
 exports.getUser = (username) => {
@@ -54,3 +55,16 @@ exports.getUserByID = (userID) => {
 exports.checkPassword = function (user, password) {
     return bcrypt.compareSync(password, user.passwordHash);
 }
+
+exports.setTutorialCompleted = (userID) => {
+    return new Promise((resolve, reject) => {
+        const sql = "UPDATE User SET Tutorial = 1 WHERE UserID = ?"
+        db.all(sql, [userID], (err) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(true);
+        });
+    });
+};

@@ -1,90 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ConfigureCoursesPage Renders correctly 1`] = `
-Array [
-  <br />,
-  <div
-    className="justify-content-around row"
-  >
-    <button
-      className="btn btn-primary"
-      disabled={false}
-      id="activateModalOfCourses"
-      onClick={[Function]}
-      type="button"
-    >
-      Add New
-    </button>
-    <button
-      className="btn btn-primary"
-      disabled={false}
-      id="uploadFileOfCourses"
-      onClick={[Function]}
-      type="button"
-    >
-      Upload File
-    </button>
-  </div>,
-  <ul
-    className="list-group list-group-flush"
-    onKeyDown={[Function]}
-  >
-    <div
-      className="list-group-item"
-      data-rb-event-key={null}
-      disabled={false}
-      id="coursesList-header"
-      onClick={[Function]}
-    >
-      <div
-        className="d-flex w-100 pt-3 justify-content-between no-gutters"
-      >
-        <div
-          className="col-sm-6"
-        >
-          <h4>
-            Course Name
-          </h4>
-        </div>
-        <div
-          className="col-sm-6"
-        >
-          <h4>
-            Teacher
-          </h4>
-        </div>
-      </div>
-    </div>
-    <div
-      className="list-group-item"
-      data-rb-event-key={null}
-      disabled={false}
-      id="course-XY123"
-      onClick={[Function]}
-    >
-      <div
-        className="d-flex w-100 pt-3 justify-content-between no-gutters"
-      >
-        <div
-          className="col-sm-6"
-        >
-          <h6
-            id="nameOfcourse_XY123"
-          >
-            Software engineering 2
-          </h6>
-        </div>
-        <div
-          className="col-sm-6"
-        >
-          <h6
-            id="teacherOfcourse_654321-XY123"
-          >
-            Mario Rossi
-          </h6>
-        </div>
-      </div>
-    </div>
-  </ul>,
-]
+<div
+  className="col-sm-12 pt-3"
+>
+  <img
+    alt=""
+    className="img-button"
+    height="600"
+    src="./images/no_data_image.png"
+    width="800"
+  />
+</div>
 `;

@@ -27,26 +27,11 @@ exports[`Navbar Navbar renders correctly when user is a student 1`] = `
     className="mr-auto navbar-nav"
     onKeyDown={[Function]}
   >
-    <a
-      aria-current={null}
-      className="nav-link"
-      data-rb-event-key={null}
-      disabled={false}
-      href="/myBookableLessonsList"
-      onClick={[Function]}
+    <span
+      className="navbar-brand"
     >
-       Book a lesson!
-    </a>
-    <a
-      aria-current={null}
-      className="nav-link"
-      data-rb-event-key={null}
-      disabled={false}
-      href="/myBookedLessonslist"
-      onClick={[Function]}
-    >
-       My booked lessons
-    </a>
+      | Tap on the image to go to the next tutorial image! |
+    </span>
   </div>
   <div
     className="ml-md-auto navbar-nav"
@@ -99,16 +84,11 @@ exports[`Navbar Navbar renders correctly when user is a teacher 1`] = `
     className="mr-auto navbar-nav"
     onKeyDown={[Function]}
   >
-    <a
-      aria-current={null}
-      className="nav-link"
-      data-rb-event-key={null}
-      disabled={false}
-      href="/myCoursesLessonslist"
-      onClick={[Function]}
+    <span
+      className="navbar-brand"
     >
-       My courses details
-    </a>
+      | Tap on the image to go to the next tutorial image! |
+    </span>
   </div>
   <div
     className="ml-md-auto navbar-nav"
@@ -161,16 +141,11 @@ exports[`Navbar Navbar renders correctly when user is the booking manager 1`] = 
     className="mr-auto navbar-nav"
     onKeyDown={[Function]}
   >
-    <a
-      aria-current={null}
-      className="nav-link"
-      data-rb-event-key={null}
-      disabled={false}
-      href="/monitorUsage"
-      onClick={[Function]}
+    <span
+      className="navbar-brand"
     >
-       Monitor usage of the system
-    </a>
+      | Tap on the image to go to the next tutorial image! |
+    </span>
   </div>
   <div
     className="ml-md-auto navbar-nav"
@@ -222,7 +197,13 @@ exports[`Navbar Navbar renders correctly when user is the support officier 1`] =
   <div
     className="mr-auto navbar-nav"
     onKeyDown={[Function]}
-  />
+  >
+    <span
+      className="navbar-brand"
+    >
+      | Tap on the image to go to the next tutorial image! |
+    </span>
+  </div>
   <div
     className="ml-md-auto navbar-nav"
     onKeyDown={[Function]}

@@ -43,12 +43,13 @@ exports[`MyCoursesLessonsStudentItem Renders correctly 1`] = `
       <button
         className="btn btn-success"
         disabled={false}
-        id="selectFieldOfLesson - 12345"
+        id="setPresentOf - 12345"
         onClick={[Function]}
         type="button"
       >
         Set as Present
       </button>
+      0
     </div>
   </div>
 </div>

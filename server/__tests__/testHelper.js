@@ -72,10 +72,18 @@ async function insertStudent() {
     return result[result.length-1].UserID;
 }
 
-async function insertCourseSchedule(course){
-    let sql = "INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom)" +
-        " VALUES(?, 1, 1, DATETIME('now', '+1 day', 'localtime'), DATETIME('now', '+1 day', '+1 hour', 'localtime'), 3, 50, 'A1')";
-    let result = await db.pRun(sql, [course]);
+async function insertCourseSchedule(course, timeStart, timeEnd){
+    let sql, result;
+    if(timeStart && timeEnd){
+        sql = "INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom)" +
+          " VALUES(?, 1, 1, ?, ?, 3, 50, 'A1')";
+        result = await db.pRun(sql, [course, timeStart, timeEnd]);
+    }
+    else{
+        sql = "INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom)" +
+          " VALUES(?, 1, 1, DATETIME('now', '+1 day', 'localtime'), DATETIME('now', '+1 day', '+1 hour', 'localtime'), 3, 50, 'A1')";
+        result = await db.pRun(sql, [course]);
+    }
     if(result)
         console.log(result);
     sql = 'SELECT * FROM CourseSchedule';
@@ -83,10 +91,19 @@ async function insertCourseSchedule(course){
     return result[result.length-1].CourseScheduleID;
 }
 
-async function insertGeneralCourseSchedule(course){
-    let sql = "INSERT INTO GeneralCourseSchedule(CourseID, Day, StartTime, EndTime, Room)" +
-        " VALUES(?, DATE('now', '+1 day', 'localtime'), TIME('now', 'localtime'), TIME('now', '+1 hours', 'localtime'), 'A1')";
-    let result = await db.pRun(sql, [course]);
+async function insertGeneralCourseSchedule(course, day, startTime, endTime){
+    let sql, result;
+    if(day && startTime && endTime){
+        sql = "INSERT INTO GeneralCourseSchedule(CourseID, Day, StartTime, EndTime, Room)" +
+            " VALUES(?, ?, ?, ?, 'A1')";
+        result = await db.pRun(sql, [course, day, startTime, endTime]);
+    }
+    else {
+        sql = "INSERT INTO GeneralCourseSchedule(CourseID, Day, StartTime, EndTime, Room)" +
+            " VALUES(?, 'Mon', TIME('now', 'localtime'), TIME('now', '+1 hours', 'localtime'), 'A1')";
+        result = await db.pRun(sql, [course]);
+
+    }
     if(result)
         console.log(result);
     sql = 'SELECT * FROM GeneralCourseSchedule';
@@ -94,9 +111,16 @@ async function insertGeneralCourseSchedule(course){
     return result[result.length-1].ID;
 }
 
-async function insertCourse(name, teacher){
-    let sql = 'INSERT INTO Course(Year, Semester, CourseName, TeacherID) VALUES(2, 1, ?, ?)';
-    let result = await db.pRun(sql, [name, teacher]);
+async function insertCourse(name, teacher, semester){
+    let sql , result;
+    if(semester){
+        sql = 'INSERT INTO Course(Year, Semester, CourseName, TeacherID) VALUES(2, ?, ?, ?)';
+        result = await db.pRun(sql, [semester, name, teacher]);
+    }
+    else{
+        sql = 'INSERT INTO Course(Year, Semester, CourseName, TeacherID) VALUES(2, 1, ?, ?)';
+        result = await db.pRun(sql, [name, teacher]);
+    }
     if(result)
         console.log(result);
     sql = 'SELECT CourseID FROM Course';

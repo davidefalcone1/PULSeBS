@@ -250,7 +250,7 @@ exports[`MyBookableLessonsPage Renders correctly 1`] = `
                     onClick={[Function]}
                     type="button"
                   >
-                    SELECT
+                    BOOK
                   </button>
                 </div>
               </div>

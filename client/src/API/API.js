@@ -794,9 +794,8 @@ function generateStudentTracing(studentID, downloadType) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ studentID, downloadType })
         }).then(async (response) => {
-            const fileJSON = await response.json();
             if (response.ok) {
-                resolve(fileJSON);
+                resolve(response);
             }
             else {
                 reject();
@@ -811,9 +810,8 @@ function generateTeacherTracing(teacherID, downloadType) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ teacherID, downloadType })
         }).then(async (response) => {
-            const fileJSON = await response.json();
             if (response.ok) {
-                resolve(fileJSON);
+                resolve(response);
             }
             else {
                 reject();
@@ -825,7 +823,7 @@ function generateTeacherTracing(teacherID, downloadType) {
 //common
 async function setTutorialCompleted() {
     return new Promise((resolve, reject) => {
-        fetch("/setStudentAsPresent", {
+        fetch("/setTutorialCompleted", {
             method: 'PUT'
         }).then((response) => {
             if (response.ok) {

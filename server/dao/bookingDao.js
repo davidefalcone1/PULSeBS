@@ -5,6 +5,8 @@ const CourseData = require('./CourseData.js');
 const moment = require('moment');
 const path = require('path');
 const { jsPDF } = require("jspdf");
+const fs = require('fs');
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 exports.getBookableLessons = function (studentID) {
     return new Promise((resolve, reject) => {
@@ -302,76 +304,137 @@ exports.getLectureDataById = (lectureID) => {
 exports.generateStudentTracing = function (studentID, downloadType) {
     return new Promise((resolve, reject) => {
         let fileLocation;
-        switch (downloadType) {
-            case 'pdf':
-                fileLocation = path.resolve(__dirname, '../files').concat('\\studentTracing.pdf');
-                break;
-            case 'csv':
-                fileLocation = path.resolve(__dirname, '../files').concat('\\studentTracing.csv');
-                break;
-            default:
-                reject('File type is incorrect!')
-        }
-
         const sql = `
-		SELECT Course.CourseName, CourseSchedule.TimeStart, Booking.StudentID, User.Name, User.Surname, User.UserName,User.City,user.Birthday,user.SSN
+        SELECT Course.CourseName, CourseSchedule.TimeStart, Booking.StudentID, User.Name, User.Surname, User.UserName,User.City,user.Birthday,user.SSN
         FROM CourseSchedule JOIN Booking
         ON CourseSchedule.CourseScheduleID = Booking.CourseScheduleID JOIN User
         ON Booking.StudentID = User.UserID JOIN Course
         ON CourseSchedule.CourseID = Course.CourseID
         WHERE Attended != 0 AND Booking.CourseScheduleID IN
         (SELECT Booking.CourseScheduleID FROM Booking WHERE StudentID = ? AND Attended =1)`;
+
         db.all(sql, [studentID], function (err, rows) {
             if (err) {
-                reject();
+                reject(err);
                 return;
             }
+            // Filter/Find the appropriate data from DB based on the positive student
             const contactList = rows.filter(function (el) { return el.StudentID !== studentID });
-            const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape", format: 'a3' });
 
-            doc.setTextColor(0, 0, 0);
-            doc.text(3, 10, `All possible contacts for the student with ID:`);
-            doc.setTextColor(255, 0, 0);
-            doc.text(113, 10, `${studentID}`);
-            doc.setTextColor(0, 0, 0);
-            doc.table(5, 25, contactList, [
-                "CourseName",
-                "TimeStart",
-                "StudentID",
-                "Name",
-                "Surname",
-                "UserName",
-                "City",
-                "Birthday",
-                "SSN"
-            ], { autoSize: true });
-            doc.save(fileLocation);
-            resolve(fileLocation);
-        });
-    });
-}
 
-exports.generateTeacherTracing = function (studentID, downloadType) {
-    return new Promise((resolve, reject) => {
-        const sql =
-            "SELECT C.CourseId, CourseName, TeacherId FROM Course C, StudentCourse SC WHERE C.CourseId = SC.CourseId AND SC.StudentID = ?";
-        db.all(sql, [studentID], function (err, rows) {
-            if (err) {
-                reject();
+            switch (downloadType) {
+                case 'pdf'://If A PDF file Needed
+                    try {
+                        fileLocation = path.resolve(__dirname, '../files').concat('\\studentTracing.pdf');
+                        const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape", format: 'a3' });
+                        doc.setTextColor(0, 0, 0);
+                        doc.text(3, 10, `All possible contacts for the student with ID:`);
+                        doc.setTextColor(255, 0, 0);
+                        doc.text(113, 10, `${studentID}`);
+                        doc.setTextColor(0, 0, 0);
+                        doc.table(5, 25, contactList, ["CourseName", "TimeStart", "StudentID", "Name", "Surname", "UserName", "City", "Birthday", "SSN"], { autoSize: true });
+                        doc.save(fileLocation);
+                        resolve('studentTracing.pdf');
+                        break;
+                    } catch (err) {
+                        reject(err);
+                        return;
+                    }
+                case 'csv'://If A CSV file Needed
+                    try {
+                        fileLocation = path.resolve(__dirname, '../files').concat('\\studentTracing.csv');
+                        const csvWriter = createCsvWriter({
+                            path: './files/studentTracing.csv',
+                            header: [
+                                { id: 'CourseName', title: 'CourseName' },
+                                { id: 'TimeStart', title: 'TimeStart' },
+                                { id: 'StudentID', title: 'StudentID' },
+                                { id: 'Name', title: 'Name' },
+                                { id: 'Surname', title: 'Surname' },
+                                { id: 'UserName', title: 'UserName' },
+                                { id: 'City', title: 'City' },
+                                { id: 'Birthday', title: 'Birthday' },
+                                { id: 'SSN', title: 'SSN' }
+                            ]
+                        });
+                        csvWriter.writeRecords(rows).then(() => resolve('studentTracing.csv'));
+                        break;
+                    } catch (err) {
+                        reject(err);
+                        return;
+                    }
+                default://If the file type requested is wrong
+                    reject('File type is incorrect!')
             }
-            const myCourses = rows.map((row) => new CourseData(row.CourseID, row.CourseName,
-                row.TeacherId));
-            resolve(myCourses);
         });
     });
 }
 
-const generatePDF = (data) => {
+exports.generateTeacherTracing = function (teacherID, downloadType) {
+    return new Promise((resolve, reject) => {
+        let fileLocation;
+        const sql = `
+        SELECT Course.CourseName,CourseSchedule.TimeStart,Booking.StudentID,User.Name,User.Surname,User.UserName,User.City,User.Birthday,User.SSN
+        FROM CourseSchedule JOIN Booking
+        ON CourseSchedule.CourseScheduleID = Booking.CourseScheduleID JOIN User
+        ON User.UserID = Booking.StudentID JOIN Course
+        ON CourseSchedule.CourseID = Course.CourseID
+        WHERE Booking.Attended=1 AND CourseSchedule.CourseID IN
+        (SELECT Course.CourseID FROM User JOIN Course
+        ON User.UserID = Course.TeacherID
+        WHERE User.UserID = ? AND User.AccessLevel = 2 AND User.TestResult = 1)`;
 
-}
-
-const generateCSV = (data) => {
-
+        db.all(sql, [teacherID], function (err, rows) {
+            if (err) {
+                reject(err);
+                return;
+            }
+            switch (downloadType) {
+                case 'pdf'://If A PDF file Needed
+                    try {
+                        fileLocation = path.resolve(__dirname, '../files').concat('\\teacherTracing.pdf');
+                        const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape", format: 'a3' });
+                        doc.setTextColor(0, 0, 0);
+                        doc.text(3, 10, `All possible contacts for the teacher with ID:`);
+                        doc.setTextColor(255, 0, 0);
+                        doc.text(113, 10, `${teacherID}`);
+                        doc.setTextColor(0, 0, 0);
+                        doc.table(5, 25, rows, ["CourseName", "TimeStart", "StudentID", "Name", "Surname", "UserName", "City", "Birthday", "SSN"], { autoSize: true });
+                        doc.save(fileLocation);
+                        resolve('teacherTracing.pdf');
+                        break;
+                    } catch (err) {
+                        reject(err);
+                        return;
+                    }
+                case 'csv'://If A CSV file Needed
+                    try {
+                        fileLocation = path.resolve(__dirname, '../files').concat('\\teacherTracing.csv');
+                        const csvWriter = createCsvWriter({
+                            path: './files/teacherTracing.csv',
+                            header: [
+                                { id: 'CourseName', title: 'CourseName' },
+                                { id: 'TimeStart', title: 'TimeStart' },
+                                { id: 'StudentID', title: 'StudentID' },
+                                { id: 'Name', title: 'Name' },
+                                { id: 'Surname', title: 'Surname' },
+                                { id: 'UserName', title: 'UserName' },
+                                { id: 'City', title: 'City' },
+                                { id: 'Birthday', title: 'Birthday' },
+                                { id: 'SSN', title: 'SSN' }
+                            ]
+                        });
+                        csvWriter.writeRecords(rows).then(() => resolve('teacherTracing.csv'));
+                        break;
+                    } catch (err) {
+                        reject(err);
+                        return;
+                    }
+                default://If the file type requested is wrong
+                    reject('File type is incorrect!')
+            }
+        });
+    });
 }
 
 const checkStart = (startDate) => {

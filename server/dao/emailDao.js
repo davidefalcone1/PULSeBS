@@ -60,7 +60,7 @@ exports.getProfessorsToNotify = () => {
                             const notification = {
                                 email: coursesProfessors[index].UserName,
                                 course: coursesProfessors[index].CourseName,
-                                date: moment(course.TimeStart).format('MM/DD/YYYY'),
+                                date: moment(course.TimeStart).format('DD/MM/YYYY'),
                                 start: moment(course.TimeStart).format('HH:mm'),
                                 end: moment(course.TimeEnd).format('HH:mm'),
                                 numStudents: course.OccupiedSeat
@@ -81,7 +81,7 @@ exports.getProfessorsToNotify = () => {
 exports.getLectureInfo = (courseScheduleID) => {
     return new Promise((resolve, reject) => {
         
-        const sql = 'SELECT CourseName, TimeStart, TimeEnd ' +
+        const sql = 'SELECT CourseName, TimeStart, TimeEnd, Classroom ' +
                     'FROM CourseSchedule CS, Course C ' +
                     'WHERE C.CourseID = CS.CourseID AND CourseScheduleID = ?';
         db.get(sql, [courseScheduleID], (err, row) => {
@@ -92,9 +92,10 @@ exports.getLectureInfo = (courseScheduleID) => {
             else {
                 const info = {
                     course: row.CourseName,
-                    date: moment(row.TimeStart).format('MM/DD/YYYY'),
+                    date: moment(row.TimeStart).format('ddd DD/MM/YYYY'),
                     start: moment(row.TimeStart).format('HH:mm'),
-                    end: moment(row.TimeEnd).format('HH:mm') 
+                    end: moment(row.TimeEnd).format('HH:mm'),
+                    room: row.Classroom 
                 };
                 resolve(info);
             }

@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfigureCoursesItem Renders correctly 1`] = `
+<div
+  className="list-group-item"
+  disabled={false}
+  id="1-undefined"
+  onClick={[Function]}
+>
+  <div
+    className="d-flex w-100 pt-3 justify-content-between no-gutters"
+  >
+    <div
+      className="col-sm-3"
+    >
+      <h4
+        id="dayOfSchedule1"
+      >
+        Mon
+      </h4>
+    </div>
+    <div
+      className="col-sm-2"
+    >
+      <p
+        id="sTimeOfSchedule1"
+      >
+        14:30
+      </p>
+    </div>
+    <div
+      className="col-sm-2"
+    >
+      <p
+        id="eTimeOfSchedule1"
+      >
+        17:00
+      </p>
+    </div>
+    <div
+      className="col-sm-2"
+    >
+      <h4
+        id="classroomOfSchedule1"
+      >
+        A1
+      </h4>
+    </div>
+    <div
+      className="col-sm-3"
+    >
+      <button
+        className="btn btn-info"
+        disabled={false}
+        id="editButtonFieldOflesson1"
+        onClick={[Function]}
+        type="button"
+      >
+        Edit
+      </button>
+       
+      <button
+        className="btn btn-danger"
+        disabled={false}
+        id="deleteButtonFieldOflesson1"
+        onClick={[Function]}
+        type="button"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</div>
+`;

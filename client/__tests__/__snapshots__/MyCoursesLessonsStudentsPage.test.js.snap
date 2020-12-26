@@ -109,7 +109,7 @@ exports[`MyCoursesLessonsStudentsPage Renders correctly 1`] = `
                       id="lesson-1482449767071----1482453367071"
                     >
                       <h6>
-                        Lezione del 
+                        Lesson of 
                         Fri 23-12-2016 00:36
                          -- 
                         Fri 23-12-2016 01:36
@@ -159,7 +159,10 @@ exports[`MyCoursesLessonsStudentsPage Renders correctly 1`] = `
                      cancelled bookings, 
                      
                     33
-                     waiting bookings
+                     waiting bookings, 
+                     
+                    0
+                     attendances
                   </h6>
                   <br />
                   <div
@@ -248,12 +251,13 @@ exports[`MyCoursesLessonsStudentsPage Renders correctly 1`] = `
                             <button
                               className="btn btn-success"
                               disabled={false}
-                              id="selectFieldOfLesson1 - 12345"
+                              id="setPresentOf1 - 12345"
                               onClick={[Function]}
                               type="button"
                             >
                               Set as Present
                             </button>
+                            0
                           </div>
                         </div>
                       </div>
