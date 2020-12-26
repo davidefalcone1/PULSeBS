@@ -9,10 +9,12 @@
     ],
     "testResultsProcessor": "jest-sonar-reporter",
     "testPathIgnorePatterns": [
-      "./server/__tests__/testHelper.js"
+      "./server/__tests__/testHelper.js",
+      "./setupTests.js"
     ],
     "coveragePathIgnorePatterns": [
-      "./server/__tests__/testHelper.js"
+      "./server/__tests__/testHelper.js",
+      "./setupTests.js"
     ],
     "moduleNameMapper": {
       "\\.(css|scss)$": "<rootDir>/__mocks__/styleMock.js"
