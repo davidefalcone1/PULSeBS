@@ -164,3 +164,73 @@ describe("getLectureDataById", ()=>{
         });
     });
 });
+
+describe("checkWaitingList",()=>{
+    let booking,lecture,student;
+    beforeEach(async () => {
+        await testHelper.initDB();
+        student = await testHelper.insertStudent();
+        const teacher = await testHelper.insertTeacher();
+        const course = await testHelper.insertCourse('Software engineering 2', teacher);
+        lecture = await testHelper.insertCourseSchedule(course);
+        await testHelper.enrollStudentToCourse(student, course);
+        booking = await testHelper.insertBooking(student, lecture);
+        await testHelper.modifyBookingasPending(student,lecture);
+    });
+    afterEach(async () => {
+        await testHelper.cleanDB();
+    });
+    test("The bookStatus changed after the check of the waiting list",()=>{
+        expect.assertions(1);
+        bookingDao.checkWaitingList(lecture).then((row)=>{
+            const userName=row.StudentID;
+            const lesson = row.CourseScheduleID;
+            const bookStatus= await testHelper.getBookStatusFromData(userName,lesson);
+            expect(bookStatus).toEqual(1);
+        });
+    });
+});
+
+describe("generateStudentTracing",()=>{
+    let student;
+    beforeEach(async () => {
+        await testHelper.initDB();
+        student = await testHelper.insertStudent();
+        const teacher = await testHelper.insertTeacher();
+        const course = await testHelper.insertCourse('Software engineering 2', teacher);
+        const lecture = await testHelper.insertCourseSchedule(course);
+        await testHelper.enrollStudentToCourse(student, course);
+        await testHelper.insertBooking(student, lecture);
+    });
+    afterEach(async () => {
+        await testHelper.cleanDB();
+    });
+    test("The file retrieved are the ones needed",()=>{
+        expect.assertions(2);
+        expect(bookingDao.generateStudentTracing(student,'pdf').toEqual('studentTracing.pdf'));
+        expect(bookingDao.generateStudentTracing(student,'csv').toEqual('studentTracing.csv'));
+    });
+});
+
+describe("generateTeacherTracing",()=>{
+    let teacher;
+    beforeEach(async () => {
+        await testHelper.initDB();
+        const student = await testHelper.insertStudent();
+        teacher = await testHelper.insertTeacher();
+        const course = await testHelper.insertCourse('Software engineering 2', teacher);
+        const lecture = await testHelper.insertCourseSchedule(course);
+        await testHelper.enrollStudentToCourse(student, course);
+        await testHelper.insertBooking(student, lecture);
+    });
+    afterEach(async () => {
+        await testHelper.cleanDB();
+    });
+    test("The file retrieved are the ones needed",()=>{
+        expect.assertions(2);
+        expect(bookingDao.generateTeacherTracing(teacher,'pdf').toEqual('teacherTracing.pdf'));
+        expect(bookingDao.generateTeacherTracing(teacher,'csv').toEqual('teacherTracing.csv'));
+    });
+});
+
+
