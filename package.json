@@ -3,6 +3,10 @@
     "test": "jest --coverage --runInBand --detectOpenHandles"
   },
   "jest": {
+    "automock": false,
+    "setupFiles": [
+      "<rootDir>/setupTests.js"
+    ],
     "testResultsProcessor": "jest-sonar-reporter",
     "testPathIgnorePatterns": [
       "./server/__tests__/testHelper.js"
@@ -27,6 +31,7 @@
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "jest": "^26.6.3",
+    "jest-fetch-mock": "^3.0.3",
     "jest-sonar-reporter": "^2.0.0",
     "react": "^17.0.1",
     "react-test-renderer": "^17.0.1",
