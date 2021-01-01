@@ -1,6 +1,152 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`App works 1`] = `
+exports[`App a student is authenticated 1`] = `
+Array [
+  <nav
+    className="navbar navbar-expand-md navbar-dark bg-dark"
+  >
+    <button
+      aria-controls="sidebar"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+      className="navbar-toggler collapsed"
+      data-target="#sidebar"
+      data-toggle="collapse"
+      onClick={[Function]}
+      type="button"
+    >
+      <span
+        className="navbar-toggler-icon"
+      />
+    </button>
+    <span
+      className="navbar-brand"
+    >
+      PULSeBS Project
+    </span>
+    <div
+      className="ml-md-auto navbar-nav"
+      onKeyDown={[Function]}
+    >
+      <a
+        aria-current="page"
+        className="nav-link active"
+        data-rb-event-key={null}
+        disabled={false}
+        href="/login"
+        onClick={[Function]}
+        style={Object {}}
+      >
+        Login
+      </a>
+    </div>
+  </nav>,
+  <div
+    className="col-sm-4 mx-auto"
+    id="form"
+  >
+    <div
+      className="card"
+    >
+      <article
+        className="card-group-item"
+      >
+        <header
+          className="card-header"
+        >
+          <h5
+            className="title"
+          >
+            <em
+              id="form-title"
+            >
+              Insert your credentials 
+            </em>
+          </h5>
+        </header>
+        <div
+          className="filter-content"
+        >
+          <div
+            className="card-body"
+          >
+            <div
+              className="table-responsive"
+            >
+              <form
+                className=""
+                method="POST"
+                onSubmit={[Function]}
+              >
+                <div
+                  className="form-group"
+                >
+                  <label
+                    className="form-label"
+                    htmlFor="username"
+                  >
+                    E-mail
+                  </label>
+                  <input
+                    autoFocus={true}
+                    className="inputEmail form-control"
+                    id="username"
+                    name="email"
+                    onChange={[Function]}
+                    placeholder="E-mail"
+                    required={true}
+                    type="email"
+                    value=""
+                  />
+                  <small
+                    className="form-text text-muted"
+                  >
+                    Email is required
+                  </small>
+                </div>
+                <div
+                  className="form-group"
+                >
+                  <label
+                    className="form-label"
+                    htmlFor="password"
+                  >
+                    Password
+                  </label>
+                  <input
+                    className="form-control"
+                    id="password"
+                    name="password"
+                    onChange={[Function]}
+                    placeholder="Password"
+                    required={true}
+                    type="password"
+                    value=""
+                  />
+                  <small
+                    className="form-text text-muted"
+                  >
+                    Password is required
+                  </small>
+                </div>
+                <button
+                  className="btn btn-primary"
+                  disabled={false}
+                  type="submit"
+                >
+                  Login
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>,
+]
+`;
+
+exports[`App no user is authenticated 1`] = `
 Array [
   <nav
     className="navbar navbar-expand-md navbar-dark bg-dark"
