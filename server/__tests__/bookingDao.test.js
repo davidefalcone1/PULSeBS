@@ -5,8 +5,9 @@
 jest.setMock("../db", require("../__mocks__/db.mock"));
 const testHelper = require("./testHelper");
 const bookingDao = require('../dao/bookingDao');
-
 const db = require("../db");
+const path = require("path");
+
 
 describe("getBookableLessons", () => {
     let student,lecture;
@@ -24,22 +25,22 @@ describe("getBookableLessons", () => {
     test('The bookable lesson figures', ()=>{
         expect.assertions(1);
         bookingDao.getBookableLessons(student).then((lessons)=>{
-            const lessonsIDs=lessons.map(lessons=>lessons.CourseScheduleID);
+            const lessonsIDs=lessons.map(lessons=>lessons.scheduleId);
             expect(lessonsIDs).toContain(lecture);
         });
     });
 });
 
 describe("getBookedLessons", () => {
-    let booking,student;
+    let student,lecture;
     beforeEach(async () => {
         await testHelper.initDB();
         student = await testHelper.insertStudent();
         const teacher = await testHelper.insertTeacher();
         const course = await testHelper.insertCourse('Software engineering 2', teacher);
-        const lecture = await testHelper.insertCourseSchedule(course);
+        lecture = await testHelper.insertCourseSchedule(course);
         await testHelper.enrollStudentToCourse(student, course);
-        booking = await testHelper.insertBooking(student, lecture);
+        const booking = await testHelper.insertBooking(student, lecture);
     });
     afterEach(async () => {
         await testHelper.cleanDB();
@@ -47,20 +48,20 @@ describe("getBookedLessons", () => {
     test('The booked lesson figures', ()=>{
         expect.assertions(1);
         bookingDao.getBookedLessons(student).then((lessons)=>{
-            const lessonsIDs=lessons.map(lessons=>lessons.CourseScheduleID);
+            const lessonsIDs=lessons.map(lessons=>lessons.scheduleId);
             expect(lessonsIDs).toContain(lecture);
         });
     });
 });
  
 describe("getPendingWaitingBookings", ()=>{
-    let booking,student;
+    let booking,student,lecture;
     beforeEach(async () => {
         await testHelper.initDB();
         student = await testHelper.insertStudent();
         const teacher = await testHelper.insertTeacher();
         const course = await testHelper.insertCourse('Software engineering 2', teacher);
-        const lecture = await testHelper.insertCourseSchedule(course);
+        lecture = await testHelper.insertCourseSchedule(course);
         await testHelper.enrollStudentToCourse(student, course);
         booking = await testHelper.insertBooking(student, lecture);
         await testHelper.modifyBookingasPending(student,lecture);
@@ -71,18 +72,18 @@ describe("getPendingWaitingBookings", ()=>{
     test("the lesson specified is pending", async () => {
         expect.assertions(1);
         bookingDao.getPendingWaitingBookings(student).then((bookings)=>{
-            const bookingsIDs=bookings.map(bookings=>bookings.BookID);
-            expect(bookingsIDs).toContain(booking); })
+            const bookingsIDs=bookings.map(bookings=>bookings.scheduleId);
+            expect(bookingsIDs).toContain(lecture); })
     });
 });
 
 describe("getStudentCourses", ()=>{
-    let student;
+    let student,course;
     beforeEach(async () => {
         await testHelper.initDB();
         student = await testHelper.insertStudent();
         const teacher = await testHelper.insertTeacher();
-        const course = await testHelper.insertCourse('Software engineering 2', teacher);
+        course = await testHelper.insertCourse('Software engineering 2', teacher);
         await testHelper.enrollStudentToCourse(student, course);
     });
     afterEach(async () => {
@@ -91,7 +92,7 @@ describe("getStudentCourses", ()=>{
     test('The inserted course figures', ()=>{
         expect.assertions(1);
         bookingDao.getStudentCourses(student).then((courses)=>{
-            const courseIDs=courses.map(courses=>courses.CourseID);
+            const courseIDs=courses.map(courses=>courses.courseId);
             expect(courseIDs).toContain(course);
         });
     });
@@ -159,8 +160,7 @@ describe("getLectureDataById", ()=>{
     test("The data of the lecture are the ones expected", ()=>{
         expect.assertions(1);
         bookingDao.getLectureDataById(lecture).then((row)=>{
-            const courseName= row.map(row => row.CourseName);
-            expect(courseName).toEqual('Software engineering 2');
+            expect(row.CourseName).toEqual('Software engineering 2');
         });
     });
 });
@@ -181,12 +181,14 @@ describe("checkWaitingList",()=>{
         await testHelper.cleanDB();
     });
     test("The bookStatus changed after the check of the waiting list",()=>{
-        expect.assertions(1);
-        bookingDao.checkWaitingList(lecture).then((row)=>{
-            const userName=row.StudentID;
-            const lesson = row.CourseScheduleID;
-            const bookStatus= testHelper.getBookStatusFromData(userName,lesson);
-            expect(bookStatus).toEqual(1);
+        expect.assertions(2);
+        bookingDao.checkWaitingList(lecture).then(async(row)=>{
+            const userName=row.studentID;
+            const lesson = row.lectureID;
+            expect(userName).toEqual(student);
+            expect(lesson).toEqual(lecture);
+        }).catch(error =>{
+            console.log(error);
         });
     });
 });
@@ -205,7 +207,7 @@ describe("generateStudentTracing",()=>{
     afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test("The file retrieved are the ones needed", async ()=>{
+    test("The pdf file retrieved are the ones needed", async ()=>{
         try {
             expect.assertions(1);
             const result = await bookingDao.generateStudentTracing(student,'pdf');
@@ -213,6 +215,8 @@ describe("generateStudentTracing",()=>{
         } catch (error) {
             console.log(error);
         }
+    });
+    /*test("The csv file retrieved are the ones needed", async ()=>{
         try {
             expect.assertions(1);
             const result = await bookingDao.generateStudentTracing(student,'csv');
@@ -220,7 +224,7 @@ describe("generateStudentTracing",()=>{
         } catch (error) {
             console.log(error);
         }
-    });
+    });*/
 });
 
 describe("generateTeacherTracing",()=>{
@@ -237,17 +241,12 @@ describe("generateTeacherTracing",()=>{
     afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test("The file retrieved are the ones needed", async ()=>{
-        expect.assertions(2);
+    test("The file retrieved are the ones needed", async (done)=>{
+        expect.assertions(1);
         try {
             const result = await bookingDao.generateTeacherTracing(teacher,'pdf');
             expect(result).toBe('teacherTracing.pdf');
-        } catch (error) {
-            console.log(error);
-        }
-        try {
-            const result = await bookingDao.generateTeacherTracing(teacher,'csv');
-            expect(result).toBe('teacherTracing.csv');
+            done();
         } catch (error) {
             console.log(error);
         }
