@@ -158,11 +158,13 @@ async function insertClassroom(){
     return result.ID;
 }
 
-async function getBookStatusFromData(userID,lecture){
-    const sql = 'SELECT * FROM Booking WHERE StudentID=? AND CourseScheduleID=?';
-    const result = await db.pGet(sql, [userID,lecture]);
-    return result.BookStatus;
-}
+/*async function getBookStatusFromData(userID,lecture){
+    console.log(userID,lecture);
+    const sql = 'SELECT * FROM Booking';
+    const result = await db.pAll(sql);
+    console.log(result);
+    return result[result.length-1].BookStatus;
+}*/
 
 async function modifyBookingasPending(user,lecture) {
     let sql= "UPDATE Booking SET BookStatus = 3 WHERE StudentID=? AND CourseScheduleID=?";
@@ -174,4 +176,4 @@ async function modifyBookingasPending(user,lecture) {
     return result[result.length-1].BookID;
 }
 
-module.exports = {initDB, cleanDB, insertStudent, insertGeneralCourseSchedule, insertTeacher, insertCourse, insertCourseSchedule, insertBooking, enrollStudentToCourse, getUserEmail, getLectureFromBooking, insertClassroom, getBookStatusFromData, modifyBookingasPending};
+module.exports = {initDB, cleanDB, insertStudent, insertGeneralCourseSchedule, insertTeacher, insertCourse, insertCourseSchedule, insertBooking, enrollStudentToCourse, getUserEmail, getLectureFromBooking, insertClassroom, modifyBookingasPending};
