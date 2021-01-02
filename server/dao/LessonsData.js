@@ -19,13 +19,6 @@ class LessonsData {
         this.waitingBookings = parseFloat(waitingBookings);
         this.attendanceCount = parseFloat(attendanceCount);
     }
-
-    static fromJson(json) {
-        const temp = Object.assign(new LessonData(), json);
-        temp.startDate = moment(new Date(temp.startDate));
-        temp.endDate = moment(new Date(temp.endDate));
-        return temp;
-    }
 }
 
 module.exports = LessonsData;
