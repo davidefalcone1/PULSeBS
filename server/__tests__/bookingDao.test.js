@@ -185,7 +185,7 @@ describe("checkWaitingList",()=>{
         bookingDao.checkWaitingList(lecture).then((row)=>{
             const userName=row.StudentID;
             const lesson = row.CourseScheduleID;
-            const bookStatus= await testHelper.getBookStatusFromData(userName,lesson);
+            const bookStatus= testHelper.getBookStatusFromData(userName,lesson);
             expect(bookStatus).toEqual(1);
         });
     });
@@ -205,10 +205,21 @@ describe("generateStudentTracing",()=>{
     afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test("The file retrieved are the ones needed",()=>{
-        expect.assertions(2);
-        expect(bookingDao.generateStudentTracing(student,'pdf').toEqual('studentTracing.pdf'));
-        expect(bookingDao.generateStudentTracing(student,'csv').toEqual('studentTracing.csv'));
+    test("The file retrieved are the ones needed", async ()=>{
+        try {
+            expect.assertions(1);
+            const result = await bookingDao.generateStudentTracing(student,'pdf');
+            expect(result).toBe('studentTracing.pdf');
+        } catch (error) {
+            console.log(error);
+        }
+        try {
+            expect.assertions(1);
+            const result = await bookingDao.generateStudentTracing(student,'csv');
+            expect(result).toBe('studentTracing.csv');
+        } catch (error) {
+            console.log(error);
+        }
     });
 });
 
@@ -226,10 +237,20 @@ describe("generateTeacherTracing",()=>{
     afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test("The file retrieved are the ones needed",()=>{
+    test("The file retrieved are the ones needed", async ()=>{
         expect.assertions(2);
-        expect(bookingDao.generateTeacherTracing(teacher,'pdf').toEqual('teacherTracing.pdf'));
-        expect(bookingDao.generateTeacherTracing(teacher,'csv').toEqual('teacherTracing.csv'));
+        try {
+            const result = await bookingDao.generateTeacherTracing(teacher,'pdf');
+            expect(result).toBe('teacherTracing.pdf');
+        } catch (error) {
+            console.log(error);
+        }
+        try {
+            const result = await bookingDao.generateTeacherTracing(teacher,'csv');
+            expect(result).toBe('teacherTracing.csv');
+        } catch (error) {
+            console.log(error);
+        }
     });
 });
 
