@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TeacherTutorialPage Renders correctly 1`] = `
+<div
+  style={
+    Object {
+      "padding": "15px",
+    }
+  }
+>
+  <div
+    className="fill-screen"
+  >
+    <img
+      alt=""
+      className="img-button fitScreen"
+      onClick={[Function]}
+      src="./images/tutorial/teacher/1.png"
+    />
+  </div>
+</div>
+`;
