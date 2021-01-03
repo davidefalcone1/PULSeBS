@@ -1,20 +1,31 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
-import { AuthContext } from '../src/_services/AuthContext';
 import ConfigureUsersPage from '../src/components/ConfigureUsersPage';
-import { BrowserRouter } from 'react-router-dom';
+import { mount } from 'enzyme';
 import UserData from '../src/API/UserData';
 
 describe('ConfigureUsersPage', ()=>{
-    test('Renders correctly', ()=>{
-        const component = renderer.create(
-            <BrowserRouter>
-                <AuthContext.Provider value={{user: new UserData(1, '12345', 'Davide Falcone', 'davide.falcone@polito.it')}}>
-                    <ConfigureUsersPage usersList={[new UserData(1, '12345', 'Davide Falcone', 'davide.falcone@polito.it')]} createNewUser={()=>{}} type={'student'} uploadFileUser={()=>{}} uploadFileEnrollment={()=>{}}/>
-                </AuthContext.Provider>
-            </BrowserRouter>
+    let component;
+    beforeAll(()=>{
+        component = mount(
+            <ConfigureUsersPage usersList={[new UserData(1, '12345', 'Davide Falcone', 'davide.falcone@polito.it')]} createNewUser={()=>{}} type={'student'} uploadFileUser={()=>{}} uploadFileEnrollment={()=>{}}/>,
+            {
+                context: {user: new UserData(1, '12345', 'Davide Falcone', 'davidefalcone@polito.it', true)}
+            }
         );
-        let tree = component.toJSON();
-        expect(tree).toMatchSnapshot();
+    });
+    test('create new user', ()=>{
+        component.find('#activateModalOfUsers').at(0).simulate('click');
+        expect(component).toContainMatchingElement('#newUserForm');
+        const form = component.find('#newUserForm').at(0);
+        form.find('input').at(0).simulate('change', {target: {value: 'new value'}});
+        form.find('input').at(1).simulate('change', {target: {value: 'new value'}});
+        form.find('input').at(2).simulate('change', {target: {value: 'new value'}});
+        form.find('input').at(3).simulate('change', {target: {value: 'new value'}});
+        form.simulate('submit');
+    });
+    test('upload file', ()=>{
+        component.find('#uploadFileOfUsers').at(0).simulate('click');
+        expect(component).toContainMatchingElement('#newUserFormFile');
+        component.find('#newUserFormFile').at(0).simulate('submit');
     });
 });
