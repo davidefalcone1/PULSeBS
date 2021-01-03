@@ -20,7 +20,6 @@ class UserData {
         return temp;
     }
 }
-
 /////////////////////////////////////////////////////////////////////////
 exports.getTeacherCourses = function (teacherID) {
     return new Promise((resolve, reject) => {
@@ -317,7 +316,7 @@ exports.setStudentAsNotPresent = (lessonID, studentID) => {
                 reject(err);
             }
             else {
-                resolve("Student set as present");
+                resolve("Student set as not present");
             }   
         });
     });
