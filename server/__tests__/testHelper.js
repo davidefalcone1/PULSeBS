@@ -155,16 +155,33 @@ async function insertClassroom(){
     let result = await db.pRun(sql);
     sql = 'SELECT * FROM Classroom';
     result = await db.pGet(sql);
+    console.log(result);
     return result.ID;
 }
 
-/*async function getBookStatusFromData(userID,lecture){
-    console.log(userID,lecture);
-    const sql = 'SELECT * FROM Booking';
-    const result = await db.pAll(sql);
-    console.log(result);
-    return result[result.length-1].BookStatus;
-}*/
+async function getBookStatusFromBooking(booking){
+    const sql = 'SELECT * FROM Booking WHERE BookID = ?';
+    const result = await db.pGet(sql,[booking]);
+    return result.BookStatus;
+}
+
+async function getLessonType(lectureId){
+    const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
+    const result = await db.pGet(sql,[lectureId]);
+    return result.CourseType;
+}
+
+async function getLessonStatus(lectureId){
+    const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
+    const result = await db.pGet(sql,[lectureId]);
+    return result.CourseStatus;
+}
+
+async function getStudentStatusAboutBooking(lectureId,studentId){
+    const sql = 'SELECT * FROM Booking WHERE CourseScheduleID = ? AND StudentID = ?';
+    const result = await db.pGet(sql,[lectureId,studentId]);
+    return result.Attended;
+}
 
 async function modifyBookingasPending(user,lecture) {
     let sql= "UPDATE Booking SET BookStatus = 3 WHERE StudentID=? AND CourseScheduleID=?";
@@ -176,4 +193,5 @@ async function modifyBookingasPending(user,lecture) {
     return result[result.length-1].BookID;
 }
 
-module.exports = {initDB, cleanDB, insertStudent, insertGeneralCourseSchedule, insertTeacher, insertCourse, insertCourseSchedule, insertBooking, enrollStudentToCourse, getUserEmail, getLectureFromBooking, insertClassroom, modifyBookingasPending};
+
+module.exports = {initDB, cleanDB, insertStudent, insertGeneralCourseSchedule, insertTeacher, insertCourse, insertCourseSchedule, insertBooking, enrollStudentToCourse, getUserEmail, getLectureFromBooking, insertClassroom, getBookStatusFromBooking, getLessonType, getLessonStatus, getStudentStatusAboutBooking, modifyBookingasPending};

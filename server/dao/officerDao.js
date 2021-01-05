@@ -564,7 +564,7 @@ exports.createEnrollment = (enrollment) => {
         const sql1 = 'SELECT * FROM StudentCourse WHERE CourseID = ? AND StudentID = ?'
         const sql2 = 'INSERT INTO StudentCourse(CourseID, StudentID) ' +
             'VALUES (?, ?)';
-
+        console.log(enrollment)
         db.get(sql1, [enrollment.courseId, enrollment.studentId], (error, row) => {
             if (error) {
                 reject(error);
