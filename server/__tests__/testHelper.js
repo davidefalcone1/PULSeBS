@@ -155,6 +155,7 @@ async function insertClassroom(){
     let result = await db.pRun(sql);
     sql = 'SELECT * FROM Classroom';
     result = await db.pGet(sql);
+    console.log(result);
     return result.ID;
 }
 

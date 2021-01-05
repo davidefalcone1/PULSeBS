@@ -257,6 +257,77 @@ describe('insertNewSchedules', ()=>{
     });
 });
 
+describe('insertNewGeneralSchedules', ()=>{
+    let teacher, course;
+    afterEach(async()=>{
+        await testHelper.cleanDB();
+    });
+    beforeEach(async()=>{
+        teacher = await testHelper.insertTeacher();
+        course = await testHelper.insertCourse('Software engineering 2', teacher, 2);
+    });
+    test('Successfully inserted!', async(done)=>{
+        expect.assertions(1);
+        officerDao.insertNewGeneralSchedules([{Code: course, Day: 'Mon', timeStart: '02:00', timeEnd: '05:00', Seats: 90, Room: 'A1', Time: '02:00-05:00'}])
+            .then((result)=>{
+                expect(result).toBe('Successfully Inserted');
+                done();
+            })
+            .catch((e)=>{
+                done(e);
+                console.log(e);
+            });
+    });
+});
+
+describe('insertNewEnrollments', ()=>{
+    let teacher, course, student;
+    afterEach(async()=>{
+        await testHelper.cleanDB();
+    });
+    beforeEach(async()=>{
+        student = await testHelper.insertStudent();
+        teacher = await testHelper.insertTeacher();
+        course = await testHelper.insertCourse('Software engineering 2', teacher, 2);
+    });
+    test('Successfully inserted!', async(done)=>{
+        expect.assertions(1);
+        officerDao.insertNewEnrollments([{Code: course,Student:student}])
+            .then((result)=>{
+                expect(result).toBe('Successfully inserted');
+                done();
+            })
+            .catch((e)=>{
+                done(e);
+                console.log(e);
+            });
+    });
+});
+
+describe('insertNewUsers', ()=>{
+    let student;
+    afterEach(async()=>{
+        await testHelper.cleanDB();
+    });
+    beforeEach(async()=>{
+        student = await testHelper.insertStudent();
+    });
+    test('Successfully inserted', (done)=>{
+        expect.assertions(1);
+        officerDao.insertNewUsers([{userID:student}]) 
+            .then((result)=>{
+                expect(result).toBe('Successfully inserted');
+                done();
+            })
+            .catch((e)=>{
+                done(e);
+            });
+    });
+});
+
+
+
+
 describe('createNewEnrollment', ()=>{
     let student, course;
     afterEach(async()=>{
@@ -339,6 +410,7 @@ describe('editLesson', ()=>{
         }
     });
 });
+
 
 describe('updateAllSchedules', ()=>{
     let lesson, generalScheduleId, course;

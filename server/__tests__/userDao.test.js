@@ -43,3 +43,36 @@ describe("checkPassword", ()=>{
         expect(userDao.checkPassword(user, "adminadmn")).toBeFalsy();
     })
 });
+
+
+describe("setTutorialCompleted", ()=>{
+    let student;
+    beforeAll(async ()=>{
+        await testHelper.initDB();
+        student = await testHelper.insertStudent();
+    });
+    afterAll(async ()=>{
+        await testHelper.cleanDB();
+    });
+    test("tutorial completed", ()=>{
+        expect.assertions(1);
+        const result = userDao.setTutorialCompleted(student);
+        expect(result).toBeTruthy();
+    });
+});
+
+describe("getUserByID", ()=>{
+    let student;
+    beforeEach(async ()=>{
+        await testHelper.initDB();
+    });
+    afterEach(async ()=>{
+        await testHelper.cleanDB();
+    });
+    test("user exists", async ()=>{
+        student = await testHelper.insertStudent();
+        expect.assertions(1);
+        return userDao.getUserByID(student)
+            .then(user=>expect(user.userID).toEqual('123456'));
+    });
+});
