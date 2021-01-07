@@ -1,12 +1,15 @@
 "use strict";
 jest.setMock("../db", require("../__mocks__/db.mock"));
 const testHelper = require('./testHelper');
+const teacherDao = require('../dao/teacherDao');
+const userDao = require('../dao/userDao');
 const app = require('../app');
 const request = require('supertest');
 const BookingData = require('../dao/BookingData');
 const { getLectureFromBooking } = require("./testHelper");
 const { TestScheduler } = require("jest");
 const { sendNotification } = require("../emailAPI");
+const { unstable_renderSubtreeIntoContainer } = require("react-dom");
 jest.mock("../emailAPI", function () {
     return {
         sendNotification: function () { }
@@ -161,6 +164,31 @@ describe('/myBookedLessons', () => {
     });
 });
 
+
+describe('/setTutorialCompleted', () => {
+    const url = '/setTutorialCompleted';
+    let userCookie, student, lecture;
+    beforeEach(async () => {
+        await testHelper.initDB();
+        student = await testHelper.insertStudent();
+        const response = await request(app).post('/users/authenticate').send({
+            username: 'davide.falcone@studenti.polito.it',
+            password: 'adminadmin'
+        });
+        userCookie = response.headers['set-cookie'];
+    });
+    afterEach(async () => {
+        await testHelper.cleanDB();
+    });
+    test('error occurred', async () => {
+        expect.assertions(1);
+        await userDao.setTutorialCompleted(student);
+        await request(app).get(url).set('Cookie', userCookie).then(function (res) {
+            expect(res.status).toEqual(404);
+        });
+    });
+});
+
 describe('/studentCourses', () => {
     const url = '/studentCourses';
     let userCookie, student, course;
@@ -265,6 +293,99 @@ describe('/myBookedLessons', () => {
         });
     });
 });
+
+describe('/myWaitingBookedLessons', () => {
+    const url = '/myWaitingBookedLessons';
+    let userCookie, student, lecture;
+    beforeAll(async () => {
+        await testHelper.initDB();
+        student = await testHelper.insertStudent();
+        const teacher = await testHelper.insertTeacher();
+        const course = await testHelper.insertCourse('Software engineering 2', teacher);
+        lecture = await testHelper.insertCourseSchedule(course);
+        await testHelper.enrollStudentToCourse(student, course);
+        const response = await request(app).post('/users/authenticate').send({
+            username: 'davide.falcone@studenti.polito.it',
+            password: 'adminadmin'
+        });
+        userCookie = response.headers['set-cookie'];
+    });
+    afterAll(async () => {
+        await testHelper.cleanDB();
+    });
+    test('fail', async () => {
+        expect.assertions(1);
+        await request(app).get(url).set('Cookie', userCookie).then(function (res) {
+            const lectureIDs = res.body.map(booking => booking.scheduleId);
+            expect(lectureIDs).not.toContain(lecture);
+        });
+    });
+    test('success', async () => {
+        expect.assertions(1);
+        await testHelper.insertBooking(student, lecture);
+        await testHelper.modifyBookingasPending(student, lecture);
+        await request(app).get(url).set('Cookie', userCookie).then(function (res) {
+            const lectureIDs = res.body.map(booking => booking.scheduleId);
+            expect(lectureIDs).toContain(lecture);
+        });
+    });
+});
+
+describe('/coursesStatistics', () => {
+    const url = '/coursesStatistics';
+    let userCookie, course, teacher, lecture;
+    beforeAll(async () => {
+        await testHelper.initDB();
+        teacher = await testHelper.insertTeacher();
+        const response = await request(app).post('/users/authenticate').send({
+            username: 'mario.rossi@polito.it',
+            password: 'adminadmin'
+        });
+        userCookie = response.headers['set-cookie'];
+    });
+    afterAll(async () => {
+        await testHelper.cleanDB();
+    });
+    test('success', async () => {
+        expect.assertions(1);
+        course = await testHelper.insertCourse('Software engineering 2', teacher);
+        lecture = await testHelper.insertCourseSchedule(course);
+        await teacherDao.getCoursesStatistics(teacher);
+        await request(app).get(url).set('Cookie', userCookie).then(function (res) {
+            const teacherIds = res.body.map(c=>c.teacherId);
+            expect(teacherIds).toContain(teacher);
+        });
+    });
+});
+
+describe('/lessonsStatistics', () => {
+    const url = '/lessonsStatistics';
+    let userCookie, course, teacher, lecture;
+    beforeAll(async () => {
+        await testHelper.initDB();
+        teacher = await testHelper.insertTeacher();
+        const response = await request(app).post('/users/authenticate').send({
+            username: 'mario.rossi@polito.it',
+            password: 'adminadmin'
+        });
+        userCookie = response.headers['set-cookie'];
+    });
+    afterAll(async () => {
+        await testHelper.cleanDB();
+    });
+    test('success', async () => {
+        expect.assertions(1);
+        course = await testHelper.insertCourse('Software engineering 2', teacher);
+        lecture = await testHelper.insertCourseSchedule(course);
+        await teacherDao.getLessonsStatistics(teacher);
+        await request(app).get(url).set('Cookie', userCookie).then(function (res) {
+            const courseIds = res.body.map(c=>c.courseId);
+            expect(courseIds).toContain(course);
+        });
+    });
+});
+
+
 
 describe('/teacherCourses', () => {
     const url = '/teacherCourses';
