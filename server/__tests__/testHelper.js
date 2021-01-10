@@ -207,7 +207,6 @@ async function insertClassroom(){
     let result = await db.pRun(sql);
     sql = 'SELECT * FROM Classroom';
     result = await db.pGet(sql);
-    console.log(result);
     return result.ID;
 }
 
@@ -244,6 +243,8 @@ async function modifyBookingasPending(user,lecture) {
     result = await db.pAll(sql);
     return result[result.length-1].BookID;
 }
+
+
 
 
 module.exports = {initDB, cleanDB, insertStudent, insertOfficer, insertGeneralCourseSchedule, insertTeacher, insertCourse, insertCourseSchedule, insertBooking, enrollStudentToCourse, getUserEmail, getLectureFromBooking, insertClassroom, getBookStatusFromBooking, getLessonType, getLessonStatus, getStudentStatusAboutBooking, modifyBookingasPending,getCourseStatusFromLectureID, getCourseTypeFromLectureID, getTimeStartFromLectureID, getTimeEndFromLectureID, getOccupiedSeatFromLectureID, getMaxSeatFromLectureID, getClassroomFromLectureID};
