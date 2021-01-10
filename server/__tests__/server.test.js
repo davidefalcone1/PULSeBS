@@ -996,4 +996,127 @@ describe('/allCoursesSchedules', () => {
             expect(scheduleIDs).toContain(schedule);
         });
     });
+}); 
+
+describe('/createNewClassroom', () => {
+    const url = '/createNewClassroom';
+    let userCookie,officer;
+    beforeAll(async () => {
+        await testHelper.initDB();
+        officer = await testHelper.insertOfficer();
+        const response = await request(app).post('/users/authenticate').send({
+            username: 'office@polito.it',
+            password: 'adminadmin'
+        });
+        userCookie = response.headers['set-cookie'];
+    });
+    afterAll(async () => {
+        await testHelper.cleanDB();
+    });
+    test('new classroom created', async () => {
+        expect.assertions(1);
+        await request(app).post(url).send({classroomName: 'A1',maxSeats : 80}).set('Cookie', userCookie).then(function (res) {
+            expect(res.body).toEqual("Classroom inserted");
+        });
+    });
+});
+
+describe('/setTutorialCompleted', () => {
+    const url = '/setTutorialCompleted';
+    let userCookie,officer,course;
+    beforeAll(async () => {
+        await testHelper.initDB();
+        officer = await testHelper.insertOfficer();
+        const response = await request(app).post('/users/authenticate').send({
+            username: 'office@polito.it',
+            password: 'adminadmin'
+        });
+        userCookie = response.headers['set-cookie'];
+    });
+    afterAll(async () => {
+        await testHelper.cleanDB();
+    });
+    test('tutorial completed', async () => {
+        expect.assertions(1);
+        await request(app).put(url).set('Cookie', userCookie).then(function (res) {
+            expect().toBeUndefined();
+        });
+    });
+});
+
+describe('/createCourseSchedule', () => {
+    const url = '/createCourseSchedule';
+    let userCookie,officer;
+    beforeAll(async () => {
+        await testHelper.initDB();
+        officer = await testHelper.insertOfficer();
+        const response = await request(app).post('/users/authenticate').send({
+            username: 'office@polito.it',
+            password: 'adminadmin'
+        });
+        userCookie = response.headers['set-cookie'];
+    });
+    afterAll(async () => {
+        await testHelper.cleanDB();
+    });
+    test('new classroom created', async () => {
+        expect.assertions(1);
+        const teacher= await testHelper.insertTeacher();
+        const course = await testHelper.insertCourse('Software engineering 2',teacher);
+        const schedule = await testHelper.insertCourseSchedule(course);
+        await request(app).put(url).send({schedule}).set('Cookie', userCookie).then(function (res) {
+            expect().toBeUndefined();
+        });
+    });
+});
+
+describe('/deleteCourseSchedule/:deletedSchedule', () => {
+    const url = '/deleteCourseSchedule/';
+    let userCookie,schedule,officer;
+    beforeEach(async () => {
+        await testHelper.initDB();
+        officer = await testHelper.insertOfficer();
+        const teacher = await testHelper.insertTeacher();
+        const course = await testHelper.insertCourse('Software engineering 2', teacher);
+        schedule = await testHelper.insertGeneralCourseSchedule(course);
+        const response = await request(app).post('/users/authenticate').send({
+            username: 'office@polito.it',
+            password: 'adminadmin'
+        });
+        userCookie = response.headers['set-cookie'];
+    });
+    afterEach(async () => {
+        await testHelper.cleanDB();
+    });
+    test('lecture deleted', async () => {
+        expect.assertions(1);
+        await request(app).delete(url + schedule).set('Cookie', userCookie).then(function (res) {
+            expect().toBeUndefined();
+        });
+    });
+});
+
+describe('/editCourseSchedule', () => {
+    const url = '/editCourseSchedule/';
+    let userCookie, lecture, student;
+    beforeEach(async () => {
+        await testHelper.initDB();
+        const teacher = await testHelper.insertTeacher();
+        const course = await testHelper.insertCourse('Software engineering 2', teacher);
+        lecture = await testHelper.insertGeneralCourseSchedule(course);
+        const response = await request(app).post('/users/authenticate').send({
+            username: 'mario.rossi@polito.it',
+            password: 'adminadmin'
+        });
+        userCookie = response.headers['set-cookie'];
+    });
+    afterEach(async () => {
+        await testHelper.cleanDB();
+    });
+    test('course schedule edited', async () => {
+        expect.assertions(1);
+        await request(app).put(url).send({scheduleId:lecture}).set('Cookie', userCookie).then(function (res) {
+            expect().toBeUndefined();
+        });
+    });
 });
