@@ -72,6 +72,58 @@ async function insertStudent() {
     return result[result.length-1].UserID;
 }
 
+async function insertOfficer() {
+    let sql = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN, Tutorial)' + 
+        " VALUES('444444','Officer', 'admin', 'office@polito.it', 4, '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S', 'Caserta', '1996-09-05', 'abc', 1)";
+    let result = await db.pRun(sql);
+    if(result)
+        console.log(result);
+    sql = 'SELECT UserID FROM User ORDER BY ID';
+    result = await db.pAll(sql);
+    return result[result.length-1].UserID;
+}
+
+
+async function getCourseStatusFromLectureID(lectureId){
+    const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
+    const result = await db.pGet(sql,[lectureId]);
+    return result.CourseStatus;
+}
+
+async function getCourseTypeFromLectureID(lectureId){
+    const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
+    const result = await db.pGet(sql,[lectureId]);
+    return result.CourseType;
+}
+
+async function getTimeStartFromLectureID(lectureId){
+    const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
+    const result = await db.pGet(sql,[lectureId]);
+    return result.TimeStart;
+}
+
+async function getTimeEndFromLectureID(lectureId){
+    const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
+    const result = await db.pGet(sql,[lectureId]);
+    return result.TimeEnd;
+}
+
+async function getOccupiedSeatFromLectureID(lectureId){
+    const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
+    const result = await db.pGet(sql,[lectureId]);
+    return result.TimeEnd;
+}
+async function getMaxSeatFromLectureID(lectureId){
+    const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
+    const result = await db.pGet(sql,[lectureId]);
+    return result.TimeEnd;
+}
+async function getClassroomFromLectureID(lectureId){
+    const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
+    const result = await db.pGet(sql,[lectureId]);
+    return result.Classroom;
+}
+
 async function insertCourseSchedule(course, timeStart, timeEnd){
     let sql, result;
     if(timeStart && timeEnd){
@@ -194,4 +246,4 @@ async function modifyBookingasPending(user,lecture) {
 }
 
 
-module.exports = {initDB, cleanDB, insertStudent, insertGeneralCourseSchedule, insertTeacher, insertCourse, insertCourseSchedule, insertBooking, enrollStudentToCourse, getUserEmail, getLectureFromBooking, insertClassroom, getBookStatusFromBooking, getLessonType, getLessonStatus, getStudentStatusAboutBooking, modifyBookingasPending};
+module.exports = {initDB, cleanDB, insertStudent, insertOfficer, insertGeneralCourseSchedule, insertTeacher, insertCourse, insertCourseSchedule, insertBooking, enrollStudentToCourse, getUserEmail, getLectureFromBooking, insertClassroom, getBookStatusFromBooking, getLessonType, getLessonStatus, getStudentStatusAboutBooking, modifyBookingasPending,getCourseStatusFromLectureID, getCourseTypeFromLectureID, getTimeStartFromLectureID, getTimeEndFromLectureID, getOccupiedSeatFromLectureID, getMaxSeatFromLectureID, getClassroomFromLectureID};
