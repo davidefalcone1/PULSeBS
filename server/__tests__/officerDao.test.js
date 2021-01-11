@@ -11,315 +11,315 @@ jest.mock("../emailAPI", function () {
     }
 });
 
-describe('getClassrooms', ()=>{
+describe('getClassrooms', () => {
     let classroomID;
-    beforeEach(async()=>{
+    beforeEach(async () => {
         classroomID = await testHelper.insertClassroom();
     });
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test('There is a classroom', ()=>{
+    test('There is a classroom', () => {
         expect.assertions(1);
-        officerDao.getClassrooms().then((classrooms)=>{
-            const classroomIDs = classrooms.map((classroom)=>classroom.classId);
+        officerDao.getClassrooms().then((classrooms) => {
+            const classroomIDs = classrooms.map((classroom) => classroom.classId);
             expect(classroomIDs).toContain(classroomID);
         });
     });
 });
 
-describe('getCourses', ()=>{
+describe('getCourses', () => {
     let courseID;
-    beforeEach(async()=>{
+    beforeEach(async () => {
         const teacher = await testHelper.insertTeacher();
         courseID = await testHelper.insertCourse('Software engineering 2', teacher);
     });
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test('There is a course', ()=>{
+    test('There is a course', () => {
         expect.assertions(1);
-        officerDao.getCourses().then((courses)=>{
-            const courseIDs = courses.map((course)=>course.courseId);
+        officerDao.getCourses().then((courses) => {
+            const courseIDs = courses.map((course) => course.courseId);
             expect(courseIDs).toContain(courseID);
         });
     });
 });
 
-describe('getUsers', ()=>{
+describe('getUsers', () => {
     let userID;
-    beforeEach(async()=>{
+    beforeEach(async () => {
         userID = await testHelper.insertStudent();
     });
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test('There is a user', ()=>{
+    test('There is a user', () => {
         expect.assertions(1);
-        officerDao.getUsers(1).then((users)=>{
-            const userIDs = users.map((user)=>user.personId);
+        officerDao.getUsers(1).then((users) => {
+            const userIDs = users.map((user) => user.personId);
             expect(userIDs).toContain(userID);
         });
     });
 });
-describe('getLessons', ()=>{
+describe('getLessons', () => {
     let lessonID;
-    beforeEach(async()=>{
+    beforeEach(async () => {
         const teacher = await testHelper.insertTeacher();
         await testHelper.insertCourse('Software engineering 2', teacher);
         lessonID = await testHelper.insertCourseSchedule(1);
     });
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test('There is a lesson', ()=>{
+    test('There is a lesson', () => {
         expect.assertions(1);
-        officerDao.getLessons().then((lessons)=>{
-            const lessonIDs = lessons.map((lesson)=>lesson.scheduleId);
+        officerDao.getLessons().then((lessons) => {
+            const lessonIDs = lessons.map((lesson) => lesson.scheduleId);
             expect(lessonIDs).toContain(lessonID);
         });
     });
 });
 
-describe('getEnrollments', ()=>{
+describe('getEnrollments', () => {
     let enrollment;
-    beforeEach(async()=>{
+    beforeEach(async () => {
         const student = await testHelper.insertStudent();
         const teacher = await testHelper.insertTeacher();
         const course = await testHelper.insertCourse('Software engineering 2', teacher);
         enrollment = await testHelper.enrollStudentToCourse(student, course)
     });
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test('There is an enrollment', ()=>{
+    test('There is an enrollment', () => {
         expect.assertions(1);
-        officerDao.getEnrollments().then((enrollements)=>{
+        officerDao.getEnrollments().then((enrollements) => {
             expect(enrollements).toContainEqual(enrollment);
         });
     });
 });
 
-describe('getSchedules', ()=>{
+describe('getSchedules', () => {
     let scheduleID;
-    beforeEach(async()=>{
+    beforeEach(async () => {
         const teacher = await testHelper.insertTeacher();
         const course = await testHelper.insertCourse('Software engineering 2', teacher);
         scheduleID = await testHelper.insertGeneralCourseSchedule(course);
     });
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test('There is a schedule', ()=>{
+    test('There is a schedule', () => {
         expect.assertions(1);
-        officerDao.getSchedules().then((schedules)=>{
-            const scheduleIDs = schedules.map(schedules=>schedules.id);
+        officerDao.getSchedules().then((schedules) => {
+            const scheduleIDs = schedules.map(_schedules => _schedules.id);
             expect(scheduleIDs).toContain(scheduleID);
         });
     });
 });
 
-describe('insertNewRooms', ()=>{
-    afterEach(async()=>{
+describe('insertNewRooms', () => {
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test('New rooms inserted', ()=>{
+    test('New rooms inserted', () => {
         expect.assertions(1);
-        const rooms = [{Room:'A1', Seats:90}];
+        const rooms = [{ Room: 'A1', Seats: 90 }];
         officerDao.insertNewRooms(rooms)
-            .then((result)=>{
+            .then((result) => {
                 expect(result).toBe('Successfully inserted');
             });
     });
-    test('Existing rooms inserted', ()=>{
+    test('Existing rooms inserted', () => {
         expect.assertions(2);
-        let rooms = [{Room:'A1', Seats:90}];
+        let rooms = [{ Room: 'A1', Seats: 90 }];
         officerDao.insertNewRooms(rooms)
-            .then((result)=>{
+            .then((result) => {
                 expect(result).toBe('Successfully inserted');
             });
-        rooms.push({Room:'A1', Seats:90}, {Room:'A2', Seats:90});
+        rooms.push({ Room: 'A1', Seats: 90 }, { Room: 'A2', Seats: 90 });
         officerDao.insertNewRooms(rooms)
-            .then((result)=>{
+            .then((result) => {
                 expect(result).toBe('Successfully inserted');
             });
     });
 });
 
-describe('createEnrollment', ()=>{
+describe('createEnrollment', () => {
     let student, course;
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    beforeEach(async()=>{
+    beforeEach(async () => {
         const teacher = await testHelper.insertTeacher();
         student = await testHelper.insertStudent();
         course = await testHelper.insertCourse('Software engineering 2', teacher);
     });
-    test('Existing enrollment inserted', async()=>{
+    test('Existing enrollment inserted', async () => {
         expect.assertions(1);
         await testHelper.enrollStudentToCourse(student, course)
-        const enrollment = {courseId: course, studentId: student};
+        const enrollment = { courseId: course, studentId: student };
         officerDao.createEnrollment(enrollment)
-            .then((result)=>{
+            .then((result) => {
                 expect(result).toBe('Already existing!');
             });
     });
-    test('New enrollment inserted', async()=>{
+    test('New enrollment inserted', async () => {
         expect.assertions(1);
-        const enrollment = {courseId: course, studentId: student};
+        const enrollment = { courseId: course, studentId: student };
         officerDao.createEnrollment(enrollment)
-            .then((result)=>{
+            .then((result) => {
                 expect(result).toBe('Succesfully inserted!');
             });
     });
 });
 
-describe('createNewClassroom', ()=>{
-    afterEach(async()=>{
+describe('createNewClassroom', () => {
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test('New classroom inserted', ()=>{
+    test('New classroom inserted', () => {
         expect.assertions(1);
         officerDao.createNewClassroom('A1', 90)
-            .then((result)=>{
+            .then((result) => {
                 expect(result).toBe('Classroom inserted');
             });
     });
 });
 
-describe('insertNewCourses', ()=>{
+describe('insertNewCourses', () => {
     let teacher, course;
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    beforeEach(async()=>{
+    beforeEach(async () => {
         teacher = await testHelper.insertTeacher();
         course = await testHelper.insertCourse('Software engineering 2', teacher);
     });
-    test('Successfully inserted (no courses inserted)', (done)=>{
+    test('Successfully inserted (no courses inserted)', (done) => {
         expect.assertions(1);
-        officerDao.insertNewCourses([{Code: course, Year: 2, Semester: 2, Course: 'Software engineering 2', Teacher: teacher}]) //Trying to add the same course 
-            .then((result)=>{
+        officerDao.insertNewCourses([{ Code: course, Year: 2, Semester: 2, Course: 'Software engineering 2', Teacher: teacher }]) //Trying to add the same course 
+            .then((result) => {
                 expect(result).toBe('Successfully inserted');
                 done();
             })
-            .catch((e)=>{
+            .catch((e) => {
                 done(e);
             });
     });
-    test('Successfully inserted', (done)=>{
+    test('Successfully inserted', (done) => {
         expect.assertions(1);
-        officerDao.insertNewCourses([{Code: course+1, Year: 1, Semester: 1, Course: 'Mobile Application', Teacher: teacher}]) //Trying to add a different course
-            .then((result)=>{
+        officerDao.insertNewCourses([{ Code: course + 1, Year: 1, Semester: 1, Course: 'Mobile Application', Teacher: teacher }]) //Trying to add a different course
+            .then((result) => {
                 expect(result).toBe('Successfully inserted');
                 done();
             })
-            .catch((e)=>{
+            .catch((e) => {
                 done(e);
             });
     });
 });
 
-describe('insertNewSchedules', ()=>{
+describe('insertNewSchedules', () => {
     let teacher, course;
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    beforeEach(async()=>{
+    beforeEach(async () => {
         teacher = await testHelper.insertTeacher();
         course = await testHelper.insertCourse('Software engineering 2', teacher, 2);
     });
-    test('No insertion, since there are no courses!', (done)=>{
+    test('No insertion, since there are no courses!', (done) => {
         expect.assertions(1);
         officerDao.insertNewSchedules([])
-            .then((result)=>{
+            .then((result) => {
                 expect(result).toBe('No insertion, since there are no courses!');
                 done();
             })
-            .catch((e)=>{
+            .catch((e) => {
                 console.log(e);
                 done(e);
             });
     });
 
-    test('Successfully inserted!', async(done)=>{
+    test('Successfully inserted!', async (done) => {
         expect.assertions(1);
-        officerDao.insertNewSchedules([{Code: course, Day: 'Mon', timeStart: '02:00', timeEnd: '05:00', Seats: 90, Room: 'A1', Time: '02:00-05:00'}])
-            .then((result)=>{
+        officerDao.insertNewSchedules([{ Code: course, Day: 'Mon', timeStart: '02:00', timeEnd: '05:00', Seats: 90, Room: 'A1', Time: '02:00-05:00' }])
+            .then((result) => {
                 expect(result).toBe('Successfully inserted!');
                 done();
             })
-            .catch((e)=>{
+            .catch((e) => {
                 done(e);
                 console.log(e);
             });
     });
 });
 
-describe('insertNewGeneralSchedules', ()=>{
+describe('insertNewGeneralSchedules', () => {
     let teacher, course;
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    beforeEach(async()=>{
+    beforeEach(async () => {
         teacher = await testHelper.insertTeacher();
         course = await testHelper.insertCourse('Software engineering 2', teacher, 2);
     });
-    test('Successfully inserted!', async(done)=>{
+    test('Successfully inserted!', async (done) => {
         expect.assertions(1);
-        officerDao.insertNewGeneralSchedules([{Code: course, Day: 'Mon', timeStart: '02:00', timeEnd: '05:00', Seats: 90, Room: 'A1', Time: '02:00-05:00'}])
-            .then((result)=>{
+        officerDao.insertNewGeneralSchedules([{ Code: course, Day: 'Mon', timeStart: '02:00', timeEnd: '05:00', Seats: 90, Room: 'A1', Time: '02:00-05:00' }])
+            .then((result) => {
                 expect(result).toBe('Successfully Inserted');
                 done();
             })
-            .catch((e)=>{
+            .catch((e) => {
                 done(e);
                 console.log(e);
             });
     });
 });
 
-describe('insertNewEnrollments', ()=>{
+describe('insertNewEnrollments', () => {
     let teacher, course, student;
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    beforeEach(async()=>{
+    beforeEach(async () => {
         student = await testHelper.insertStudent();
         teacher = await testHelper.insertTeacher();
         course = await testHelper.insertCourse('Software engineering 2', teacher, 2);
     });
-    test('Successfully inserted!', async(done)=>{
+    test('Successfully inserted!', async (done) => {
         expect.assertions(1);
-        officerDao.insertNewEnrollments([{Code: course,Student:student}])
-            .then((result)=>{
+        officerDao.insertNewEnrollments([{ Code: course, Student: student }])
+            .then((result) => {
                 expect(result).toBe('Successfully inserted');
                 done();
             })
-            .catch((e)=>{
+            .catch((e) => {
                 done(e);
                 console.log(e);
             });
     });
 });
 
-describe('insertNewUsers', ()=>{
+describe('insertNewUsers', () => {
     let student;
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    beforeEach(async()=>{
+    beforeEach(async () => {
         student = await testHelper.insertStudent();
     });
-    test('Successfully inserted', (done)=>{
+    test('Successfully inserted', (done) => {
         expect.assertions(1);
-        officerDao.insertNewUsers([{userID:student}]) 
-            .then((result)=>{
+        officerDao.insertNewUsers([{ userID: student }])
+            .then((result) => {
                 expect(result).toBe('Successfully inserted');
                 done();
             })
-            .catch((e)=>{
+            .catch((e) => {
                 done(e);
             });
     });
@@ -328,30 +328,30 @@ describe('insertNewUsers', ()=>{
 
 
 
-describe('createNewEnrollment', ()=>{
+describe('createNewEnrollment', () => {
     let student, course;
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    beforeEach(async()=>{
+    beforeEach(async () => {
         const teacher = await testHelper.insertTeacher();
         student = await testHelper.insertStudent();
         course = await testHelper.insertCourse('Software engineering 2', teacher);
     });
-    test('New enrollment inserted', ()=>{
+    test('New enrollment inserted', () => {
         expect.assertions(1);
         officerDao.createNewEnrollment(student, course)
-            .then((result)=>{
+            .then((result) => {
                 expect(result).toBe('New enrollment inserted');
             });
     });
 });
 
-describe('createNewUser', ()=>{
-    afterEach(async()=>{
+describe('createNewUser', () => {
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test('New user inserted', async ()=>{
+    test('New user inserted', async () => {
         expect.assertions(1);
         try {
             const result = await officerDao.createNewUser('12345', 'Davide Falcone', 'davide.falcone@studenti.polito.it', 'ciao', 1);
@@ -362,16 +362,16 @@ describe('createNewUser', ()=>{
     });
 });
 
-describe('createNewLesson', ()=>{
+describe('createNewLesson', () => {
     let course;
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    beforeEach(async()=>{
+    beforeEach(async () => {
         const teacher = await testHelper.insertTeacher();
         course = await testHelper.insertCourse('Software engineering 2', teacher);
     });
-    test('New lesson inserted', async ()=>{
+    test('New lesson inserted', async () => {
         expect.assertions(1);
         try {
             const result = await officerDao.createNewLesson(course, 0, 1, '2020-08-09T14:30', '2020-08-09T17:30', 'A1');
@@ -382,17 +382,17 @@ describe('createNewLesson', ()=>{
     });
 });
 
-describe('editLesson', ()=>{
+describe('editLesson', () => {
     let lesson;
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    beforeEach(async()=>{
+    beforeEach(async () => {
         const teacher = await testHelper.insertTeacher();
         const course = await testHelper.insertCourse('Software engineering 2', teacher);
         lesson = await testHelper.insertCourseSchedule(course);
     });
-    test('Lesson updated', async ()=>{
+    test('Lesson updated', async () => {
         expect.assertions(1);
         try {
             const result = await officerDao.editLesson(lesson, 1, 0, 1, moment().add(1, 'days').format(), moment().add(1, 'days').add(1, 'hours').format(), 'A1');
@@ -401,7 +401,7 @@ describe('editLesson', ()=>{
             console.log(error);
         }
     });
-    test('wrong dates', async ()=>{
+    test('wrong dates', async () => {
         expect.assertions(1);
         try {
             await officerDao.editLesson(lesson, 1, 0, 1, moment().subtract(1, 'days').format(), moment().add(1, 'days').add(1, 'hours').format(), 'A1');
@@ -412,17 +412,17 @@ describe('editLesson', ()=>{
 });
 
 
-describe('updateAllSchedules', ()=>{
+describe('updateAllSchedules', () => {
     let lesson, generalScheduleId, course;
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    beforeEach(async()=>{
+    beforeEach(async () => {
         const teacher = await testHelper.insertTeacher();
         course = await testHelper.insertCourse('Software engineering 2', teacher);
         generalScheduleId = await testHelper.insertGeneralCourseSchedule(course, 'Mon', '2:00', '5:00');
     });
-    test('Successfully updated and student booked', async (done)=>{
+    test('Successfully updated and student booked', async (done) => {
         expect.assertions(1);
         lesson = await testHelper.insertCourseSchedule(course, moment().set('hour', 2).set('minute', 0).add(1, 'week').isoWeekday('Monday')/*Get the 'next week' instance of Monday*/.format(), moment().add(1, 'week').set('hour', 5).set('minute', 0).isoWeekday('Monday').format());
         const student = await testHelper.insertStudent();
@@ -437,7 +437,7 @@ describe('updateAllSchedules', ()=>{
             done(error);
         }
     });
-    test('Successfully updated and no students booked', async (done)=>{
+    test('Successfully updated and no students booked', async (done) => {
         expect.assertions(1);
         lesson = await testHelper.insertCourseSchedule(course, moment().set('hour', 2).set('minute', 0).add(1, 'week').isoWeekday('Monday')/*Get the 'next week' instance of Monday*/.format(), moment().add(1, 'week').set('hour', 5).set('minute', 0).isoWeekday('Monday').format());
         const newGeneralSchedule = new CourseBasicSchedule(generalScheduleId, course, 'Tue', '02:30', '05:00', 'A1');
@@ -449,7 +449,7 @@ describe('updateAllSchedules', ()=>{
             done(error);
         }
     });
-    test('Nothing updated', async (done)=>{
+    test('Nothing updated', async (done) => {
         expect.assertions(1);
         const newGeneralSchedule = new CourseBasicSchedule(generalScheduleId, course, 'Tue', '14:30', '17:00', 'A1');
         try {
@@ -462,17 +462,17 @@ describe('updateAllSchedules', ()=>{
     });
 });
 
-describe('deleteSchedules', ()=>{
+describe('deleteSchedules', () => {
     let lesson, generalScheduleId, course;
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    beforeEach(async()=>{
+    beforeEach(async () => {
         const teacher = await testHelper.insertTeacher();
         course = await testHelper.insertCourse('Software engineering 2', teacher);
         generalScheduleId = await testHelper.insertGeneralCourseSchedule(course, 'Mon', '02:00', '05:00');
     });
-    test('Successfully deleted and student booked', async (done)=>{
+    test('Successfully deleted and student booked', async (done) => {
         expect.assertions(1);
         lesson = await testHelper.insertCourseSchedule(course, moment().set('hour', 2).set('minute', 0).add(1, 'week').isoWeekday('Monday')/*Get the 'next week' instance of Monday*/.format(), moment().add(1, 'week').set('hour', 5).set('minute', 0).isoWeekday('Monday').format());
         const student = await testHelper.insertStudent();
@@ -486,7 +486,7 @@ describe('deleteSchedules', ()=>{
             done(error);
         }
     });
-    test('Successfully deleted and no students booked', async (done)=>{
+    test('Successfully deleted and no students booked', async (done) => {
         expect.assertions(1);
         lesson = await testHelper.insertCourseSchedule(course, moment().set('hour', 2).set('minute', 0).add(1, 'week').isoWeekday('Monday')/*Get the 'next week' instance of Monday*/.format(), moment().add(1, 'week').set('hour', 5).set('minute', 0).isoWeekday('Monday').format());
         try {
@@ -499,17 +499,17 @@ describe('deleteSchedules', ()=>{
     });
 });
 
-describe('createNewSchedule', ()=>{
+describe('createNewSchedule', () => {
     let course;
-    afterEach(async()=>{
+    afterEach(async () => {
         await testHelper.cleanDB();
     });
-    beforeEach(async()=>{
+    beforeEach(async () => {
         const teacher = await testHelper.insertTeacher();
         course = await testHelper.insertCourse('Software engineering 2', teacher, 2);
         await testHelper.insertClassroom();
     });
-    test('Nothing inserted', async (done)=>{
+    test('Nothing inserted', async (done) => {
         expect.assertions(1);
         Date.now = jest.fn(() => new Date('2021-06-14')); // 2 Semester is over
         const newGeneralSchedule = new CourseBasicSchedule(1, course, 'Tue', '14:30', '17:00', 'A1');
@@ -522,9 +522,9 @@ describe('createNewSchedule', ()=>{
         }
     });
 
-    test('Successfully inserted', async (done)=>{
+    test('Successfully inserted', async (done) => {
         expect.assertions(1);
-        Date.now = jest.fn(() => new Date()); 
+        Date.now = jest.fn(() => new Date());
         const newGeneralSchedule = new CourseBasicSchedule(1, course, 'Tue', '14:30', '17:00', 'A1');
         try {
             const result = await officerDao.createNewSchedule(newGeneralSchedule);

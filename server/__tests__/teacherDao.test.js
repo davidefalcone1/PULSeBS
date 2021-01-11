@@ -8,9 +8,9 @@ const db = require("../db");
 const BookingData = require("../dao/BookingData");
 
 
-describe("getBookedStudents", ()=>{
+describe("getBookedStudents", () => {
     let lecture, student;
-    beforeAll(async ()=>{
+    beforeAll(async () => {
         await testHelper.initDB();
         student = await testHelper.insertStudent();
         const teacher = await testHelper.insertTeacher();
@@ -18,105 +18,105 @@ describe("getBookedStudents", ()=>{
         lecture = await testHelper.insertCourseSchedule(course);
         await testHelper.enrollStudentToCourse(student, course);
     });
-    afterAll(async ()=>{
+    afterAll(async () => {
         await testHelper.cleanDB();
     });
-    test("No students booked", ()=>{
+    test("No students booked", () => {
         expect.assertions(1);
         return teacherDao.getBookedStudents([lecture])
-            .then((bookedStudents)=>expect(bookedStudents).toHaveLength(0));
+            .then((bookedStudents) => expect(bookedStudents).toHaveLength(0));
     });
-    test("One student is booked", async()=>{
+    test("One student is booked", async () => {
         expect.assertions(1);
         testHelper.insertBooking(student, lecture);
         return teacherDao.getBookedStudents([lecture])
-            .then((bookedStudents)=>{
-                const IDs = bookedStudents.map(s=>s.studentId);
+            .then((bookedStudents) => {
+                const IDs = bookedStudents.map(s => s.studentId);
                 expect(IDs).toContain(student);
             });
     });
 });
 
-describe("getTeacherCourses", ()=>{
-    let teacher,course;
-    beforeAll(async ()=>{
+describe("getTeacherCourses", () => {
+    let teacher, course;
+    beforeAll(async () => {
         await testHelper.initDB();
         teacher = await testHelper.insertTeacher();
         course = await testHelper.insertCourse('Software engineering 2', teacher);
     });
-    afterAll(async ()=>{
+    afterAll(async () => {
         await testHelper.cleanDB();
     });
-    test("The course inserted figures in the ones led by the teacher", async()=>{
+    test("The course inserted figures in the ones led by the teacher", async () => {
         expect.assertions(1);
-        return teacherDao.getTeacherCourses(teacher).then((teacherCourses)=>{
-            const CourseIDs = teacherCourses.map(c=>c.courseId);
+        return teacherDao.getTeacherCourses(teacher).then((teacherCourses) => {
+            const CourseIDs = teacherCourses.map(c => c.courseId);
             expect(CourseIDs).toContain(course);
         });
     });
 });
 
-describe("getCourseStatistics", ()=>{
-    let teacher,course;
-    beforeAll(async ()=>{
+describe("getCourseStatistics", () => {
+    let teacher, course;
+    beforeAll(async () => {
         await testHelper.initDB();
         teacher = await testHelper.insertTeacher();
         course = await testHelper.insertCourse('Software engineering 2', teacher);
     });
-    afterAll(async ()=>{
+    afterAll(async () => {
         await testHelper.cleanDB();
     });
-    test("The course inserted figures in the ones led by the teacher", async()=>{
+    test("The course inserted figures in the ones led by the teacher", async () => {
         expect.assertions(1);
-        return teacherDao.getCoursesStatistics(teacher).then((teacherCourses)=>{
-            const CourseIDs = teacherCourses.map(c=>c.courseId);
+        return teacherDao.getCoursesStatistics(teacher).then((teacherCourses) => {
+            const CourseIDs = teacherCourses.map(c => c.courseId);
             expect(CourseIDs).toContain(course);
         });
     });
 });
 
-describe("getMyCoursesLessons", ()=>{
-    let teacher,course,lecture;
-    beforeAll(async ()=>{
+describe("getMyCoursesLessons", () => {
+    let teacher, course, lecture;
+    beforeAll(async () => {
         await testHelper.initDB();
         teacher = await testHelper.insertTeacher();
         course = await testHelper.insertCourse('Software engineering 2', teacher);
         lecture = await testHelper.insertCourseSchedule(course);
     });
-    afterAll(async ()=>{
+    afterAll(async () => {
         await testHelper.cleanDB();
     });
-    test("The lecture inserted figures in the ones led by the teacher", async()=>{
+    test("The lecture inserted figures in the ones led by the teacher", async () => {
         expect.assertions(1);
-        return teacherDao.getMyCoursesLessons(teacher).then((teacherLessons)=>{
-            const LessonsIDs = teacherLessons.map(c=>c.scheduleId);
+        return teacherDao.getMyCoursesLessons(teacher).then((teacherLessons) => {
+            const LessonsIDs = teacherLessons.map(c => c.scheduleId);
             expect(LessonsIDs).toContain(lecture);
         });
     });
 });
 
-describe("getLessonsStatistics", ()=>{
-    let teacher,course,lecture;
-    beforeAll(async ()=>{
+describe("getLessonsStatistics", () => {
+    let teacher, course, lecture;
+    beforeAll(async () => {
         await testHelper.initDB();
         teacher = await testHelper.insertTeacher();
         course = await testHelper.insertCourse('Software engineering 2', teacher);
         lecture = await testHelper.insertCourseSchedule(course);
     });
-    afterAll(async ()=>{
+    afterAll(async () => {
         await testHelper.cleanDB();
     });
-    test("The lecture inserted figures in the ones led by the teacher", async()=>{
+    test("The lecture inserted figures in the ones led by the teacher", async () => {
         expect.assertions(1);
-        return teacherDao.getLessonsStatistics(teacher).then((teacherLessons)=>{
-            const LessonsIDs = teacherLessons.map(c=>c.scheduleId);
+        return teacherDao.getLessonsStatistics(teacher).then((teacherLessons) => {
+            const LessonsIDs = teacherLessons.map(c => c.scheduleId);
             expect(LessonsIDs).toContain(lecture);
         });
     });
 });
 
 describe("getStudentsData", () => {
-    let students= new Array();
+    let students = new Array();
     beforeEach(async () => {
         await testHelper.initDB();
         students[0] = await testHelper.insertStudent();
@@ -124,19 +124,19 @@ describe("getStudentsData", () => {
     afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test('The students data retrieved are the ones expected', ()=>{
+    test('The students data retrieved are the ones expected', () => {
         expect.assertions(1);
-        return teacherDao.getStudentsData(students).then((users)=>{
-            const usersIDs = users.map(u=>u.personId);
+        return teacherDao.getStudentsData(students).then((users) => {
+            const usersIDs = users.map(u => u.personId);
             expect(usersIDs).toContain(students[0]);
         });
     });
 });
 
 
-describe("cancelAllBooking", ()=>{
+describe("cancelAllBooking", () => {
     let lecture, student, booking;
-    beforeAll(async ()=>{
+    beforeAll(async () => {
         await testHelper.initDB();
         student = await testHelper.insertStudent();
         const teacher = await testHelper.insertTeacher();
@@ -145,10 +145,10 @@ describe("cancelAllBooking", ()=>{
         await testHelper.enrollStudentToCourse(student, course);
         booking = await testHelper.insertBooking(student, lecture);
     });
-    afterAll(async ()=>{
+    afterAll(async () => {
         await testHelper.cleanDB();
     });
-    test("The booking is cancelled", async()=>{
+    test("The booking is cancelled", async () => {
         expect.assertions(1);
         await teacherDao.cancelAllBooking(lecture);
         const BookStatus = await testHelper.getBookStatusFromBooking(booking);
@@ -156,85 +156,85 @@ describe("cancelAllBooking", ()=>{
     });
 });
 
-describe("setStudentAsPresent", ()=>{
-    let lecture, student, booking;
-    beforeAll(async ()=>{
+describe("setStudentAsPresent", () => {
+    let lecture, student;
+    beforeAll(async () => {
         await testHelper.initDB();
         student = await testHelper.insertStudent();
         const teacher = await testHelper.insertTeacher();
         const course = await testHelper.insertCourse('Software engineering 2', teacher);
         lecture = await testHelper.insertCourseSchedule(course);
         await testHelper.enrollStudentToCourse(student, course);
-        booking = await testHelper.insertBooking(student, lecture);
+        await testHelper.insertBooking(student, lecture);
     });
-    afterAll(async ()=>{
+    afterAll(async () => {
         await testHelper.cleanDB();
     });
-    test("The student is set as present", async()=>{
+    test("The student is set as present", async () => {
         expect.assertions(1);
-        await teacherDao.setStudentAsPresent(lecture,student);
-        const attended= await testHelper.getStudentStatusAboutBooking(lecture,student);
+        await teacherDao.setStudentAsPresent(lecture, student);
+        const attended = await testHelper.getStudentStatusAboutBooking(lecture, student);
         expect(attended).toEqual("1");
     });
 });
 
-describe("setStudentAsNotPresent", ()=>{
-    let lecture, student, booking;
-    beforeAll(async ()=>{
+describe("setStudentAsNotPresent", () => {
+    let lecture, student;
+    beforeAll(async () => {
         await testHelper.initDB();
         student = await testHelper.insertStudent();
         const teacher = await testHelper.insertTeacher();
         const course = await testHelper.insertCourse('Software engineering 2', teacher);
         lecture = await testHelper.insertCourseSchedule(course);
         await testHelper.enrollStudentToCourse(student, course);
-        booking = await testHelper.insertBooking(student, lecture);
+        await testHelper.insertBooking(student, lecture);
     });
-    afterAll(async ()=>{
+    afterAll(async () => {
         await testHelper.cleanDB();
     });
-    test("The student is set as not present", async()=>{
+    test("The student is set as not present", async () => {
         expect.assertions(1);
-        await teacherDao.setStudentAsNotPresent(lecture,student);
-        const attended= await testHelper.getStudentStatusAboutBooking(lecture,student);
+        await teacherDao.setStudentAsNotPresent(lecture, student);
+        const attended = await testHelper.getStudentStatusAboutBooking(lecture, student);
         expect(attended).toEqual("0");
     });
 });
 
 
-describe("updateLessonType", ()=>{
-    let teacher,course,lecture;
-    beforeAll(async ()=>{
+describe("updateLessonType", () => {
+    let teacher, course, lecture;
+    beforeAll(async () => {
         await testHelper.initDB();
         teacher = await testHelper.insertTeacher();
         course = await testHelper.insertCourse('Software engineering 2', teacher);
         lecture = await testHelper.insertCourseSchedule(course);
     });
-    afterAll(async ()=>{
+    afterAll(async () => {
         await testHelper.cleanDB();
     });
-    test("The lesson type is updated", async()=>{
+    test("The lesson type is updated", async () => {
         expect.assertions(1);
-        const result= await teacherDao.updateLessonType(lecture,"0");
-        const lessonType= await testHelper.getLessonType(lecture);
+        await teacherDao.updateLessonType(lecture, "0");
+        const lessonType = await testHelper.getLessonType(lecture);
         expect(lessonType).toEqual("0");
     });
 });
 
-describe("updateLessonStatus", ()=>{
-    let teacher,course,lecture;
-    beforeAll(async ()=>{
+describe("updateLessonStatus", () => {
+    let teacher, course, lecture;
+    beforeAll(async () => {
         await testHelper.initDB();
         teacher = await testHelper.insertTeacher();
         course = await testHelper.insertCourse('Software engineering 2', teacher);
         lecture = await testHelper.insertCourseSchedule(course);
     });
-    afterAll(async ()=>{
+    afterAll(async () => {
         await testHelper.cleanDB();
     });
-    test("The lesson status is updated", async()=>{
+    test("The lesson status is updated", async () => {
         expect.assertions(1);
-        const result= await teacherDao.updateLessonStatus(lecture,"0");
-        const lessonType= await testHelper.getLessonStatus(lecture);
+        await teacherDao.updateLessonStatus(lecture, "0");
+        const lessonType = await testHelper.getLessonStatus(lecture);
         expect(lessonType).toEqual("0");
     });
 });
