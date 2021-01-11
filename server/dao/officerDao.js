@@ -3,7 +3,6 @@
 const db = require('../db');
 const ClassroomData = require('./ClassroomData');
 const CourseData = require('./CourseData');
-const UserData = require('./UserData');
 const LessonsData = require('./LessonsData');
 const EnrollmentData = require('./EnrollmentData');
 const CourseBasicSchedule = require('./CourseBasicSchedule');
@@ -47,7 +46,7 @@ exports.getCourses = () => {
 
 exports.getUsers = (userType) => {
     return new Promise((resolve, reject) => {
-        const sql = 'SELECT ID, UserID, Name, Surname, UserName ' +
+        const sql = 'SELECT UserID, Name, Surname, UserName ' +
             'FROM User ' +
             'WHERE AccessLevel = ?';
         db.all(sql, [userType], (err, rows) => {
@@ -55,7 +54,7 @@ exports.getUsers = (userType) => {
                 reject(err);
             }
             else {
-                const students = rows.map(row => new UserData(row.ID, row.UserID, row.Name + ' ' + row.Surname, row.UserName));
+                const students = rows.map(row => new User(row.UserID, row.Name + ' ' + row.Surname, row.UserName, undefined, undefined, undefined));
                 resolve(students);
             }
         });
