@@ -3,6 +3,7 @@
 const db = require('../db');
 const ClassroomData = require('./ClassroomData');
 const CourseData = require('./CourseData');
+const User = require('./User');
 const LessonsData = require('./LessonsData');
 const EnrollmentData = require('./EnrollmentData');
 const CourseBasicSchedule = require('./CourseBasicSchedule');
