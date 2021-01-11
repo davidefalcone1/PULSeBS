@@ -6,7 +6,6 @@ import { mount } from 'enzyme';
 import CourseBasicSchedule from '../src/API/CourseBasicSchedule';
 import ConfigureCourseScheduleItem from '../src/components/ConfigureCourseScheduleItem';
 import ClassroomData from '../src/API/ClassroomData';
-import Accordion from 'react-bootstrap/Accordion';
 
 describe('ConfigureCoursesPage', ()=>{
     const component = mount(
