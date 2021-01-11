@@ -16,7 +16,7 @@ describe("getUser", ()=>{
         await testHelper.insertStudent();
         expect.assertions(1);
         return userDao.getUser("davide.falcone@studenti.polito.it")
-            .then(user=>expect(user.userID).toEqual('123456'));
+            .then(user=>expect(user.personId).toEqual('123456'));
     });
     test("user doesn't exists", ()=>{
         expect.assertions(1);
@@ -73,6 +73,6 @@ describe("getUserByID", ()=>{
         student = await testHelper.insertStudent();
         expect.assertions(1);
         return userDao.getUserByID(student)
-            .then(user=>expect(user.userID).toEqual('123456'));
+            .then(user=>expect(user.personId).toEqual('123456'));
     });
 });
