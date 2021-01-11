@@ -2,6 +2,7 @@
 const BookingData = require('./BookingData');
 const CourseData = require('./CourseData');
 const LessonsData = require('./LessonsData');
+const User = require ('./User');
 const moment = require("moment");
 const db = require('../db');
 
@@ -215,7 +216,7 @@ exports.getStudentsData = function (studentsIds) {
             if (err) {
                 reject();
             }
-            const users = rows.map((row) => new User(row.UserID, row.Name + ' ' + row.Surname, row.UserName, undefined, undefined, undefined));
+            const users = rows.map((row) => new User(row.UserID, row.Name + ' ' + row.Surname, row.UserName, undefined, row.AccessLevel, row.Tutorial));
             resolve(users);
         });
     });
