@@ -336,8 +336,8 @@ exports.generateStudentTracing = function (studentID, downloadType) {
                         doc.save(fileLocation);
                         resolve('studentTracing.pdf');
                         break;
-                    } catch (err) {
-                        reject(err);
+                    } catch (error1) {
+                        reject(error1);
                         return;
                     }
                 case 'csv'://If A CSV file Needed
@@ -359,8 +359,8 @@ exports.generateStudentTracing = function (studentID, downloadType) {
                         });
                         csvWriter.writeRecords(rows).then(() => resolve('studentTracing.csv'));
                         break;
-                    } catch (err) {
-                        reject(err);
+                    } catch (error2) {
+                        reject(error2);
                         return;
                     }
                 default://If the file type requested is wrong
@@ -403,8 +403,8 @@ exports.generateTeacherTracing = function (teacherID, downloadType) {
                         doc.save(fileLocation);
                         resolve('teacherTracing.pdf');
                         break;
-                    } catch (err) {
-                        reject(err);
+                    } catch (error1) {
+                        reject(error1);
                         return;
                     }
                 case 'csv'://If A CSV file Needed
@@ -426,8 +426,8 @@ exports.generateTeacherTracing = function (teacherID, downloadType) {
                         });
                         csvWriter.writeRecords(rows).then(() => resolve('teacherTracing.csv'));
                         break;
-                    } catch (err) {
-                        reject(err);
+                    } catch (error2) {
+                        reject(error2);
                         return;
                     }
                 default://If the file type requested is wrong

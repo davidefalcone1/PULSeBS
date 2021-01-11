@@ -148,7 +148,7 @@ app.get('/myWaitingBookedLessons', async (req, res) => {
 
 app.put('/setTutorialCompleted', async (req, res) => {
     try {
-        const result = await userDao.setTutorialCompleted(req.user.user);
+        await userDao.setTutorialCompleted(req.user.user);
         res.status(200).end();
     }
     catch (err) {

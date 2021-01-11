@@ -21,7 +21,7 @@ async function initDB() {
     // await db.pRun(sql);
 }
 
-async function cleanDB(){
+async function cleanDB() {
     let sql = "DELETE FROM sqlite_sequence";
     await db.pRun(sql);
     sql = "DELETE FROM Booking";
@@ -44,17 +44,17 @@ async function insertBooking(user, lecture) {
     let sql = 'INSERT INTO Booking(CourseScheduleID, StudentID, BookStatus, Attended, Timestamp)' +
         " VALUES(?, ?, 1, 0, datetime('now', 'localtime'))";
     let result = await db.pRun(sql, [lecture, user]);
-    if(result)
+    if (result)
         console.log(result);
     sql = "SELECT BookID FROM Booking";
     result = await db.pAll(sql);
-    return result[result.length-1].BookID;
+    return result[result.length - 1].BookID;
 }
 
 async function enrollStudentToCourse(student, course) {
     let sql = 'INSERT INTO StudentCourse(CourseID, StudentID) VALUES(?, ?)';
     let result = await db.pRun(sql, [course, student]);
-    if(result)
+    if (result)
         console.log(result);
     sql = "SELECT * FROM StudentCourse";
     result = await db.pGet(sql);
@@ -62,90 +62,90 @@ async function enrollStudentToCourse(student, course) {
 }
 
 async function insertStudent() {
-    let sql = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN)' + 
+    let sql = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN)' +
         " VALUES('123456','Davide', 'Falcone', 'davide.falcone@studenti.polito.it', 1, '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S', 'Caserta', '1996-09-05', 'abc')";
     let result = await db.pRun(sql);
-    if(result)
+    if (result)
         console.log(result);
     sql = 'SELECT UserID FROM User ORDER BY ID';
     result = await db.pAll(sql);
-    return result[result.length-1].UserID;
+    return result[result.length - 1].UserID;
 }
 
 async function insertOfficer() {
-    let sql = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN, Tutorial)' + 
+    let sql = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN, Tutorial)' +
         " VALUES('444444','Officer', 'admin', 'office@polito.it', 4, '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S', 'Caserta', '1996-09-05', 'abc', 1)";
     let result = await db.pRun(sql);
-    if(result)
+    if (result)
         console.log(result);
     sql = 'SELECT UserID FROM User ORDER BY ID';
     result = await db.pAll(sql);
-    return result[result.length-1].UserID;
+    return result[result.length - 1].UserID;
 }
 
 
-async function getCourseStatusFromLectureID(lectureId){
+async function getCourseStatusFromLectureID(lectureId) {
     const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
-    const result = await db.pGet(sql,[lectureId]);
+    const result = await db.pGet(sql, [lectureId]);
     return result.CourseStatus;
 }
 
-async function getCourseTypeFromLectureID(lectureId){
+async function getCourseTypeFromLectureID(lectureId) {
     const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
-    const result = await db.pGet(sql,[lectureId]);
+    const result = await db.pGet(sql, [lectureId]);
     return result.CourseType;
 }
 
-async function getTimeStartFromLectureID(lectureId){
+async function getTimeStartFromLectureID(lectureId) {
     const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
-    const result = await db.pGet(sql,[lectureId]);
+    const result = await db.pGet(sql, [lectureId]);
     return result.TimeStart;
 }
 
-async function getTimeEndFromLectureID(lectureId){
+async function getTimeEndFromLectureID(lectureId) {
     const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
-    const result = await db.pGet(sql,[lectureId]);
+    const result = await db.pGet(sql, [lectureId]);
     return result.TimeEnd;
 }
 
-async function getOccupiedSeatFromLectureID(lectureId){
+async function getOccupiedSeatFromLectureID(lectureId) {
     const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
-    const result = await db.pGet(sql,[lectureId]);
+    const result = await db.pGet(sql, [lectureId]);
     return result.TimeEnd;
 }
-async function getMaxSeatFromLectureID(lectureId){
+async function getMaxSeatFromLectureID(lectureId) {
     const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
-    const result = await db.pGet(sql,[lectureId]);
+    const result = await db.pGet(sql, [lectureId]);
     return result.TimeEnd;
 }
-async function getClassroomFromLectureID(lectureId){
+async function getClassroomFromLectureID(lectureId) {
     const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
-    const result = await db.pGet(sql,[lectureId]);
+    const result = await db.pGet(sql, [lectureId]);
     return result.Classroom;
 }
 
-async function insertCourseSchedule(course, timeStart, timeEnd){
+async function insertCourseSchedule(course, timeStart, timeEnd) {
     let sql, result;
-    if(timeStart && timeEnd){
+    if (timeStart && timeEnd) {
         sql = "INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom)" +
-          " VALUES(?, 1, 1, ?, ?, 3, 50, 'A1')";
+            " VALUES(?, 1, 1, ?, ?, 3, 50, 'A1')";
         result = await db.pRun(sql, [course, timeStart, timeEnd]);
     }
-    else{
+    else {
         sql = "INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom)" +
-          " VALUES(?, 1, 1, DATETIME('now', '+1 day', 'localtime'), DATETIME('now', '+1 day', '+1 hour', 'localtime'), 3, 50, 'A1')";
+            " VALUES(?, 1, 1, DATETIME('now', '+1 day', 'localtime'), DATETIME('now', '+1 day', '+1 hour', 'localtime'), 3, 50, 'A1')";
         result = await db.pRun(sql, [course]);
     }
-    if(result)
+    if (result)
         console.log(result);
     sql = 'SELECT * FROM CourseSchedule';
     result = await db.pAll(sql);
-    return result[result.length-1].CourseScheduleID;
+    return result[result.length - 1].CourseScheduleID;
 }
 
-async function insertGeneralCourseSchedule(course, day, startTime, endTime){
+async function insertGeneralCourseSchedule(course, day, startTime, endTime) {
     let sql, result;
-    if(day && startTime && endTime){
+    if (day && startTime && endTime) {
         sql = "INSERT INTO GeneralCourseSchedule(CourseID, Day, StartTime, EndTime, Room)" +
             " VALUES(?, ?, ?, ?, 'A1')";
         result = await db.pRun(sql, [course, day, startTime, endTime]);
@@ -156,95 +156,95 @@ async function insertGeneralCourseSchedule(course, day, startTime, endTime){
         result = await db.pRun(sql, [course]);
 
     }
-    if(result)
+    if (result)
         console.log(result);
     sql = 'SELECT * FROM GeneralCourseSchedule';
     result = await db.pAll(sql);
-    return result[result.length-1].ID;
+    return result[result.length - 1].ID;
 }
 
-async function insertCourse(name, teacher, semester){
-    let sql , result;
-    if(semester){
+async function insertCourse(name, teacher, semester) {
+    let sql, result;
+    if (semester) {
         sql = 'INSERT INTO Course(Year, Semester, CourseName, TeacherID) VALUES(2, ?, ?, ?)';
         result = await db.pRun(sql, [semester, name, teacher]);
     }
-    else{
+    else {
         sql = 'INSERT INTO Course(Year, Semester, CourseName, TeacherID) VALUES(2, 1, ?, ?)';
         result = await db.pRun(sql, [name, teacher]);
     }
-    if(result)
+    if (result)
         console.log(result);
     sql = 'SELECT CourseID FROM Course';
     result = await db.pAll(sql);
-    return result[result.length-1].CourseID;
+    return result[result.length - 1].CourseID;
 }
 
-async function insertTeacher(){
+async function insertTeacher() {
     let sql = "INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN) VALUES('654321', 'Mario', 'Rossi', 'mario.rossi@polito.it', 2, '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S', 'Torino', '08-09-1970', 'abc')";
     let result = await db.pRun(sql);
-    if(result)
+    if (result)
         console.log(result);
     sql = 'SELECT * FROM User';
     result = await db.pAll(sql);
-    return result[result.length-1].UserID;
+    return result[result.length - 1].UserID;
 }
 
-async function getUserEmail(userID){
+async function getUserEmail(userID) {
     const sql = 'SELECT UserName FROM User WHERE UserID = ?';
     const result = await db.pGet(sql, [userID]);
     return result.UserName;
 }
 
-async function getLectureFromBooking(booking){
+async function getLectureFromBooking(booking) {
     const sql = 'SELECT * FROM Booking WHERE BookID = ?';
     const result = await db.pGet(sql, [booking]);
     return result.CourseScheduleID;
 }
 
-async function insertClassroom(){
+async function insertClassroom() {
     let sql = "INSERT INTO Classroom(ClassroomName, MaxSeats) VALUES('A1', 80)";
-    let result = await db.pRun(sql);
+    await db.pRun(sql);
     sql = 'SELECT * FROM Classroom';
-    result = await db.pGet(sql);
+    let result = await db.pGet(sql);
     return result.ID;
 }
 
-async function getBookStatusFromBooking(booking){
+async function getBookStatusFromBooking(booking) {
     const sql = 'SELECT * FROM Booking WHERE BookID = ?';
-    const result = await db.pGet(sql,[booking]);
+    const result = await db.pGet(sql, [booking]);
     return result.BookStatus;
 }
 
-async function getLessonType(lectureId){
+async function getLessonType(lectureId) {
     const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
-    const result = await db.pGet(sql,[lectureId]);
+    const result = await db.pGet(sql, [lectureId]);
     return result.CourseType;
 }
 
-async function getLessonStatus(lectureId){
+async function getLessonStatus(lectureId) {
     const sql = 'SELECT * FROM CourseSchedule WHERE CourseScheduleID = ?';
-    const result = await db.pGet(sql,[lectureId]);
+    const result = await db.pGet(sql, [lectureId]);
     return result.CourseStatus;
 }
 
-async function getStudentStatusAboutBooking(lectureId,studentId){
+async function getStudentStatusAboutBooking(lectureId, studentId) {
     const sql = 'SELECT * FROM Booking WHERE CourseScheduleID = ? AND StudentID = ?';
-    const result = await db.pGet(sql,[lectureId,studentId]);
+    const result = await db.pGet(sql, [lectureId, studentId]);
     return result.Attended;
 }
 
-async function modifyBookingasPending(user,lecture) {
-    let sql= "UPDATE Booking SET BookStatus = 3 WHERE StudentID=? AND CourseScheduleID=?";
-    let result = await db.pRun(sql,[user,lecture]);
-    if(result)
+async function modifyBookingasPending(user, lecture) {
+    let sql = "UPDATE Booking SET BookStatus = 3 WHERE StudentID=? AND CourseScheduleID=?";
+    let result = await db.pRun(sql, [user, lecture]);
+    if (result)
         console.log(result);
     sql = "SELECT BookID FROM Booking"
     result = await db.pAll(sql);
-    return result[result.length-1].BookID;
+    return result[result.length - 1].BookID;
 }
 
 
 
 
-module.exports = {initDB, cleanDB, insertStudent, insertOfficer, insertGeneralCourseSchedule, insertTeacher, insertCourse, insertCourseSchedule, insertBooking, enrollStudentToCourse, getUserEmail, getLectureFromBooking, insertClassroom, getBookStatusFromBooking, getLessonType, getLessonStatus, getStudentStatusAboutBooking, modifyBookingasPending,getCourseStatusFromLectureID, getCourseTypeFromLectureID, getTimeStartFromLectureID, getTimeEndFromLectureID, getOccupiedSeatFromLectureID, getMaxSeatFromLectureID, getClassroomFromLectureID};
+module.exports = { initDB, cleanDB, insertStudent, insertOfficer, insertGeneralCourseSchedule, insertTeacher, insertCourse, insertCourseSchedule, insertBooking, enrollStudentToCourse, getUserEmail, getLectureFromBooking, insertClassroom, getBookStatusFromBooking, getLessonType, getLessonStatus, getStudentStatusAboutBooking, modifyBookingasPending, getCourseStatusFromLectureID, getCourseTypeFromLectureID, getTimeStartFromLectureID, getTimeEndFromLectureID, getOccupiedSeatFromLectureID, getMaxSeatFromLectureID, getClassroomFromLectureID };
