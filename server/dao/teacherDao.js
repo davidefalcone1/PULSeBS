@@ -5,21 +5,6 @@ const LessonsData = require('./LessonsData');
 const moment = require("moment");
 const db = require('../db');
 
-// this is a UserData type that will fulfill the front-end (it is different from the User class)
-class UserData {
-    constructor(id, personId, fullName, email) {
-        if (id)
-            this.id = id;
-        this.personId = personId;
-        this.fullName = fullName;
-        this.email = email;
-    }
-
-    static fromJson(json) {
-        const temp = Object.assign(new UserData(), json);
-        return temp;
-    }
-}
 /////////////////////////////////////////////////////////////////////////
 exports.getTeacherCourses = function (teacherID) {
     return new Promise((resolve, reject) => {
@@ -230,7 +215,7 @@ exports.getStudentsData = function (studentsIds) {
             if (err) {
                 reject();
             }
-            const users = rows.map((row) => new UserData(row.ID, row.UserID, row.Name + ' ' + row.Surname, row.UserName));
+            const users = rows.map((row) => new User(row.UserID, row.Name + ' ' + row.Surname, row.UserName, undefined, undefined, undefined));
             resolve(users);
         });
     });
