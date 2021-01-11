@@ -6,7 +6,7 @@ class User {
         this.username = username;
         this.passwordHash = passwordHash;
         this.accessLevel = accessLevel;
-        this.hasDoneTutorial = hasDoneTutorial;
+        this.hasDoneTutorial = Boolean(parseInt(hasDoneTutorial));
     }
 }
 
