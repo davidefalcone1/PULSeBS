@@ -49,9 +49,9 @@ app.post('/users/authenticate', async (req, res) => {
             }
             else {
                 // AUTHENTICATION SUCCESS
-                const token = jsonwebtoken.sign({ user: user.userID }, jwtSecret, { expiresIn: expireTime });
+                const token = jsonwebtoken.sign({ user: user.personId }, jwtSecret, { expiresIn: expireTime });
                 res.cookie('token', token, { httpOnly: true, sameSite: true, maxAge: 1000 * expireTime });
-                res.status(200).json({ id: user.userID, username: user.username, fullname: user.fullName, accessLevel: user.accessLevel, hasDoneTutorial: user.hasDoneTutorial });
+                res.status(200).json({ id: user.personId, username: user.email, fullname: user.fullName, accessLevel: user.accessLevel, hasDoneTutorial: user.hasDoneTutorial });
             }
         }
 
@@ -94,7 +94,7 @@ app.delete('/deleteBooking/:lessonID', (req, res) => {
                             userDao.getUserByID(result.studentID)
                                 .then((userData) => {
                                     info.notificationType = 4;
-                                    emailAPI.sendNotification(userData.username, info);
+                                    emailAPI.sendNotification(userData.email, info);
                                     res.status(204).json();
                                 })
                         });
@@ -148,7 +148,7 @@ app.get('/myWaitingBookedLessons', async (req, res) => {
 
 app.put('/setTutorialCompleted', async (req, res) => {
     try {
-        const result = await userDao.setTutorialCompleted(req.user.user);
+        await userDao.setTutorialCompleted(req.user.user);
         res.status(200).end();
     }
     catch (err) {
@@ -320,7 +320,7 @@ app.post('/bookLesson', async (req, res) => {
         const booked = await bookingDao.bookLesson(userID, lectureID);
         const user = await userDao.getUserByID(userID);
         const lectureData = await bookingDao.getLectureDataById(lectureID);
-        const email = user.username;
+        const email = user.email;
         if (!booked) {
             res.json(false);
             return;

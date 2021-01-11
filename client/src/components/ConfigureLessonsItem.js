@@ -1,6 +1,7 @@
 import React from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
+import moment from 'moment';
 
 const configureLessonItem = (props) => {
   return (
@@ -12,7 +13,8 @@ const configureLessonItem = (props) => {
             <EndDateField id = {props.lesson.scheduleId} endDate = {props.lesson.endDate}/>
             <SeatsField id = {props.lesson.scheduleId} seats = {props.lesson.availableSeats}/>
             <ClassroomField id = {props.lesson.scheduleId} classroom = {props.lesson.classroom}/>
-            <ButtonField id = {props.lesson.scheduleId} lesson = {props.lesson} editLesson = {props.editLesson}/>
+            <ButtonField id = {props.lesson.scheduleId} lesson = {props.lesson} editLesson = {props.editLesson}
+				startDate = {props.lesson.startDate}/>
         </div>
     </ListGroup.Item>
   );
@@ -74,12 +76,21 @@ function ClassroomField(props){
 function ButtonField(props){
     return(
         <div className="col-sm-1">
-            <Button variant="primary" onClick={(event) => {
+            {(moment().isBefore(moment(props.startDate).subtract(1, 'd'))) && 
+			<Button variant="primary" onClick={(event) => {
                 event.preventDefault();
-                props.editLesson(props.lesson);
+				if(moment().isBefore(moment(props.startDate).subtract(1, 'd'))){
+				  props.editLesson(props.lesson)
+				  .catch((errorObj) => { 
+					alert("Something went wrong: " + errorObj);
+				  });
+				}
+				else{
+				  alert("Sorry, your time to edit this lesson is over.");
+				}
             }} id={"buttonFieldOflesson" + props.id}>
                 Edit
-            </Button>
+            </Button>}
         </div>
     );
 }

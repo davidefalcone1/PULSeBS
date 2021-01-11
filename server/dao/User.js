@@ -1,12 +1,12 @@
 class User {
-    constructor(userID, fullName, username, passwordHash, accessLevel, hasDoneTutorial) {
+    constructor(userID, fullName, email, passwordHash, accessLevel, hasDoneTutorial) {
 
-        this.userID = userID;
+        this.personId = userID;
         this.fullName = fullName;
-        this.username = username;
+        this.email = email;
         this.passwordHash = passwordHash;
         this.accessLevel = accessLevel;
-        this.hasDoneTutorial = hasDoneTutorial;
+        this.hasDoneTutorial = Boolean(parseInt(hasDoneTutorial));
     }
 }
 

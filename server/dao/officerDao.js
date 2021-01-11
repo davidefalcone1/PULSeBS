@@ -3,7 +3,7 @@
 const db = require('../db');
 const ClassroomData = require('./ClassroomData');
 const CourseData = require('./CourseData');
-const UserData = require('./UserData');
+const User = require('./User');
 const LessonsData = require('./LessonsData');
 const EnrollmentData = require('./EnrollmentData');
 const CourseBasicSchedule = require('./CourseBasicSchedule');
@@ -47,7 +47,7 @@ exports.getCourses = () => {
 
 exports.getUsers = (userType) => {
     return new Promise((resolve, reject) => {
-        const sql = 'SELECT ID, UserID, Name, Surname, UserName ' +
+        const sql = 'SELECT UserID, Name, Surname, UserName ' +
             'FROM User ' +
             'WHERE AccessLevel = ?';
         db.all(sql, [userType], (err, rows) => {
@@ -55,7 +55,7 @@ exports.getUsers = (userType) => {
                 reject(err);
             }
             else {
-                const students = rows.map(row => new UserData(row.ID, row.UserID, row.Name + ' ' + row.Surname, row.UserName));
+                const students = rows.map(row => new User(row.UserID, row.Name + ' ' + row.Surname, row.UserName, undefined, undefined, undefined));
                 resolve(students);
             }
         });
@@ -175,7 +175,7 @@ exports.readFile = (fileContent, fileType) => {
             const part0 = buf[0].split(',');
             part0.pop()
             const part2 = buf[2].replace(',', '');
-            fields = [part0[0], part0[1], part0[2], name, part2]
+            //fields = [part0[0], part0[1], part0[2], name, part2]
 
             // skip the line if it contains wrong data
             if (part0.length + 2 !== header.length)
@@ -309,6 +309,7 @@ const generateSchedule = async (schedule) => {
         }
     }
     catch (err) {
+        console.log(err);
         throw (err);
     }
 }
@@ -322,7 +323,7 @@ exports.insertNewSchedules = async (newSchedules) => {
             const newLectures = await generateSchedule(schedule);
             if (newLectures)
                 lecturesToInsert.push(...newLectures);
-            }
+        }
         if (lecturesToInsert.length === 0) {
             resolve('No insertion, since there are no courses!');
             return;
@@ -676,40 +677,40 @@ exports.editLesson = (scheduleId, courseId, lessonStatus, lessonType, startDate,
         UPDATE CourseSchedule
         SET CourseID = ?, CourseStatus = ?, CourseType = ?, TimeStart = ?, TimeEnd = ?, Classroom = ?
         WHERE CourseScheduleID = ?`;
-        if(moment(startDate).isSameOrBefore(moment(), 'days') || moment(endDate).isSameOrBefore(moment(), 'days') 
-            || !moment(startDate).isSame(moment(endDate), 'days')){
-                reject('wrong data');
-                return;
-            }
+        if (moment(startDate).isSameOrBefore(moment(), 'days') || moment(endDate).isSameOrBefore(moment(), 'days')
+            || !moment(startDate).isSame(moment(endDate), 'days')) {
+            reject('wrong data');
+            return;
+        }
         emailDao.getLectureInfo(scheduleId)
-        .then((info) => {
-            const emailInfo = {
-                notificationType: 5,
-                course: info.course,
-                oldDate: info.date,
-                oldStart: info.start,
-                oldEnd: info.end,
-                oldRoom: info.room,
-                newDate: moment(startDate).format('ddd DD/MM/YYYY'),
-                newStart: moment(startDate).format('HH:mm'),
-                newEnd: moment(endDate).format('HH:mm'),
-                newRoom: classroom,
-            }
-            emailDao.getStudentsToNotify(scheduleId)
-            .then((emails) => {
-                emails.forEach((email) => {
-                    emailAPI.sendNotification(email.UserName, emailInfo);
-                });
+            .then((info) => {
+                const emailInfo = {
+                    notificationType: 5,
+                    course: info.course,
+                    oldDate: info.date,
+                    oldStart: info.start,
+                    oldEnd: info.end,
+                    oldRoom: info.room,
+                    newDate: moment(startDate).format('ddd DD/MM/YYYY'),
+                    newStart: moment(startDate).format('HH:mm'),
+                    newEnd: moment(endDate).format('HH:mm'),
+                    newRoom: classroom,
+                }
+                emailDao.getStudentsToNotify(scheduleId)
+                    .then((emails) => {
+                        emails.forEach((email) => {
+                            emailAPI.sendNotification(email.UserName, emailInfo);
+                        });
 
-                db.run(sql, [courseId, lessonStatus, lessonType, startDate, endDate, classroom, scheduleId], (error) => {
-                    if (error) {
-                        reject(error);
-                        return;
-                    }
-                    resolve('Lesson updated');
-                });
+                        db.run(sql, [courseId, lessonStatus, lessonType, startDate, endDate, classroom, scheduleId], (error) => {
+                            if (error) {
+                                reject(error);
+                                return;
+                            }
+                            resolve('Lesson updated');
+                        });
+                    });
             });
-        });
     });
 }
 
@@ -838,7 +839,7 @@ const selectSchedulesToUpdate = (oldData) => {
                     if (date.isSameOrBefore(moment(), 'day')) {
                         return false;
                     }
-                    
+
                     //check the start and end time
                     const start = moment(row.TimeStart).format('H:mm');
                     const end = moment(row.TimeEnd).format('H:mm');
@@ -847,7 +848,7 @@ const selectSchedulesToUpdate = (oldData) => {
                     if (start.localeCompare(oldStart) !== 0 || end.localeCompare(oldEnd) !== 0) {
                         return false;
                     }
-                    
+
                     return true;
                 });
                 resolve(selected);
