@@ -6,14 +6,18 @@ import { BrowserRouter } from 'react-router-dom';
 import UserData from '../src/API/UserData';
 describe('TeacherTutorialPage', ()=>{
     test('Renders correctly', ()=>{
-        const component = renderer.create(
-            <BrowserRouter>
-                <AuthContext.Provider value={{user: new UserData(1, '12345', 'Davide Falcone', 'davide.falcone@polito.it')}}>
-                    <TeacherTutorialPage setTutorialCompleted={()=>{}}/>
-                </AuthContext.Provider>
-            </BrowserRouter>
+        const component = mount(
+            <TeacherTutorialPage setTutorialCompleted={()=>{}}/>,
+            {
+                context: {
+                    user: new UserData(1, '12345', 'Davide Falcone', 'davide.falcone@polito.it'),
+                    hasDoneTutorial: false
+                }
+            }
         );
-        let tree = component.toJSON();
-        expect(tree).toMatchSnapshot();
+        let i=0;
+        for(;i < 8; i++){
+            component.find('img').simulate('click');
+        }
     });
 });
