@@ -84,11 +84,16 @@ exports[`Navbar Navbar renders correctly when user is a teacher 1`] = `
     className="mr-auto navbar-nav"
     onKeyDown={[Function]}
   >
-    <span
-      className="navbar-brand"
+    <a
+      aria-current={null}
+      className="nav-link"
+      data-rb-event-key={null}
+      disabled={false}
+      href="/myCoursesLessonslist"
+      onClick={[Function]}
     >
-      | Tap on the image to go to the next tutorial image! |
-    </span>
+       My courses details
+    </a>
   </div>
   <div
     className="ml-md-auto navbar-nav"
@@ -141,11 +146,26 @@ exports[`Navbar Navbar renders correctly when user is the booking manager 1`] = 
     className="mr-auto navbar-nav"
     onKeyDown={[Function]}
   >
-    <span
-      className="navbar-brand"
+    <a
+      aria-current={null}
+      className="nav-link"
+      data-rb-event-key={null}
+      disabled={false}
+      href="/monitorUsage"
+      onClick={[Function]}
     >
-      | Tap on the image to go to the next tutorial image! |
-    </span>
+       Monitor usage of the system
+    </a>
+    <a
+      aria-current={null}
+      className="nav-link"
+      data-rb-event-key={null}
+      disabled={false}
+      href="/generateContactTracing"
+      onClick={[Function]}
+    >
+       Generate contact tracing
+    </a>
   </div>
   <div
     className="ml-md-auto navbar-nav"
@@ -198,11 +218,66 @@ exports[`Navbar Navbar renders correctly when user is the support officier 1`] =
     className="mr-auto navbar-nav"
     onKeyDown={[Function]}
   >
-    <span
-      className="navbar-brand"
+    <a
+      aria-current={null}
+      className="nav-link"
+      data-rb-event-key={null}
+      disabled={false}
+      href="/configureStudentsList"
+      onClick={[Function]}
     >
-      | Tap on the image to go to the next tutorial image! |
-    </span>
+       Students
+    </a>
+    <a
+      aria-current={null}
+      className="nav-link"
+      data-rb-event-key={null}
+      disabled={false}
+      href="/configureCoursesList"
+      onClick={[Function]}
+    >
+       Courses
+    </a>
+    <a
+      aria-current={null}
+      className="nav-link"
+      data-rb-event-key={null}
+      disabled={false}
+      href="/configureTeachersList"
+      onClick={[Function]}
+    >
+       Teachers
+    </a>
+    <a
+      aria-current={null}
+      className="nav-link"
+      data-rb-event-key={null}
+      disabled={false}
+      href="/configureLessonsList"
+      onClick={[Function]}
+    >
+       Lessons
+    </a>
+    <a
+      aria-current={null}
+      className="nav-link"
+      data-rb-event-key={null}
+      disabled={false}
+      href="/configureClassesList"
+      onClick={[Function]}
+    >
+       Classes
+    </a>
+    <a
+      aria-current={null}
+      className="nav-link"
+      data-rb-event-key={null}
+      disabled={false}
+      href="/configureClassroomsList"
+      onClick={[Function]}
+    >
+       Classrooms
+    </a>
   </div>
   <div
     className="ml-md-auto navbar-nav"
