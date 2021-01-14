@@ -1,5 +1,4 @@
 const nodemailer = require('nodemailer');
-const db = require('./db');
 
 
 /* the info object needs the following properties:
@@ -96,7 +95,6 @@ exports.sendNotification = (username, emailInfo) => {
               pass: 'gruppo-2-P'
             }
           });
-    
           const emailFields = createMessage(emailInfo);
           if(!emailFields) {
               reject('Info fields not correct') 
