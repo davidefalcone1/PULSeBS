@@ -1,8 +1,5 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
-import { AuthContext } from '../src/_services/AuthContext';
 import MyBookedLessonsPage from '../src/components/MyBookedLessonsPage';
-import { BrowserRouter } from 'react-router-dom';
 import UserData from '../src/API/UserData';
 import LessonData from '../src/API/LessonData';
 import CourseData from '../src/API/CourseData';
