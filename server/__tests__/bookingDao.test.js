@@ -124,14 +124,14 @@ describe("deleteBooking", () => {
 });
 
 describe("bookLesson", () => {
-    let lecture;
+    let lecture, course, user1, booking;
     beforeEach(async () => {
-        await testHelper.initDB();
-        const user = await testHelper.insertStudent();
+        //await testHelper.initDB();
+        user1 = await testHelper.insertStudent();
         const teacher = await testHelper.insertTeacher();
-        const course = await testHelper.insertCourse('Software engineering 2', teacher);
+        course = await testHelper.insertCourse('Software engineering 2', teacher);
         lecture = await testHelper.insertCourseSchedule(course);
-        await testHelper.enrollStudentToCourse(user, course);
+        await testHelper.enrollStudentToCourse(user1, course);
     });
     afterEach(async () => {
         await testHelper.cleanDB();
@@ -143,6 +143,14 @@ describe("bookLesson", () => {
     test("the lesson does not exist and can't be booked", async () => {
         expect.assertions(1);
         await expect(bookingDao.bookLesson('123456', 134)).rejects.toEqual('Some error occurred, server request failed!');
+    });
+    test('student put in waiting list', async(done)=>{
+        expect.assertions(2);
+        await expect(bookingDao.bookLesson('123456', lecture)).resolves.toEqual(true);
+        const user2 = await testHelper.insertStudent('2');
+        await testHelper.enrollStudentToCourse('2', course);
+        await expect(bookingDao.bookLesson('2', lecture)).resolves.toEqual(false);
+        done();
     });
 });
 
@@ -181,7 +189,7 @@ describe("checkWaitingList", () => {
     afterEach(async () => {
         await testHelper.cleanDB();
     });
-    test("The bookStatus changed after the check of the waiting list", () => {
+    test("pending student becomes booked student", () => {
         expect.assertions(2);
         bookingDao.checkWaitingList(lecture).then(async (row) => {
             const userName = row.studentID;

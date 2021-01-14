@@ -4,24 +4,36 @@
 ## Docker instructions
 
 ```bash
-sudo docker pull alessiodeioanni/pulsebs_group2:release1
-sudo docker run -p 3000:3000 -p 3001:3001 alessiodeioanni/pulsebs_group2:release1
+sudo docker pull alessiodeioanni/pulsebs_group2:release2
+sudo docker run -p 3000:3000 -p 3001:3001 alessiodeioanni/pulsebs_group2:release2
 ```
 
 ## Login instructions
 
 #### Student credentials
 ```
-Username: student1.puls@gmail.com
+Username: stud270000@gmail.com
 App password: adminadmin
-Gmail password: @dminAdmin
+Gmail password: gruppo2Stud1
 ```
 
 #### Teacher credentials
 ```
-Username: teacher1.puls@gmail.com
+Username:  Derossi.Iacopo@gmail.com 
 App password: adminadmin
-Gmail password: @dminAdmin
+Gmail password: Professore1
+```
+
+#### Booking manager credentials
+```
+App username: book@polito.it
+App password: adminadmin
+```
+
+#### Support officer credentials
+```
+App username: office@polito.it
+App password: adminadmin
 ```
 ## Sonarcloud badges
 

@@ -46,7 +46,7 @@ class LoginForm extends React.Component {
                                                 <div className="card-body">
                                                     <div className="table-responsive">
 
-                                                        <Form method="POST" onSubmit={(event) => this.handleSubmit(event, context.loginUser)}>
+                                                        <Form method="POST" id="loginForm" onSubmit={(event) => this.handleSubmit(event, context.loginUser)}>
                                                             <Form.Group controlId="username">
                                                                 <Form.Label>E-mail</Form.Label>
                                                                 <Form.Control className="inputEmail" type="email" name="email" placeholder="E-mail" value={this.state.username} onChange={(ev) => this.onChangeUsername(ev)} required autoFocus />

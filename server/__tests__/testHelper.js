@@ -61,10 +61,17 @@ async function enrollStudentToCourse(student, course) {
     return new EnrollmentData(result.CourseID, result.StudentID);
 }
 
-async function insertStudent() {
-    let sql = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN)' +
+async function insertStudent(studentID) {
+    let sql, result;
+    if(studentID){
+        sql = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN)' +
+        " VALUES(?,'Davide', 'Falcone', 'davide.falcone@studenti.polito.it', 1, '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S', 'Caserta', '1996-09-05', 'abc')";
+        result = await db.pRun(sql, [studentID]);
+    }else{
+        let sql = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN)' +
         " VALUES('123456','Davide', 'Falcone', 'davide.falcone@studenti.polito.it', 1, '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S', 'Caserta', '1996-09-05', 'abc')";
-    let result = await db.pRun(sql);
+        result = await db.pRun(sql);
+    }
     if (result)
         console.log(result);
     sql = 'SELECT UserID FROM User ORDER BY ID';
@@ -128,12 +135,12 @@ async function insertCourseSchedule(course, timeStart, timeEnd) {
     let sql, result;
     if (timeStart && timeEnd) {
         sql = "INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom)" +
-            " VALUES(?, 1, 1, ?, ?, 3, 50, 'A1')";
+            " VALUES(?, 1, 1, ?, ?, 1, 50, 'A1')";
         result = await db.pRun(sql, [course, timeStart, timeEnd]);
     }
     else {
         sql = "INSERT INTO CourseSchedule(CourseID, CourseStatus, CourseType, TimeStart, TimeEnd, OccupiedSeat, MaxSeat, Classroom)" +
-            " VALUES(?, 1, 1, DATETIME('now', '+1 day', 'localtime'), DATETIME('now', '+1 day', '+1 hour', 'localtime'), 3, 50, 'A1')";
+            " VALUES(?, 1, 1, DATETIME('now', '+1 day', 'localtime'), DATETIME('now', '+1 day', '+1 hour', 'localtime'), 49, 50, 'A1')";
         result = await db.pRun(sql, [course]);
     }
     if (result)
@@ -244,7 +251,10 @@ async function modifyBookingasPending(user, lecture) {
     return result[result.length - 1].BookID;
 }
 
+async function cancelBooking(booking){
+    const sql = 'DELETE FROM Booking WHERE BookID=?';
+    await db.pRun(sql, [booking]);
+}
 
 
-
-module.exports = { initDB, cleanDB, insertStudent, insertOfficer, insertGeneralCourseSchedule, insertTeacher, insertCourse, insertCourseSchedule, insertBooking, enrollStudentToCourse, getUserEmail, getLectureFromBooking, insertClassroom, getBookStatusFromBooking, getLessonType, getLessonStatus, getStudentStatusAboutBooking, modifyBookingasPending, getCourseStatusFromLectureID, getCourseTypeFromLectureID, getTimeStartFromLectureID, getTimeEndFromLectureID, getOccupiedSeatFromLectureID, getMaxSeatFromLectureID, getClassroomFromLectureID };
+module.exports = { initDB, cleanDB, insertStudent, insertOfficer, insertGeneralCourseSchedule, insertTeacher, insertCourse, insertCourseSchedule, insertBooking, enrollStudentToCourse, getUserEmail, getLectureFromBooking, insertClassroom, getBookStatusFromBooking, getLessonType, getLessonStatus, getStudentStatusAboutBooking, modifyBookingasPending, getCourseStatusFromLectureID, getCourseTypeFromLectureID, getTimeStartFromLectureID, getTimeEndFromLectureID, getOccupiedSeatFromLectureID, getMaxSeatFromLectureID, getClassroomFromLectureID, cancelBooking };
