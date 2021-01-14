@@ -16,7 +16,7 @@ class GenerateContactTracing extends React.Component{
         super(props);
         this.props = props;
         this.state = {
-            studentID: '0', teacherID: '0',
+            studentID: '', teacherID: '',
             studentFormat: 'Select format', teacherFormat: 'Select format',
             errorStudent: false, errorTeacher: false,
             errorStudentFormat: false, errorTeacherFormat: false
@@ -85,7 +85,7 @@ class GenerateContactTracing extends React.Component{
                                         <Form.Group>
                                             <Form.Label className="control-label">Student Id</Form.Label>
                                             <Form.Control type="text" name="studentID" size = "lg"
-                                            value = {this.state.studentID} required autoFocus
+                                            value = {this.state.studentID} required
                                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
                                         </Form.Group>
                                         <Form.Group>
@@ -126,7 +126,7 @@ class GenerateContactTracing extends React.Component{
                                         <Form.Group>
                                             <Form.Label className="control-label">Teacher Id</Form.Label>
                                             <Form.Control type="text" name="teacherID" size = "lg"
-                                            value = {this.state.teacherID} required autoFocus
+                                            value = {this.state.teacherID} required
                                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
                                         </Form.Group>
                                         <Form.Group>
