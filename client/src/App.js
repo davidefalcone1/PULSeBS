@@ -390,7 +390,7 @@ class App extends React.Component {
       const url = window.URL.createObjectURL(new Blob([file]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `studentContactTracing.${downloadType}`);
+      link.setAttribute('download', `${studentID}_studentContactTracing.${downloadType}`);
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);
@@ -403,7 +403,7 @@ class App extends React.Component {
       const url = window.URL.createObjectURL(new Blob([file]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `teacherContactTracing.${downloadType}`);
+      link.setAttribute('download', `${teacherID}_teacherContactTracing.${downloadType}`);
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);

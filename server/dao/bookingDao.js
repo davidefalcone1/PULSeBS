@@ -325,7 +325,7 @@ exports.generateStudentTracing = function (studentID, downloadType) {
             switch (downloadType) {
                 case 'pdf'://If A PDF file Needed
                     try {
-                        fileLocation = path.resolve(__dirname, '../files').concat('\\studentTracing.pdf');
+                        fileLocation = path.resolve(__dirname, '../files').concat(`/${studentID}_studentTracing.pdf`);
                         const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape", format: 'a3' });
                         doc.setTextColor(0, 0, 0);
                         doc.text(3, 10, `All possible contacts for the student with ID:`);
@@ -334,7 +334,7 @@ exports.generateStudentTracing = function (studentID, downloadType) {
                         doc.setTextColor(0, 0, 0);
                         doc.table(5, 25, contactList, ["CourseName", "TimeStart", "StudentID", "Name", "Surname", "UserName", "City", "Birthday", "SSN"], { autoSize: true });
                         doc.save(fileLocation);
-                        resolve('studentTracing.pdf');
+                        resolve(`${studentID}_studentTracing.pdf`);
                         break;
                     } catch (error1) {
                         reject(error1);
@@ -342,9 +342,9 @@ exports.generateStudentTracing = function (studentID, downloadType) {
                     }
                 case 'csv'://If A CSV file Needed
                     try {
-                        fileLocation = path.resolve(__dirname, '../files').concat('\\studentTracing.csv');
+                        fileLocation = path.resolve(__dirname, '../files').concat(`\\${studentID}_studentTracing.csv`);
                         const csvWriter = createCsvWriter({
-                            path: './files/studentTracing.csv',
+                            path: `./files/${studentID}_studentTracing.csv`,
                             header: [
                                 { id: 'CourseName', title: 'CourseName' },
                                 { id: 'TimeStart', title: 'TimeStart' },
@@ -357,7 +357,7 @@ exports.generateStudentTracing = function (studentID, downloadType) {
                                 { id: 'SSN', title: 'SSN' }
                             ]
                         });
-                        csvWriter.writeRecords(rows).then(() => resolve('studentTracing.csv'));
+                        csvWriter.writeRecords(rows).then(() => resolve(`${studentID}_studentTracing.csv`));
                         break;
                     } catch (error2) {
                         reject(error2);
@@ -392,7 +392,7 @@ exports.generateTeacherTracing = function (teacherID, downloadType) {
             switch (downloadType) {
                 case 'pdf'://If A PDF file Needed
                     try {
-                        fileLocation = path.resolve(__dirname, '../files').concat('\\teacherTracing.pdf');
+                        fileLocation = path.resolve(__dirname, '../files').concat(`/${teacherID}_teacherTracing.pdf`);
                         const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape", format: 'a3' });
                         doc.setTextColor(0, 0, 0);
                         doc.text(3, 10, `All possible contacts for the teacher with ID:`);
@@ -401,7 +401,7 @@ exports.generateTeacherTracing = function (teacherID, downloadType) {
                         doc.setTextColor(0, 0, 0);
                         doc.table(5, 25, rows, ["CourseName", "TimeStart", "StudentID", "Name", "Surname", "UserName", "City", "Birthday", "SSN"], { autoSize: true });
                         doc.save(fileLocation);
-                        resolve('teacherTracing.pdf');
+                        resolve(`${teacherID}_teacherTracing.pdf`);
                         break;
                     } catch (error1) {
                         reject(error1);
@@ -409,9 +409,9 @@ exports.generateTeacherTracing = function (teacherID, downloadType) {
                     }
                 case 'csv'://If A CSV file Needed
                     try {
-                        fileLocation = path.resolve(__dirname, '../files').concat('\\teacherTracing.csv');
+                        fileLocation = path.resolve(__dirname, '../files').concat(`\\${teacherID}_teacherTracing.csv`);
                         const csvWriter = createCsvWriter({
-                            path: './files/teacherTracing.csv',
+                            path: `./files/${teacherID}_teacherTracing.csv`,
                             header: [
                                 { id: 'CourseName', title: 'CourseName' },
                                 { id: 'TimeStart', title: 'TimeStart' },
@@ -424,7 +424,7 @@ exports.generateTeacherTracing = function (teacherID, downloadType) {
                                 { id: 'SSN', title: 'SSN' }
                             ]
                         });
-                        csvWriter.writeRecords(rows).then(() => resolve('teacherTracing.csv'));
+                        csvWriter.writeRecords(rows).then(() => resolve(`${teacherID}_teacherTracing.csv`));
                         break;
                     } catch (error2) {
                         reject(error2);

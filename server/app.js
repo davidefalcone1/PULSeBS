@@ -185,6 +185,7 @@ app.post('/generateStudentTracing', async (req, res) => {
     const downloadType = req.body.downloadType;
     try {
         const fileName = await bookingDao.generateStudentTracing(studentID, downloadType.toLowerCase());
+        console.log(fileName)
         const options = { root: path.join(__dirname, 'files'), dotfiles: 'deny', headers: { 'x-timestamp': Date.now(), 'x-sent': true } }
         res.sendFile(fileName, options);
     }
@@ -198,6 +199,7 @@ app.post('/generateTeacherTracing', async (req, res) => {
     const downloadType = req.body.downloadType;
     try {
         const fileName = await bookingDao.generateTeacherTracing(teacherID, downloadType.toLowerCase());
+        console.log(fileName)
         const options = { root: path.join(__dirname, 'files'), dotfiles: 'deny', headers: { 'x-timestamp': Date.now(), 'x-sent': true } }
         res.sendFile(fileName, options);
     }
