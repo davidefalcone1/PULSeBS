@@ -20,7 +20,7 @@ describe('Navbar', ()=>{
     test('Navbar renders correctly when user is a teacher', ()=>{
         const component = renderer.create(
             <BrowserRouter>
-                <AuthContext.Provider value={{isTeacher: true, user: new UserData(1, '123456', 'Mario Rossi', 'mario.rossi@polito.it')}}>
+                <AuthContext.Provider value={{hasDoneTutorial: true, isTeacher: true, user: new UserData(1, '123456', 'Mario Rossi', 'mario.rossi@polito.it')}}>
                     <NavBar/>
                 </AuthContext.Provider>
             </BrowserRouter>
@@ -31,7 +31,7 @@ describe('Navbar', ()=>{
     test('Navbar renders correctly when user is the booking manager', ()=>{
         const component = renderer.create(
             <BrowserRouter>
-                <AuthContext.Provider value={{isBookingManager: true, user: new UserData(1, '123456', 'Mario Rossi', 'mario.rossi@polito.it')}}>
+                <AuthContext.Provider value={{hasDoneTutorial: true, isBookingManager: true, user: new UserData(1, '123456', 'Mario Rossi', 'mario.rossi@polito.it')}}>
                     <NavBar/>
                 </AuthContext.Provider>
             </BrowserRouter>
@@ -42,7 +42,7 @@ describe('Navbar', ()=>{
     test('Navbar renders correctly when user is the support officier', ()=>{
         const component = renderer.create(
             <BrowserRouter>
-                <AuthContext.Provider value={{isSupportOfficier: true, user: new UserData(1, '123456', 'Mario Rossi', 'mario.rossi@polito.it')}}>
+                <AuthContext.Provider value={{hasDoneTutorial: true, isSupportOfficer: true, user: new UserData(1, '123456', 'Mario Rossi', 'mario.rossi@polito.it')}}>
                     <NavBar/>
                 </AuthContext.Provider>
             </BrowserRouter>

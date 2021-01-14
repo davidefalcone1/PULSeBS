@@ -1,19 +1,21 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
-import { AuthContext } from '../src/_services/AuthContext';
 import LoginForm from '../src/components/LoginForm';
-import { BrowserRouter } from 'react-router-dom';
 
 describe('LoginForm', ()=>{
-    test('Renders correctly', ()=>{
-        const component = renderer.create(
-            <BrowserRouter>
-                <AuthContext.Provider value={{user: undefined}}>
-                    <LoginForm/>
-                </AuthContext.Provider>
-            </BrowserRouter>
-        );
-        let tree = component.toJSON();
-        expect(tree).toMatchSnapshot();
+    let component;
+    beforeAll(()=>{
+        component = mount(
+        <AuthContext.Provider value={{ user: undefined, loginUser: function(user, pass){return Promise.resolve()}, configurationCompleted: false }}>
+            <LoginForm />
+        </AuthContext.Provider>);
+    });
+    it('renders', ()=>{
+        expect(component).toContainMatchingElement('#loginForm');
+    });
+    it('form', ()=>{
+        const form = component.find('#loginForm').at(0);
+        form.find('input').at(0).simulate('change', {target: {value: 'new value'}});
+        form.find('input').at(1).simulate('change', {target: {value: 'new value'}});
+        form.simulate('submit');
     });
 });

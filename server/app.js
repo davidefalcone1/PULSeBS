@@ -26,7 +26,6 @@ app.use(cookieParser());
 app.post('/users/authenticate', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
-
     if (!username) {
         res.status(500).json({ error: 'Missing username' });
         return;
