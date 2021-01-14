@@ -53,6 +53,12 @@ const navbar = (props) => {
                                 <Navbar.Brand>
                                     Welcome {context.user.fullname ? context.user.fullname : context.user.name}!
                                 </Navbar.Brand> 
+                                {context.isStudent && <>
+                                    <Nav.Link as={NavLink} to="/studentTutorial" onClick={() => props.changeLocalTutorialFlag(false)}> Re-Watch the tutorial!</Nav.Link> 
+                                </>}
+                                {context.isTeacher && <>
+                                    <Nav.Link as={NavLink} to="/teacherTutorial" onClick={() => props.changeLocalTutorialFlag(false)}> Re-Watch the tutorial!</Nav.Link>
+                                </>}
                                 <Nav.Link onClick = {() => {
                                     context.logoutUser();
                                 }}>Logout</Nav.Link>

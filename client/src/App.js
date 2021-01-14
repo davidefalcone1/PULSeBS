@@ -410,6 +410,10 @@ class App extends React.Component {
     })
   }
 
+  changeLocalTutorialFlag = (flag) => {
+    this.setState({hasDoneTutorial: flag})
+  }
+
   render() {
     const value = {
       user: this.state.user,
@@ -426,7 +430,7 @@ class App extends React.Component {
     return (
       <AuthContext.Provider value={value}>
         <>
-          <Navbar />
+          <Navbar changeLocalTutorialFlag={this.changeLocalTutorialFlag} />
           <Switch>
             {/* STUDENT */}
             <Route path='/myBookableLessonsList'>

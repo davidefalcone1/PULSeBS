@@ -32,12 +32,33 @@ class MyCoursesLessonsPageRender extends React.Component {
     this.props = props;
     this.state = {
       startingDay: undefined, endingDay: undefined, 
-      modalMessage: "", showModal: false
+      modalMessage: "", showModal: false,
+      dataFilter: undefined
     }
   }
 
   activateModal = (message)  => {
     this.setState({showModal: true, modalMessage: message});
+  }
+  isLessonInDateBoundaries = (lessonStartingDay) => {
+    debugger
+    var res = undefined;
+    if(this.state.dataFilter === undefined){
+      res = true;
+    }
+    else if(this.state.dataFilter === "past" && moment(lessonStartingDay).diff(moment(), "days") < 0){ //ieri - oggi ( 0 - 1 )
+        res = true;
+    }
+    else if(this.state.dataFilter === "today" && moment(lessonStartingDay).diff(moment(), "days") === 0){ //oggi - oggi ( 0 - 0 )
+        res = true;
+    }
+    else if(this.state.dataFilter === "future" && moment(lessonStartingDay).diff(moment(), "days") > 0){ //domani - oggi ( 1 - 0 )
+        res = true;
+    }
+    else{
+      res = false;
+    }
+    return res;
   }
 
   render() {
@@ -49,6 +70,41 @@ class MyCoursesLessonsPageRender extends React.Component {
               <>        
                 {this.props.teacherCourses && this.props.myTeachedCoursesLessons &&
                 <div style={{padding: "15px"}}>
+                  <Row>
+                    <Col>
+                      <Button type="button" 
+                        variant={this.state.dataFilter === undefined ? "primary" : "outline-primary"}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          this.setState({dataFilter: undefined});
+                      }}>No Filters</Button>
+                    </Col>
+                    <Col>
+                      <Button type="button" 
+                        variant={this.state.dataFilter === "past" ? "primary" : "outline-primary"}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          this.setState({dataFilter: "past"});
+                      }}>Past Lessons</Button>
+                    </Col>
+                    <Col>
+                      <Button type="button" 
+                        variant={this.state.dataFilter === "today" ? "primary" : "outline-primary"}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          this.setState({dataFilter: "today"});
+                      }}>Today Lessons</Button>
+                    </Col>
+                    <Col>
+                      <Button type="button" 
+                        variant={this.state.dataFilter === "future" ? "primary" : "outline-primary"}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          this.setState({dataFilter: "future"});
+                      }}>Future Lessons</Button>
+                    </Col>
+                  </Row>
+                  <br/>
                   <Accordion>
                     {this.props.teacherCourses.map((teacherCourse) => //per ogni mio corso
                       <Card key={teacherCourse.courseId}>
@@ -64,8 +120,9 @@ class MyCoursesLessonsPageRender extends React.Component {
                                 waitingBookingsAvgWeek = {teacherCourse.waitingBookingsAvgWeek} normalBookingsAvgMonth = {teacherCourse.normalBookingsAvgMonth} 
                                 cancelledBookingsAvgMonth = {teacherCourse.cancelledBookingsAvgMonth} waitingBookingsAvgMonth = {teacherCourse.waitingBookingsAvgMonth}/>
                               {this.props.myTeachedCoursesLessons.map((courseLesson) => //per ogni lezione del mio corso
-                                (courseLesson.courseId === teacherCourse.courseId) &&
-                                  <Card key={courseLesson.courseId}>
+                                (courseLesson.courseId === teacherCourse.courseId) && 
+                                (console.log(courseLesson.startDate, this.isLessonInDateBoundaries(courseLesson.startDate)) || true) &&
+                                  <Card key={courseLesson.scheduleId} hidden={!(this.isLessonInDateBoundaries(courseLesson.startDate))}>
                                     <Card.Header>
                                       <div className="d-flex w-100 pt-3 justify-content-between no-gutters">
                                         <Accordion.Toggle as={Button} variant="link" eventKey={teacherCourse.courseName + "-" + courseLesson.scheduleId}>

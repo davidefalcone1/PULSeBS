@@ -78,6 +78,10 @@ class ConfigureCourses extends React.Component {
       if(this.state.scheduleEndTime !== ''){
           this.setState({errorScheduleEndTime: false});
       }
+      if(name === "scheduleEndTime" && this.state.scheduleEndTime !== '' &&
+        moment(this.state.scheduleStartTime, "HH:mm").isAfter(moment(this.state.scheduleEndTime, "HH:mm"))){
+          alert("The scheduled end time cannot be before the scheduled start time.")
+      }
     });
   }
 
@@ -274,7 +278,7 @@ class ConfigureCourses extends React.Component {
                         <Form.Group>
                           <Form.Label className="control-label">Ending Time</Form.Label>
                           <Form.Control type="time" name="scheduleEndTime"
-                            value = {this.state.scheduleEndTime} min={moment(this.state.scheduleStartTime).format("HH:mm")}
+                            value = {this.state.scheduleEndTime} min={moment(this.state.scheduleStartTime, "HH:mm")}
                             onChange={(ev) => this.updateField(ev.target.name, ev.target.value)}/>
                         </Form.Group>
                         <Form.Group>
