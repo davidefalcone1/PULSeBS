@@ -119,7 +119,7 @@ describe("deleteBooking", () => {
 });
 
 describe("bookLesson", () => {
-    let lecture, course, user1, booking;
+    let lecture, course, user1;
     beforeEach(async () => {
         //await testHelper.initDB();
         user1 = await testHelper.insertStudent();
@@ -142,7 +142,7 @@ describe("bookLesson", () => {
     test('student put in waiting list', async(done)=>{
         expect.assertions(2);
         await expect(bookingDao.bookLesson('123456', lecture)).resolves.toEqual(true);
-        const user2 = await testHelper.insertStudent('2');
+        await testHelper.insertStudent('2');
         await testHelper.enrollStudentToCourse('2', course);
         await expect(bookingDao.bookLesson('2', lecture)).resolves.toEqual(false);
         done();

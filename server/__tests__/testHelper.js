@@ -68,7 +68,7 @@ async function insertStudent(studentID) {
         " VALUES(?,'Davide', 'Falcone', 'davide.falcone@studenti.polito.it', 1, '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S', 'Caserta', '1996-09-05', 'abc')";
         result = await db.pRun(sql, [studentID]);
     }else{
-        let sql = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN)' +
+        sql = 'INSERT INTO User(UserID, Name, Surname, UserName, AccessLevel, Password, City, Birthday, SSN)' +
         " VALUES('123456','Davide', 'Falcone', 'davide.falcone@studenti.polito.it', 1, '$2b$12$7iALJ38k/PBlAB7b8JDksu7v85z.tjnC9XfoMdUJd75bIId87Ip2S', 'Caserta', '1996-09-05', 'abc')";
         result = await db.pRun(sql);
     }
