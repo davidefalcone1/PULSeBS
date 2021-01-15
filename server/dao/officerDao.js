@@ -185,7 +185,6 @@ exports.readFile = (fileContent, fileType) => {
         }
         // build an object with the header names as keys and the line values as values
         fields.forEach((field, index) => {
-            console.log(field);
             objectToInsert[header[index]] = field;
         });
 
