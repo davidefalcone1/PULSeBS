@@ -41,7 +41,7 @@ class GenerateContactTracing extends React.Component{
     }
     handleSubmitStudent = () => {
         if (!this.sForm.checkValidity()) {
-            this.form.reportValidity();
+            this.sForm.reportValidity();
         }
         else if(this.state.studentID === ''){
             this.setState({errorStudent: true});
@@ -55,7 +55,7 @@ class GenerateContactTracing extends React.Component{
     }
     handleSubmitTeacher = () => {
         if (!this.sForm.checkValidity()) {
-            this.form.reportValidity();
+            this.sForm.reportValidity();
         }
         else if(this.state.teacherID === ''){
             this.setState({errorTeacher: true});

@@ -1,5 +1,6 @@
 import React from 'react';
 import LoginForm from '../src/components/LoginForm';
+import { AuthContext } from '../src/_services/AuthContext'
 
 describe('LoginForm', ()=>{
     let component;

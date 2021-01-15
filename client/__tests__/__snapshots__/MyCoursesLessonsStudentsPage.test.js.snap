@@ -9,6 +9,59 @@ exports[`MyCoursesLessonsStudentsPage Renders correctly 1`] = `
   }
 >
   <div
+    className="row"
+  >
+    <div
+      className="col"
+    >
+      <button
+        className="btn btn-primary"
+        disabled={false}
+        onClick={[Function]}
+        type="button"
+      >
+        No Filters
+      </button>
+    </div>
+    <div
+      className="col"
+    >
+      <button
+        className="btn btn-outline-primary"
+        disabled={false}
+        onClick={[Function]}
+        type="button"
+      >
+        Past Lessons
+      </button>
+    </div>
+    <div
+      className="col"
+    >
+      <button
+        className="btn btn-outline-primary"
+        disabled={false}
+        onClick={[Function]}
+        type="button"
+      >
+        Today Lessons
+      </button>
+    </div>
+    <div
+      className="col"
+    >
+      <button
+        className="btn btn-outline-primary"
+        disabled={false}
+        onClick={[Function]}
+        type="button"
+      >
+        Future Lessons
+      </button>
+    </div>
+  </div>
+  <br />
+  <div
     className="accordion"
   >
     <div
@@ -92,6 +145,7 @@ exports[`MyCoursesLessonsStudentsPage Renders correctly 1`] = `
             </div>
             <div
               className="card"
+              hidden={false}
             >
               <div
                 className="card-header"

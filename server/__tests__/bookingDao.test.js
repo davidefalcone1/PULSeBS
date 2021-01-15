@@ -1,12 +1,7 @@
 "use strict";
-/* I used setTimeout() because test start to run before DB initialization ends.
-    Another solution is to substitute sqlite3 node module with sqlite node module,
-    since the latter supports await/async mechanisms */
 jest.setMock("../db", require("../__mocks__/db.mock"));
 const testHelper = require("./testHelper");
 const bookingDao = require('../dao/bookingDao');
-const db = require("../db");
-const path = require("path");
 
 
 describe("getBookableLessons", () => {
@@ -220,7 +215,7 @@ describe("generateStudentTracing", () => {
         try {
             expect.assertions(1);
             const result = await bookingDao.generateStudentTracing(student, 'pdf');
-            expect(result).toBe('studentTracing.pdf');
+            expect(result).toBe(student+'_studentTracing.pdf');
         } catch (error) {
             console.log(error);
         }
@@ -254,7 +249,7 @@ describe("generateTeacherTracing", () => {
         expect.assertions(1);
         try {
             const result = await bookingDao.generateTeacherTracing(teacher, 'pdf');
-            expect(result).toBe('teacherTracing.pdf');
+            expect(result).toBe(teacher+'_teacherTracing.pdf');
             done();
         } catch (error) {
             console.log(error);

@@ -44,6 +44,16 @@ exports[`Navbar Navbar renders correctly when user is a student 1`] = `
       !
     </span>
     <a
+      aria-current={null}
+      className="nav-link"
+      data-rb-event-key={null}
+      disabled={false}
+      href="/studentTutorial"
+      onClick={[Function]}
+    >
+       Re-Watch the tutorial!
+    </a>
+    <a
       className="nav-link"
       data-rb-event-key={null}
       href="#"
@@ -105,6 +115,16 @@ exports[`Navbar Navbar renders correctly when user is a teacher 1`] = `
       Welcome 
       !
     </span>
+    <a
+      aria-current={null}
+      className="nav-link"
+      data-rb-event-key={null}
+      disabled={false}
+      href="/teacherTutorial"
+      onClick={[Function]}
+    >
+       Re-Watch the tutorial!
+    </a>
     <a
       className="nav-link"
       data-rb-event-key={null}
