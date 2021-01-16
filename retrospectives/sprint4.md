@@ -45,7 +45,7 @@ Task estimation error ratio: 60/58.5 = 1.02
 | --- | --- |
 | 23 | 23 |
 
-Automated unit tests: 46 (unit) + 21 (snapshot)  
+Automated unit tests: 258 (unit) + 16 (snapshot)  
 Coverage: 65%  
 
 ### Code review
@@ -54,5 +54,5 @@ Coverage: 65%
 | 1.5 | 1.5 |
 
 ## Assessment
-We are proud we have completed all the stories committed in the sprint planning, deploying a fully-working and fancy application. In addition, we managed to estimate almost correctly our effort during the planning. We would like to achieve a better testing coverage but we improved it a lot compared to the previous sprint.
+Our main improvement in this sprint concerns testing: allocating one more person in testing lead to significantly increase our test coverage.
 
